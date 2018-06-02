@@ -22,7 +22,5 @@ set(SPIRV_CROSS_SOURCES
 	ext/SPIRV-Cross/spirv_msl.hpp
 )
 
-
-
 project (veldrid-spirv)
 add_executable(veldrid-spirv ${VELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})
