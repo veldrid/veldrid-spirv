@@ -1,6 +1,6 @@
 #pragma once
 
-enum CompilationType
+enum CompilationTarget
 {
     HLSL,
     GLSL,

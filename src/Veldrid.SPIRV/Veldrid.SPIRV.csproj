@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
+    <PackageReference Include="Veldrid" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dll"
+      CopyToOutputDirectory="PreserveNewest"
+      PackagePath="runtimes/win-x64/native"
+      Pack="true" />
+  </ItemGroup>
+
+</Project>

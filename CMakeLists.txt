@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(ext/SPIRV-Cross)
 include_directories(ext/SPIRV-Cross/include)
 
-file(GLOB_RECURSE VELDRID_SPIRV_SOURCES src/veldrid-spirv/*.cpp src/veldrid-spirv/*.hpp)
+file(GLOB_RECURSE LIBVELDRID_SPIRV_SOURCES src/libveldrid-spirv/*.cpp src/libveldrid-spirv/*.hpp)
 set(SPIRV_CROSS_SOURCES 
 	ext/SPIRV-Cross/spirv_cpp.cpp
 	ext/SPIRV-Cross/spirv_cpp.hpp
@@ -22,5 +22,5 @@ set(SPIRV_CROSS_SOURCES
 	ext/SPIRV-Cross/spirv_msl.hpp
 )
 
-project (veldrid-spirv)
-add_executable(veldrid-spirv ${VELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})
+project (libveldrid-spirv)
+add_library(libveldrid-spirv SHARED ${LIBVELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})

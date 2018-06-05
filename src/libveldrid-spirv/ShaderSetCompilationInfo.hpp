@@ -2,29 +2,14 @@
 
 #include "stdint.h"
 #include <vector>
-#include "CompilationType.hpp"
+#include "CompilationTarget.hpp"
 
 namespace Veldrid
 {
-template<class T>
-struct Optional
-{
-    bool HasValue;
-    T Value;
-
-    Optional(T value)
-    {
-        HasValue = true;
-        Value = value;
-    }
-
-    Optional()
-    {
-        HasValue = false;
-    }
-};
 struct ShaderCompilationInfo
 {
+    uint32_t _HasValue;
+    bool HasValue() const { return _HasValue != 0; }
     uint32_t Length;
     uint32_t* ShaderCode; // SPIR-V bytecode
 
@@ -40,16 +25,18 @@ struct ShaderCompilationInfo
         Length = 0;
     }
 };
+#pragma pack(push, 1)
 struct ShaderSetCompilationInfo
 {
-    CompilationType CompilationKind;
-    Optional<ShaderCompilationInfo> VertexShader;
-    Optional<ShaderCompilationInfo> FragmentShader;
-    Optional<ShaderCompilationInfo> ComputeShader;
+    CompilationTarget CompilationKind;
+    ShaderCompilationInfo VertexShader;
+    ShaderCompilationInfo FragmentShader;
+    ShaderCompilationInfo ComputeShader;
 };
+#pragma pack(pop)
 struct ShaderCompilationResult
 {
-    bool Succeeded;
+    uint32_t Succeeded;
     uint32_t ErrorMessageLength;
     uint8_t* ErrorMessage;
     uint32_t VertexShaderLength;
@@ -63,7 +50,7 @@ struct ShaderCompilationResult
 
     ShaderCompilationResult(const std::string& errorMessage)
     {
-        Succeeded = false;
+        Succeeded = 0;
         ErrorMessageLength = static_cast<uint32_t>(errorMessage.length());
         ErrorMessage = new uint8_t[ErrorMessageLength];
         memcpy(ErrorMessage, errorMessage.c_str(), ErrorMessageLength);
