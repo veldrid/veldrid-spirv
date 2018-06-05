@@ -6,10 +6,14 @@
 
 namespace Veldrid
 {
+struct Bool32
+{
+    uint32_t Value;
+    operator bool() const { return Value != 0; }
+};
 struct ShaderCompilationInfo
 {
-    uint32_t _HasValue;
-    bool HasValue() const { return _HasValue != 0; }
+    Bool32 HasValue;
     uint32_t Length;
     uint32_t* ShaderCode; // SPIR-V bytecode
 
@@ -29,6 +33,7 @@ struct ShaderCompilationInfo
 struct ShaderSetCompilationInfo
 {
     CompilationTarget CompilationKind;
+    Bool32 InvertY;
     ShaderCompilationInfo VertexShader;
     ShaderCompilationInfo FragmentShader;
     ShaderCompilationInfo ComputeShader;

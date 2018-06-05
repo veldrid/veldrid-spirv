@@ -162,6 +162,9 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, CompilationTarget kind)
         CompilerHLSL::Options opts = {};
         opts.shader_model = 50;
         ret->set_hlsl_options(opts);
+        CompilerGLSL::Options commonOpts;
+        commonOpts.vertex.flip_vert_y = true;
+        ret->set_common_options(commonOpts);
         return ret;
     }
     case GLSL:
@@ -172,6 +175,8 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, CompilationTarget kind)
         opts.es = kind == ESSL;
         opts.enable_420pack_extension = false;
         opts.version = kind == GLSL ? 330 : 300;
+        opts.vertex.fixup_clipspace = true;
+        opts.vertex.flip_vert_y = true;
         ret->set_common_options(opts);
         return ret;
     }
@@ -180,6 +185,9 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, CompilationTarget kind)
         auto ret = new CompilerMSL(spirvBytes);
         CompilerMSL::Options opts = {};
         ret->set_msl_options(opts);
+        CompilerGLSL::Options commonOpts;
+        commonOpts.vertex.flip_vert_y = true;
+        ret->set_common_options(commonOpts);
         return ret;
     }
     default:
@@ -344,7 +352,7 @@ ShaderCompilationResult* CompileCompute(const ShaderSetCompilationInfo& info)
 
 ShaderCompilationResult* Compile(const ShaderSetCompilationInfo& info)
 {
-    if (info.VertexShader.HasValue() && info.FragmentShader.HasValue())
+    if (info.VertexShader.HasValue && info.FragmentShader.HasValue)
     {
         return CompileVertexFragment(info);
     }
