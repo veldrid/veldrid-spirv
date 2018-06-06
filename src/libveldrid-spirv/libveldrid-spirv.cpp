@@ -152,9 +152,9 @@ uint32_t GetResourceIndex(
     }
 }
 
-Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, CompilationTarget kind)
+Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilationInfo& info)
 {
-    switch (kind)
+    switch (info.Target)
     {
     case HLSL:
     {
@@ -163,7 +163,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, CompilationTarget kind)
         opts.shader_model = 50;
         ret->set_hlsl_options(opts);
         CompilerGLSL::Options commonOpts;
-        commonOpts.vertex.flip_vert_y = true;
+        commonOpts.vertex.flip_vert_y = info.InvertY;
         ret->set_common_options(commonOpts);
         return ret;
     }
@@ -172,11 +172,11 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, CompilationTarget kind)
     {
         auto ret = new CompilerGLSL(spirvBytes);
         CompilerGLSL::Options opts = {};
-        opts.es = kind == ESSL;
+        opts.es = info.Target == ESSL;
         opts.enable_420pack_extension = false;
-        opts.version = kind == GLSL ? 330 : 300;
+        opts.version = info.Target == GLSL ? 330 : 300;
         opts.vertex.fixup_clipspace = true;
-        opts.vertex.flip_vert_y = true;
+        opts.vertex.flip_vert_y = info.InvertY;
         ret->set_common_options(opts);
         return ret;
     }
@@ -186,7 +186,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, CompilationTarget kind)
         CompilerMSL::Options opts = {};
         ret->set_msl_options(opts);
         CompilerGLSL::Options commonOpts;
-        commonOpts.vertex.flip_vert_y = true;
+        commonOpts.vertex.flip_vert_y = info.InvertY;
         ret->set_common_options(commonOpts);
         return ret;
     }
@@ -200,14 +200,14 @@ ShaderCompilationResult* CompileVertexFragment(const ShaderSetCompilationInfo& i
     std::vector<uint32_t> vsBytes(
         info.VertexShader.ShaderCode,
         info.VertexShader.ShaderCode + info.VertexShader.Length);
-    Compiler* vsCompiler = GetCompiler(vsBytes, info.CompilationKind);
+    Compiler* vsCompiler = GetCompiler(vsBytes, info);
 
     std::vector<uint32_t> fsBytes(
         info.FragmentShader.ShaderCode,
         info.FragmentShader.ShaderCode + info.FragmentShader.Length);
-    Compiler* fsCompiler = GetCompiler(fsBytes, info.CompilationKind);
+    Compiler* fsCompiler = GetCompiler(fsBytes, info);
 
-    if (info.CompilationKind == HLSL || info.CompilationKind == MSL)
+    if (info.Target == HLSL || info.Target == MSL)
     {
         ShaderResources vsResources = vsCompiler->get_shader_resources();
         ShaderResources fsResources = fsCompiler->get_shader_resources();
@@ -232,7 +232,7 @@ ShaderCompilationResult* CompileVertexFragment(const ShaderSetCompilationInfo& i
         uint32_t samplerIndex = 0;
         for (auto& it : allResources)
         {
-            uint32_t index = GetResourceIndex(info.CompilationKind, it.second.Kind, bufferIndex, textureIndex, uavIndex, samplerIndex);
+            uint32_t index = GetResourceIndex(info.Target, it.second.Kind, bufferIndex, textureIndex, uavIndex, samplerIndex);
 
             uint32_t vsID = it.second.IDs[0];
             if (vsID != 0)
@@ -247,7 +247,7 @@ ShaderCompilationResult* CompileVertexFragment(const ShaderSetCompilationInfo& i
         }
     }
 
-    if (info.CompilationKind == GLSL || info.CompilationKind == ESSL)
+    if (info.Target == GLSL || info.Target == ESSL)
     {
         vsCompiler->build_combined_image_samplers();
         for (auto &remap : vsCompiler->get_combined_image_samplers())
@@ -291,9 +291,9 @@ ShaderCompilationResult* CompileCompute(const ShaderSetCompilationInfo& info)
     std::vector<uint32_t> csBytes(
         info.ComputeShader.ShaderCode,
         info.ComputeShader.ShaderCode + info.ComputeShader.Length);
-    Compiler* csCompiler = GetCompiler(csBytes, info.CompilationKind);
+    Compiler* csCompiler = GetCompiler(csBytes, info);
 
-    if (info.CompilationKind == HLSL || info.CompilationKind == MSL)
+    if (info.Target == HLSL || info.Target == MSL)
     {
         ShaderResources fsResources = csCompiler->get_shader_resources();
 
@@ -311,7 +311,7 @@ ShaderCompilationResult* CompileCompute(const ShaderSetCompilationInfo& info)
         uint32_t samplerIndex = 0;
         for (auto& it : allResources)
         {
-            uint32_t index = GetResourceIndex(info.CompilationKind, it.second.Kind, bufferIndex, textureIndex, uavIndex, samplerIndex);
+            uint32_t index = GetResourceIndex(info.Target, it.second.Kind, bufferIndex, textureIndex, uavIndex, samplerIndex);
 
             uint32_t csID = it.second.IDs[0];
             if (csID != 0)
@@ -321,7 +321,7 @@ ShaderCompilationResult* CompileCompute(const ShaderSetCompilationInfo& info)
         }
     }
 
-    if (info.CompilationKind == GLSL || info.CompilationKind == ESSL)
+    if (info.Target == GLSL || info.Target == ESSL)
     {
         csCompiler->build_combined_image_samplers();
         for (auto &remap : csCompiler->get_combined_image_samplers())

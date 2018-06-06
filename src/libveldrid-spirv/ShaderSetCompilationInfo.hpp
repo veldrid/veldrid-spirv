@@ -32,7 +32,7 @@ struct ShaderCompilationInfo
 #pragma pack(push, 1)
 struct ShaderSetCompilationInfo
 {
-    CompilationTarget CompilationKind;
+    CompilationTarget Target;
     Bool32 InvertY;
     ShaderCompilationInfo VertexShader;
     ShaderCompilationInfo FragmentShader;
