@@ -9,23 +9,25 @@ namespace Veldrid.SPIRV
         public static unsafe VertexFragmentCompilationResult Compile(
             byte[] vsBytes,
             byte[] fsBytes,
-            CompilationTarget target) => Compile(vsBytes, fsBytes, target, Array.Empty<SpecializationConstant>());
+            CompilationTarget target) => Compile(vsBytes, fsBytes, target, new CompilationOptions());
 
         public static unsafe VertexFragmentCompilationResult Compile(
             byte[] vsBytes,
             byte[] fsBytes,
             CompilationTarget target,
-            SpecializationConstant[] specializations)
+            CompilationOptions options)
         {
             int size = Unsafe.SizeOf<ShaderSetCompilationInfo>();
             int size2 = Unsafe.SizeOf<SpecializationList>();
             int size3 = Unsafe.SizeOf<SpecializationConstant>();
 
             ShaderSetCompilationInfo info;
-            info.CompilationKind = target;
+            info.Target = target;
+            info.FixClipSpaceZ = options.FixClipSpaceZ;
+            info.InvertY = options.InvertVertexOutputY;
             fixed (byte* vsBytesPtr = vsBytes)
             fixed (byte* fsBytesPtr = fsBytes)
-            fixed (SpecializationConstant* specConstants = specializations)
+            fixed (SpecializationConstant* specConstants = options.Specializations)
             {
                 info.VertexShader.HasValue = true;
                 info.VertexShader.Length = (uint)vsBytes.Length / 4;
@@ -35,7 +37,7 @@ namespace Veldrid.SPIRV
                 info.FragmentShader.Length = (uint)fsBytes.Length / 4;
                 info.FragmentShader.ShaderCode = (uint*)fsBytesPtr;
 
-                info.Specializations.Count = (uint)specializations.Length;
+                info.Specializations.Count = (uint)options.Specializations.Length;
                 info.Specializations.Values = specConstants;
 
                 ShaderCompilationResult* result = null;

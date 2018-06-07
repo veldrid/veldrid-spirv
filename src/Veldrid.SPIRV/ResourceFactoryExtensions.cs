@@ -14,13 +14,13 @@ namespace Veldrid.SPIRV
                 factory,
                 vertexShaderDescription,
                 fragmentShaderDescription,
-                Array.Empty<SpecializationConstant>());
+                new CompilationOptions());
 
         public static (Shader vertexShader, Shader fragmentShader) CreateFromSPIRV(
             this ResourceFactory factory,
             ShaderDescription vertexShaderDescription,
             ShaderDescription fragmentShaderDescription,
-            SpecializationConstant[] specializations)
+            CompilationOptions options)
         {
             GraphicsBackend backend = factory.BackendType;
             if (backend == GraphicsBackend.Vulkan)
@@ -33,7 +33,7 @@ namespace Veldrid.SPIRV
                 vertexShaderDescription.ShaderBytes,
                 fragmentShaderDescription.ShaderBytes,
                 target,
-                specializations);
+                options);
 
             byte[] vertexBytes = GetBytes(backend, compilationResult.VertexShader);
             Shader vertexShader = factory.CreateShader(new ShaderDescription(

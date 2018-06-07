@@ -175,7 +175,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
         opts.es = info.Target == ESSL;
         opts.enable_420pack_extension = false;
         opts.version = info.Target == GLSL ? 330 : 300;
-        opts.vertex.fixup_clipspace = true;
+        opts.vertex.fixup_clipspace = info.FixClipSpaceZ;
         opts.vertex.flip_vert_y = info.InvertY;
         ret->set_common_options(opts);
         return ret;

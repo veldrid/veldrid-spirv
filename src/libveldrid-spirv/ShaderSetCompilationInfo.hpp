@@ -47,6 +47,7 @@ struct SpecializationList
 struct ShaderSetCompilationInfo
 {
     CompilationTarget Target;
+    Bool32 FixClipSpaceZ;
     Bool32 InvertY;
     SpecializationList Specializations;
     ShaderCompilationInfo VertexShader;

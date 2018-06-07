@@ -19,7 +19,11 @@ namespace Veldrid.SPIRV.Tests
                 SpecializationConstant.Create(101, true),
                 SpecializationConstant.Create(102, 0.75f),
             };
-            VertexFragmentCompilationResult result = SpirvCompilation.Compile(vsBytes, fsBytes, target, specializations);
+            VertexFragmentCompilationResult result = SpirvCompilation.Compile(
+                vsBytes,
+                fsBytes,
+                target,
+                new CompilationOptions(false, false, specializations));
             Assert.NotNull(result.VertexShader);
             Assert.NotNull(result.FragmentShader);
         }
