@@ -15,9 +15,12 @@ layout(set = 0, binding = 1) uniform RotationInfo
     vec2 padding0;
 };
 
+layout(constant_id=100) const uint SpecializedCount = 4;
+layout(constant_id=101) const bool InvertY = false;
+
 layout(std140, set = 2, binding = 0) readonly buffer ExampleData
 {
-    vec4 Data[];
+    vec4 Data[SpecializedCount];
 };
 
 layout(location = 0) in vec3 Position;
@@ -74,4 +77,9 @@ void main()
     gl_Position.y = -gl_Position.y; // Correct for Vulkan clip coordinates
     fsin_Normal = normalize(globalRotMat * instanceRotFull * Normal);
     fsin_TexCoord = vec3(TexCoord, InstanceTexArrayIndex);
+
+    if (InvertY)
+    {
+        gl_Position.y *= -1;
+    }
 }

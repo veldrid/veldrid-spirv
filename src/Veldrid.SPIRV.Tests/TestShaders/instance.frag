@@ -19,6 +19,8 @@ layout(location = 2) in vec3 in_TexCoord;
 
 layout(location = 0) out vec4 outputColor;
 
+layout(constant_id=102) const float AlphaOffset = 0.25f;
+
 void main()
 {
     vec4 texColor = texture(sampler2DArray(Tex, Samp), in_TexCoord);
@@ -41,4 +43,5 @@ void main()
     }
 
     outputColor = diffuseColor + specColor;
+    outputColor.a += AlphaOffset;
 }

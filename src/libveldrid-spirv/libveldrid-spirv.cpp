@@ -69,7 +69,7 @@ ResourceKind ClassifyResource(const Compiler* compiler, const Resource& resource
         return ResourceKind::Sampler;
     }
 
-    throw new std::exception("Unhandled SPIR-V data type.");
+    throw std::runtime_error("Unhandled SPIR-V data type.");
 }
 
 void AddResources(
@@ -195,8 +195,36 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
     }
 }
 
+void SetSpecializations(spirv_cross::Compiler* compiler, const ShaderSetCompilationInfo& info)
+{
+    auto specConstants = compiler->get_specialization_constants();
+    for (uint32_t i = 0; i < info.Specializations.Count; i++)
+    {
+        uint32_t constID = info.Specializations.Values[i].ID;
+        uint32_t varID = 0;
+
+        for (auto& constant : specConstants)
+        {
+            if (constant.constant_id == constID)
+            {
+                varID = constant.id;
+            }
+        }
+
+        if (varID != 0)
+        {
+            auto& constVar = compiler->get_constant(varID);
+            constVar.m.c[0].r[0].u64 = info.Specializations.Values[i].Constant;
+        }
+    }
+}
+
 ShaderCompilationResult* CompileVertexFragment(const ShaderSetCompilationInfo& info)
 {
+    int size = sizeof(ShaderSetCompilationInfo);
+    int size2 = sizeof(SpecializationList);
+    int size3 = sizeof(SpecializationValue);
+
     std::vector<uint32_t> vsBytes(
         info.VertexShader.ShaderCode,
         info.VertexShader.ShaderCode + info.VertexShader.Length);
@@ -206,6 +234,9 @@ ShaderCompilationResult* CompileVertexFragment(const ShaderSetCompilationInfo& i
         info.FragmentShader.ShaderCode,
         info.FragmentShader.ShaderCode + info.FragmentShader.Length);
     Compiler* fsCompiler = GetCompiler(fsBytes, info);
+
+    SetSpecializations(vsCompiler, info);
+    SetSpecializations(fsCompiler, info);
 
     if (info.Target == HLSL || info.Target == MSL)
     {

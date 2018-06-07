@@ -6,12 +6,26 @@ namespace Veldrid.SPIRV
 {
     public static class SpirvCompilation
     {
-        public static unsafe VertexFragmentCompilationResult Compile(byte[] vsBytes, byte[] fsBytes, CompilationTarget target)
+        public static unsafe VertexFragmentCompilationResult Compile(
+            byte[] vsBytes,
+            byte[] fsBytes,
+            CompilationTarget target) => Compile(vsBytes, fsBytes, target, Array.Empty<SpecializationConstant>());
+
+        public static unsafe VertexFragmentCompilationResult Compile(
+            byte[] vsBytes,
+            byte[] fsBytes,
+            CompilationTarget target,
+            SpecializationConstant[] specializations)
         {
+            int size = Unsafe.SizeOf<ShaderSetCompilationInfo>();
+            int size2 = Unsafe.SizeOf<SpecializationList>();
+            int size3 = Unsafe.SizeOf<SpecializationConstant>();
+
             ShaderSetCompilationInfo info;
             info.CompilationKind = target;
             fixed (byte* vsBytesPtr = vsBytes)
             fixed (byte* fsBytesPtr = fsBytes)
+            fixed (SpecializationConstant* specConstants = specializations)
             {
                 info.VertexShader.HasValue = true;
                 info.VertexShader.Length = (uint)vsBytes.Length / 4;
@@ -20,6 +34,9 @@ namespace Veldrid.SPIRV
                 info.FragmentShader.HasValue = true;
                 info.FragmentShader.Length = (uint)fsBytes.Length / 4;
                 info.FragmentShader.ShaderCode = (uint*)fsBytesPtr;
+
+                info.Specializations.Count = (uint)specializations.Length;
+                info.Specializations.Values = specConstants;
 
                 ShaderCompilationResult* result = null;
                 try

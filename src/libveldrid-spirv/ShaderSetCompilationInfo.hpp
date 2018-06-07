@@ -3,6 +3,7 @@
 #include "stdint.h"
 #include <vector>
 #include "CompilationTarget.hpp"
+#include "spirv_common.hpp"
 
 namespace Veldrid
 {
@@ -29,11 +30,25 @@ struct ShaderCompilationInfo
         Length = 0;
     }
 };
+
+struct SpecializationValue
+{
+    uint32_t ID;
+    uint64_t Constant;
+};
+
+struct SpecializationList
+{
+    uint32_t Count;
+    SpecializationValue* Values;
+};
+
 #pragma pack(push, 1)
 struct ShaderSetCompilationInfo
 {
     CompilationTarget Target;
     Bool32 InvertY;
+    SpecializationList Specializations;
     ShaderCompilationInfo VertexShader;
     ShaderCompilationInfo FragmentShader;
     ShaderCompilationInfo ComputeShader;

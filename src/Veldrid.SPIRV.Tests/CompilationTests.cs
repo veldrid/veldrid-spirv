@@ -13,7 +13,13 @@ namespace Veldrid.SPIRV.Tests
         {
             byte[] vsBytes = TestUtil.LoadShaderBytes(vs);
             byte[] fsBytes = TestUtil.LoadShaderBytes(fs);
-            VertexFragmentCompilationResult result = SpirvCompilation.Compile(vsBytes, fsBytes, target);
+            SpecializationConstant[] specializations =
+            {
+                SpecializationConstant.Create(100, 125u),
+                SpecializationConstant.Create(101, true),
+                SpecializationConstant.Create(102, 0.75f),
+            };
+            VertexFragmentCompilationResult result = SpirvCompilation.Compile(vsBytes, fsBytes, target, specializations);
             Assert.NotNull(result.VertexShader);
             Assert.NotNull(result.FragmentShader);
         }
