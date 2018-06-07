@@ -5,18 +5,15 @@ namespace Veldrid.SPIRV
 {
     public static class ResourceFactoryExtensions
     {
-        // TODO: Create return type struct.
-        public static (Shader vertexShader, Shader fragmentShader) CreateFromSPIRV(
+        public static Shader[] CreateFromSPIRV(
             this ResourceFactory factory,
             ShaderDescription vertexShaderDescription,
             ShaderDescription fragmentShaderDescription)
-            => CreateFromSPIRV(
-                factory,
-                vertexShaderDescription,
-                fragmentShaderDescription,
-                new CompilationOptions());
+        {
+            return CreateFromSPIRV(factory, vertexShaderDescription, fragmentShaderDescription, new CompilationOptions());
+        }
 
-        public static (Shader vertexShader, Shader fragmentShader) CreateFromSPIRV(
+        public static Shader[] CreateFromSPIRV(
             this ResourceFactory factory,
             ShaderDescription vertexShaderDescription,
             ShaderDescription fragmentShaderDescription,
@@ -25,7 +22,11 @@ namespace Veldrid.SPIRV
             GraphicsBackend backend = factory.BackendType;
             if (backend == GraphicsBackend.Vulkan)
             {
-                return (factory.CreateShader(ref vertexShaderDescription), factory.CreateShader(ref fragmentShaderDescription));
+                return new Shader[]
+                {
+                    factory.CreateShader(ref vertexShaderDescription),
+                    factory.CreateShader(ref fragmentShaderDescription)
+                };
             }
 
             CompilationTarget target = GetCompilationTarget(factory.BackendType);
@@ -35,19 +36,25 @@ namespace Veldrid.SPIRV
                 target,
                 options);
 
+            string vertexEntryPoint = vertexShaderDescription.EntryPoint == "main"
+                ? "main0"
+                : vertexShaderDescription.EntryPoint;
             byte[] vertexBytes = GetBytes(backend, compilationResult.VertexShader);
             Shader vertexShader = factory.CreateShader(new ShaderDescription(
                 vertexShaderDescription.Stage,
                 vertexBytes,
-                vertexShaderDescription.EntryPoint));
+                vertexEntryPoint));
 
+            string fragmentEntryPoint = fragmentShaderDescription.EntryPoint == "main"
+                ? "main0"
+                : fragmentShaderDescription.EntryPoint;
             byte[] fragmentBytes = GetBytes(backend, compilationResult.FragmentShader);
             Shader fragmentShader = factory.CreateShader(new ShaderDescription(
                 fragmentShaderDescription.Stage,
                 fragmentBytes,
-                fragmentShaderDescription.EntryPoint));
+                fragmentEntryPoint));
 
-            return (vertexShader, fragmentShader);
+            return new Shader[] { vertexShader, fragmentShader };
         }
 
         private static byte[] GetBytes(GraphicsBackend backend, string code)
