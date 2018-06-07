@@ -67,9 +67,10 @@ ResourceKind ClassifyResource(const Compiler* compiler, const Resource& resource
         return ResourceKind::SampledImage;
     case SPIRType::BaseType::Sampler:
         return ResourceKind::Sampler;
+    default:
+        throw std::runtime_error("Unhandled SPIR-V data type.");
     }
 
-    throw std::runtime_error("Unhandled SPIR-V data type.");
 }
 
 void AddResources(
