@@ -13,17 +13,17 @@ layout(set = 0, binding = 2) uniform LightInfo
 layout(set = 1, binding = 0) uniform texture2DArray Tex;
 layout(set = 1, binding = 1) uniform sampler Samp;
 
-layout(location = 0) in vec3 fsin_Position_WorldSpace;
-layout(location = 1) in vec3 fsin_Normal;
-layout(location = 2) in vec3 fsin_TexCoord;
+layout(location = 0) in vec3 in_Position_WorldSpace;
+layout(location = 1) in vec3 in_Normal;
+layout(location = 2) in vec3 in_TexCoord;
 
 layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-    vec4 texColor = texture(sampler2DArray(Tex, Samp), fsin_TexCoord);
+    vec4 texColor = texture(sampler2DArray(Tex, Samp), in_TexCoord);
 
-    float diffuseIntensity = clamp(dot(fsin_Normal, -LightDirection), 0, 1);
+    float diffuseIntensity = clamp(dot(in_Normal, -LightDirection), 0, 1);
     vec4 diffuseColor = texColor * diffuseIntensity;
 
     // Specular color
@@ -31,8 +31,8 @@ void main()
     vec3 lightColor = vec3(1, 1, 1);
     float specPower = 5.0f;
     float specIntensity = 0.3f;
-    vec3 vertexToEye = -normalize(fsin_Position_WorldSpace - CameraPosition);
-    vec3 lightReflect = normalize(reflect(LightDirection, fsin_Normal));
+    vec3 vertexToEye = -normalize(in_Position_WorldSpace - CameraPosition);
+    vec3 lightReflect = normalize(reflect(LightDirection, in_Normal));
     float specularFactor = dot(vertexToEye, lightReflect);
     if (specularFactor > 0)
     {

@@ -15,7 +15,7 @@ namespace Veldrid.SPIRV.Tests
             byte[] fsBytes = TestUtil.LoadShaderBytes(fs);
             VertexFragmentCompilationResult result = SpirvCompilation.Compile(vsBytes, fsBytes, target);
             Assert.NotNull(result.VertexShader);
-            Assert.NotNull(result.VertexShader);
+            Assert.NotNull(result.FragmentShader);
         }
     }
 }

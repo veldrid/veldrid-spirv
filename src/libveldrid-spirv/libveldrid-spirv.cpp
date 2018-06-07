@@ -250,15 +250,31 @@ ShaderCompilationResult* CompileVertexFragment(const ShaderSetCompilationInfo& i
     if (info.Target == GLSL || info.Target == ESSL)
     {
         vsCompiler->build_combined_image_samplers();
-        for (auto &remap : vsCompiler->get_combined_image_samplers())
+        for (auto& remap : vsCompiler->get_combined_image_samplers())
         {
             vsCompiler->set_name(remap.combined_id, vsCompiler->get_name(remap.image_id));
         }
 
         fsCompiler->build_combined_image_samplers();
-        for (auto &remap : fsCompiler->get_combined_image_samplers())
+        for (auto& remap : fsCompiler->get_combined_image_samplers())
         {
             fsCompiler->set_name(remap.combined_id, fsCompiler->get_name(remap.image_id));
+        }
+
+        auto vsResources = vsCompiler->get_shader_resources();
+        for (auto& output : vsResources.stage_outputs)
+        {
+            uint32_t location = vsCompiler->get_decoration(output.id, spv::Decoration::DecorationLocation);
+            std::string newName = "vdspv_fsin" + std::to_string(location);
+            vsCompiler->set_name(output.id, newName);
+        }
+
+        auto fsResources = fsCompiler->get_shader_resources();
+        for (auto& input : fsResources.stage_inputs)
+        {
+            uint32_t location = fsCompiler->get_decoration(input.id, spv::Decoration::DecorationLocation);
+            std::string newName = "vdspv_fsin" + std::to_string(location);
+            fsCompiler->set_name(input.id, newName);
         }
     }
 
