@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.0)
 
 set(CMAKE_CXX_STANDARD 17)
 include_directories(ext/SPIRV-Cross)
@@ -22,5 +22,5 @@ set(SPIRV_CROSS_SOURCES
 	ext/SPIRV-Cross/spirv_msl.hpp
 )
 
-project (libveldrid-spirv)
-add_library(libveldrid-spirv SHARED ${LIBVELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})
+project (veldrid-spirv)
+add_library(veldrid-spirv SHARED ${LIBVELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})

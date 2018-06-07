@@ -11,9 +11,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dll"
+    <Content
+      Include="$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dll"
+      Condition="Exists('$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dll')"
       CopyToOutputDirectory="PreserveNewest"
       PackagePath="runtimes/win-x64/native"
+      Pack="true" />
+    <Content
+      Include="$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dylib"
+      Condition="Exists('$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dylib')"
+      CopyToOutputDirectory="PreserveNewest"
+      PackagePath="runtimes/osx-x64/native"
       Pack="true" />
   </ItemGroup>
 
