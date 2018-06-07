@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Veldrid.SPIRV
 {
     public unsafe struct SpecializationConstant
