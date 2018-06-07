@@ -98,7 +98,7 @@ void AddResources(
             pair.first->second.IDs[idIndex] = resource.id;
             if (pair.first->second.Name != resource.name)
             {
-                printf("Same binding slot had different names.");
+                throw std::runtime_error("Same binding slot had different names.");
             }
         }
     }
@@ -148,7 +148,7 @@ uint32_t GetResourceIndex(
     case Sampler:
         return samplerIndex++;
     default:
-        throw new std::exception("Invalid ResourceKind.");
+        throw std::runtime_error("Invalid ResourceKind.");
     }
 }
 
@@ -191,7 +191,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
         return ret;
     }
     default:
-        throw new std::exception("Invalid OutputKind.");
+        throw std::runtime_error("Invalid OutputKind.");
     }
 }
 
