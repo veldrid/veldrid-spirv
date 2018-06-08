@@ -36,18 +36,18 @@ namespace Veldrid.SPIRV
                 target,
                 options);
 
-            string vertexEntryPoint = vertexShaderDescription.EntryPoint == "main"
-                ? "main0"
-                : vertexShaderDescription.EntryPoint;
+            string vertexEntryPoint = (backend == GraphicsBackend.Metal && vertexShaderDescription.EntryPoint == "main")
+                ? vertexEntryPoint = "main0"
+                : vertexEntryPoint = vertexShaderDescription.EntryPoint;
             byte[] vertexBytes = GetBytes(backend, compilationResult.VertexShader);
             Shader vertexShader = factory.CreateShader(new ShaderDescription(
                 vertexShaderDescription.Stage,
                 vertexBytes,
                 vertexEntryPoint));
 
-            string fragmentEntryPoint = fragmentShaderDescription.EntryPoint == "main"
-                ? "main0"
-                : fragmentShaderDescription.EntryPoint;
+            string fragmentEntryPoint = (backend == GraphicsBackend.Metal && fragmentShaderDescription.EntryPoint == "main")
+                ? fragmentEntryPoint = "main0"
+                : fragmentEntryPoint = fragmentShaderDescription.EntryPoint;
             byte[] fragmentBytes = GetBytes(backend, compilationResult.FragmentShader);
             Shader fragmentShader = factory.CreateShader(new ShaderDescription(
                 fragmentShaderDescription.Stage,

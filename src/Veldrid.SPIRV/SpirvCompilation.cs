@@ -17,10 +17,6 @@ namespace Veldrid.SPIRV
             CompilationTarget target,
             CompilationOptions options)
         {
-            int size = Unsafe.SizeOf<ShaderSetCompilationInfo>();
-            int size2 = Unsafe.SizeOf<SpecializationList>();
-            int size3 = Unsafe.SizeOf<SpecializationConstant>();
-
             ShaderSetCompilationInfo info;
             info.Target = target;
             info.FixClipSpaceZ = options.FixClipSpaceZ;
