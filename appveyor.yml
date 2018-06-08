@@ -12,3 +12,16 @@ artifacts:
   name: libveldrid-spirv.so
 - path: build\Release\libveldrid-spirv.dll
   name: libveldrid-spirv.dll
+
+deploy:
+  release: libveldrid-spirv-$(appveyor_repo_commit)-$(appveyor_build_worker_image)
+  description: 'Native Release ($(appveyor_build_worker_image))'
+  provider: GitHub
+  auth_token:
+    secure: DEGIcombPNY+d9ZUR4321jSr5Y+i03DkeiLvfEhzJtOFmaZrXVdS8B14mJQyqw8c
+  artifact: build/Release/libveldrid-spirv.*
+  draft: false
+  prerelease: false
+  on:
+    branch: master                 # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only
