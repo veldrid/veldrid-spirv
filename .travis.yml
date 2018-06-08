@@ -13,3 +13,6 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
+
+notifications:
+  email: false
