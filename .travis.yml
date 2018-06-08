@@ -1,11 +1,9 @@
 os:
 - osx
 
-language: csharp
-mono: none
-dotnet: 2.0.0
+language: cpp
 script:
-- "./build-packages.sh release"
+- "./build-native.sh release"
 
 deploy:
   provider: releases
