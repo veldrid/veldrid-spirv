@@ -1,0 +1,14 @@
+version: 1.0.{build}
+image:
+- Ubuntu
+- Visual Studio 2017
+install:
+- git submodule update --init --recursive
+build_script:
+- sh: ./build-native.sh release
+- cmd: call .\build-native.cmd Release
+artifacts:
+- path: build/Release/libveldrid-spirv.so
+  name: libveldrid-spirv.so
+- path: build\Release\libveldrid-spirv.dll
+  name: libveldrid-spirv.dll
