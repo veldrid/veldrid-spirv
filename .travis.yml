@@ -1,0 +1,8 @@
+os: osx
+
+language: csharp
+mono: none
+dotnet: 2.0.0
+script:
+ - ./build-native.sh
+ - ./build-packages.sh
