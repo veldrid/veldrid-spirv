@@ -1,9 +1,17 @@
 os:
-  - osx
-  - linux
+- osx
 
 language: csharp
 mono: none
 dotnet: 2.0.0
 script:
- - ./build-packages.sh
+- "./build-packages.sh release"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: gVKUuRTuN5glUgxM/lHDRpI31xhnCspLxzHURD6PEsti5BCt8eAn6G59lIIY9rdEgrorI6EDVU0h24MDVVzPbLhKAoMnrauouf/V0UasbbdJ0+d9cGjyo+Ik3bsXZVtCpYsuwn8OVL3gZJWLzWQ/hRwkU4uVB0atLmSJLJ0GC6b6epQVpzihbGTr0aY2igCTzcGPt1ZCK9jXpGwRNZJrlV8NS9Fa0SNX1Ug/YqF1yhqdhGvTDGgbwM/w2A/zUpdvEUltl8jtY0U8GOyum9zvK+w5YLkfLVOP3zW6lDb+RF3wRuZzdUXaOD6T62ZpdapmXfvYEKhR3apxr1so0XiI+JFE914gqL3vm3BmCLLwouXef1N7CIQh9WRiCJToA2k3JASWHb0+MNBYFlff6fK/e2KzLCG1BEVBVRaHrfCzm+N6ztkCNuNGbGQupADkV6p3/J+WzOKQkSwoTGP3Bm+YvLLPDX4cpm2tkX/RSqrMgmV9HoEVGuXaWOXY5wybQhVzIc1mjFK1BROdaO8uH5WIfSQYaPsSr+b7YHs9SXmMxu/m2r9ILa4aXmdoqsWogSlrYZ9+EODCa7hQk94XrLkDD761vyf5aMsdH0NzTUD4XPlO4nz1ulX+tJn+7HbO//XSOIKnX39kWrvx0jRAqsue/W1O0Pb9RBJmwx7mvVst9qU=
+  file: "build/Release/libveldrid-spirv.dylib"
+  skip_cleanup: true
+  on:
+    tags: true
