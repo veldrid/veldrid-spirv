@@ -14,8 +14,8 @@ artifacts:
   name: libveldrid-spirv.dll
 
 deploy:
-  release: $(appveyor_repo_tag_name)
-  description: 'Native Release ($(appveyor_build_worker_image))'
+  release: $(APPVEYOR_REPO_TAG_NAME)
+  description: 'Native Release ($(APPVEYOR_BUILD_WORKER_IMAGE))'
   provider: GitHub
   auth_token:
     secure: DEGIcombPNY+d9ZUR4321jSr5Y+i03DkeiLvfEhzJtOFmaZrXVdS8B14mJQyqw8c
