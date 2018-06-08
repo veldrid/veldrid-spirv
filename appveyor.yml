@@ -20,8 +20,8 @@ deploy:
   auth_token:
     secure: DEGIcombPNY+d9ZUR4321jSr5Y+i03DkeiLvfEhzJtOFmaZrXVdS8B14mJQyqw8c
   artifacts: 
-    - build/Release/libveldrid-spirv.so
-    - build\Release\libveldrid-spirv.dll
+    - path: build/Release/libveldrid-spirv.so
+    - path: build\Release\libveldrid-spirv.dll
   draft: false
   prerelease: false
   on:
