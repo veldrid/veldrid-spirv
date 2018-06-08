@@ -24,3 +24,4 @@ set(SPIRV_CROSS_SOURCES
 
 project (veldrid-spirv)
 add_library(veldrid-spirv SHARED ${LIBVELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})
+set_target_properties(veldrid-spirv PROPERTIES PREFIX "lib")
