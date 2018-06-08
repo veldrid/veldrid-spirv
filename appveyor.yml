@@ -19,7 +19,9 @@ deploy:
   provider: GitHub
   auth_token:
     secure: DEGIcombPNY+d9ZUR4321jSr5Y+i03DkeiLvfEhzJtOFmaZrXVdS8B14mJQyqw8c
-  artifact: build/Release/libveldrid-spirv.*
+  artifacts: 
+    - build/Release/libveldrid-spirv.so
+    - build\Release\libveldrid-spirv.dll
   draft: false
   prerelease: false
   on:
