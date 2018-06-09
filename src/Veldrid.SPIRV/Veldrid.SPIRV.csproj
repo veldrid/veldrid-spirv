@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NativeAssetsPath Condition="'$(NativeAssetsPath)' == ''">$(RepositoryRootDirectory)/build/$(Configuration)</NativeAssetsPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,19 +11,22 @@
     <PackageReference Include="Veldrid" Version="4.2.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content
-      Include="$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dll"
-      Condition="Exists('$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dll')"
-      CopyToOutputDirectory="PreserveNewest"
-      PackagePath="runtimes/win-x64/native"
-      Pack="true" />
-    <Content
-      Include="$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dylib"
-      Condition="Exists('$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dylib')"
-      CopyToOutputDirectory="PreserveNewest"
-      PackagePath="runtimes/osx-x64/native"
-      Pack="true" />
-  </ItemGroup>
+  <Target Name="BeforePackage" BeforeTargets="AssignTargetPaths">
+    <Message Importance="high" Text="I'm determining what to package now." />
+
+    <ItemGroup>
+      <_NativeAssetName Include="libveldrid-spirv.dll" PackagePath="runtimes/win-x64/native" />
+      <_NativeAssetName Include="libveldrid-spirv.so" PackagePath="runtimes/linux-x64/native" />
+      <_NativeAssetName Include="libveldrid-spirv.dylib" PackagePath="runtimes/osx-x64/native" />
+
+      <_ExistingAssets Include="@(_NativeAssetName)" Condition="Exists('$(NativeAssetsPath)/%(Identity)')" />
+
+      <Content
+        Include="@(_ExistingAssets->'$(NativeAssetsPath)/%(Identity)')"
+        CopyToOutputDirectory="PreserveNewest"
+        PackagePath="%(PackagePath)"
+        Pack="true" />
+    </ItemGroup>
+  </Target>
 
 </Project>

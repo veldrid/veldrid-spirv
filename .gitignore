@@ -261,3 +261,6 @@ launchSettings.json
 
 # CMake build dir
 build/
+
+# Downloaded assets for package build
+download/
