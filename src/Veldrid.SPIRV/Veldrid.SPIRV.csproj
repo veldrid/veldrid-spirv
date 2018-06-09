@@ -12,8 +12,6 @@
   </ItemGroup>
 
   <Target Name="BeforePackage" BeforeTargets="AssignTargetPaths">
-    <Message Importance="high" Text="I'm determining what to package now." />
-
     <ItemGroup>
       <_NativeAssetName Include="libveldrid-spirv.dll" PackagePath="runtimes/win-x64/native" />
       <_NativeAssetName Include="libveldrid-spirv.so" PackagePath="runtimes/linux-x64/native" />
