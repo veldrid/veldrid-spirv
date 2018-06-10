@@ -2,22 +2,18 @@
 //
 
 #include "libveldrid-spirv.hpp"
+#include "InteropStructs.hpp"
 #include <fstream>
 #include "spirv_hlsl.hpp"
 #include "spirv_glsl.hpp"
 #include "spirv_msl.hpp"
-#include "ShaderSetCompilationInfo.hpp"
 #include <map>
+#include <sstream>
 
 using namespace spirv_cross;
-using namespace Veldrid;
 
-void WriteToFile(const std::string& path, const std::string& text)
+namespace Veldrid
 {
-    auto outFile = std::ofstream(path);
-    outFile << text;
-    outFile.close();
-}
 
 struct BindingInfo
 {
@@ -25,7 +21,7 @@ struct BindingInfo
     uint32_t Binding;
 };
 
-bool operator< (const BindingInfo& a, const BindingInfo& b)
+bool operator <(const BindingInfo& a, const BindingInfo& b)
 {
     return a.Set < b.Set ||
         (a.Set == b.Set && a.Binding < b.Binding);
@@ -57,26 +53,33 @@ ResourceKind ClassifyResource(const Compiler* compiler, const Resource& resource
     case SPIRType::BaseType::Struct:
         if (storage)
         {
-            return StorageBufferReadOnly;
+            auto bufferBlockFlags = compiler->get_buffer_block_flags(resource.id);
+            if (bufferBlockFlags.get(spv::Decoration::DecorationNonWritable))
+            {
+                return StorageBufferReadOnly;
+            }
+            else
+            {
+                return StorageBufferReadWrite;
+            }
         }
         else
         {
             return UniformBuffer;
         }
     case SPIRType::BaseType::Image:
-        return ResourceKind::SampledImage;
+        return storage ? StorageImage : SampledImage;
     case SPIRType::BaseType::Sampler:
         return ResourceKind::Sampler;
     default:
         throw std::runtime_error("Unhandled SPIR-V data type.");
     }
-
 }
 
 void AddResources(
     std::vector<spirv_cross::Resource> &resources,
     spirv_cross::Compiler* compiler,
-    std::map<BindingInfo, ResourceInfo> &allBuffers,
+    std::map<BindingInfo, ResourceInfo> &allResources,
     const uint32_t idIndex,
     bool image = false,
     bool storage = false)
@@ -93,20 +96,24 @@ void AddResources(
         ri.IDs[idIndex] = resource.id;
         ri.Kind = kind;
 
-        auto pair = allBuffers.insert(std::pair<BindingInfo, ResourceInfo>(bi, ri));
+        auto pair = allResources.insert(std::pair<BindingInfo, ResourceInfo>(bi, ri));
         if (!pair.second)
         {
             pair.first->second.IDs[idIndex] = resource.id;
             if (pair.first->second.Name != resource.name)
             {
-                throw std::runtime_error("Same binding slot had different names.");
+                std::stringstream msg;
+                msg << "The same binding slot was used by multiple resources: ";
+                msg << "\"" << pair.first->second.Name << "\" and ";
+                msg << "\"" << resource.name << "\".";
+                throw std::runtime_error(msg.str());
             }
         }
     }
 }
 
 uint32_t GetResourceIndex(
-    CompilationTarget outputKind,
+    CompilationTarget target,
     ResourceKind resourceKind,
     uint32_t& bufferIndex,
     uint32_t& textureIndex,
@@ -118,7 +125,7 @@ uint32_t GetResourceIndex(
     case UniformBuffer:
         return bufferIndex++;
     case StorageBufferReadWrite:
-        if (outputKind == MSL)
+        if (target == MSL)
         {
             return bufferIndex++;
         }
@@ -127,7 +134,7 @@ uint32_t GetResourceIndex(
             return uavIndex++;
         }
     case StorageImage:
-        if (outputKind == MSL)
+        if (target == MSL)
         {
             return textureIndex++;
         }
@@ -138,7 +145,7 @@ uint32_t GetResourceIndex(
     case SampledImage:
         return textureIndex++;
     case StorageBufferReadOnly:
-        if (outputKind == MSL)
+        if (target == MSL)
         {
             return bufferIndex++;
         }
@@ -165,6 +172,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
         ret->set_hlsl_options(opts);
         CompilerGLSL::Options commonOpts;
         commonOpts.vertex.flip_vert_y = info.InvertY;
+        commonOpts.vertex.fixup_clipspace = info.DepthRange == NegativeOneToOne;
         ret->set_common_options(commonOpts);
         return ret;
     }
@@ -175,8 +183,15 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
         CompilerGLSL::Options opts = {};
         opts.es = info.Target == ESSL;
         opts.enable_420pack_extension = false;
-        opts.version = info.Target == GLSL ? 330 : 300;
-        opts.vertex.fixup_clipspace = info.FixClipSpaceZ;
+        if (info.ComputeShader.HasValue)
+        {
+            opts.version = info.Target == GLSL ? 430 : 310;
+        }
+        else
+        {
+            opts.version = info.Target == GLSL ? 330 : 300;
+        }
+        opts.vertex.fixup_clipspace = info.DepthRange == ZeroToOne;
         opts.vertex.flip_vert_y = info.InvertY;
         ret->set_common_options(opts);
         return ret;
@@ -188,6 +203,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
         ret->set_msl_options(opts);
         CompilerGLSL::Options commonOpts;
         commonOpts.vertex.flip_vert_y = info.InvertY;
+        commonOpts.vertex.fixup_clipspace = info.DepthRange == NegativeOneToOne;
         ret->set_common_options(commonOpts);
         return ret;
     }
@@ -341,6 +357,8 @@ ShaderCompilationResult* CompileCompute(const ShaderSetCompilationInfo& info)
         info.ComputeShader.ShaderCode + info.ComputeShader.Length);
     Compiler* csCompiler = GetCompiler(csBytes, info);
 
+    SetSpecializations(csCompiler, info);
+
     if (info.Target == HLSL || info.Target == MSL)
     {
         ShaderResources fsResources = csCompiler->get_shader_resources();
@@ -404,6 +422,10 @@ ShaderCompilationResult* Compile(const ShaderSetCompilationInfo& info)
     {
         return CompileVertexFragment(info);
     }
+    else if (info.ComputeShader.HasValue)
+    {
+        return CompileCompute(info);
+    }
 
     return new ShaderCompilationResult("The given combination of shaders was not valid.");
 }
@@ -424,6 +446,13 @@ std::vector<uint32_t> ReadFile(std::string path)
     return ret;
 }
 
+void WriteToFile(const std::string& path, const std::string& text)
+{
+    auto outFile = std::ofstream(path);
+    outFile << text;
+    outFile.close();
+}
+
 VD_EXPORT ShaderCompilationResult* Compile(ShaderSetCompilationInfo* info)
 {
     try
@@ -439,4 +468,5 @@ VD_EXPORT ShaderCompilationResult* Compile(ShaderSetCompilationInfo* info)
 VD_EXPORT void FreeResult(ShaderCompilationResult* result)
 {
     delete result;
+}
 }

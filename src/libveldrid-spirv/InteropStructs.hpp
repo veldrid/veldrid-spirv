@@ -12,6 +12,7 @@ struct Bool32
     uint32_t Value;
     operator bool() const { return Value != 0; }
 };
+
 struct ShaderCompilationInfo
 {
     Bool32 HasValue;
@@ -43,17 +44,32 @@ struct SpecializationList
     SpecializationValue* Values;
 };
 
+enum CompilationTarget
+{
+    HLSL,
+    GLSL,
+    ESSL,
+    MSL,
+};
+
+enum InputDepthRange
+{
+    ZeroToOne,
+    NegativeOneToOne,
+};
+
 #pragma pack(push, 1)
 struct ShaderSetCompilationInfo
 {
     CompilationTarget Target;
-    Bool32 FixClipSpaceZ;
+    InputDepthRange DepthRange;
     Bool32 InvertY;
     SpecializationList Specializations;
     ShaderCompilationInfo VertexShader;
     ShaderCompilationInfo FragmentShader;
     ShaderCompilationInfo ComputeShader;
 };
+
 #pragma pack(pop)
 struct ShaderCompilationResult
 {

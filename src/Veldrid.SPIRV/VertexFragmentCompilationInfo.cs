@@ -11,4 +11,15 @@
             FragmentShader = fragmentCode;
         }
     }
+
+    public class ComputeCompilationResult
+    {
+        public string ComputeShader { get; }
+
+        internal ComputeCompilationResult(string computeCode)
+        {
+            ComputeShader = computeCode;
+        }
+    }
+
 }

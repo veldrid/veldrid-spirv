@@ -30,7 +30,7 @@ namespace Veldrid.SPIRV
             }
 
             CompilationTarget target = GetCompilationTarget(factory.BackendType);
-            VertexFragmentCompilationResult compilationResult = SpirvCompilation.Compile(
+            VertexFragmentCompilationResult compilationResult = SpirvCompilation.CompileVertexFragment(
                 vertexShaderDescription.ShaderBytes,
                 fragmentShaderDescription.ShaderBytes,
                 target,
@@ -68,7 +68,7 @@ namespace Veldrid.SPIRV
                 case GraphicsBackend.Metal:
                     return Encoding.UTF8.GetBytes(code);
                 default:
-                    throw new InvalidOperationException($"Invalid GraphicsBackend: {backend}");
+                    throw new SpirvCompilationException($"Invalid GraphicsBackend: {backend}");
             }
         }
 
@@ -85,7 +85,7 @@ namespace Veldrid.SPIRV
                 case GraphicsBackend.OpenGLES:
                     return CompilationTarget.ESSL;
                 default:
-                    throw new InvalidOperationException($"Invalid GraphicsBackend: {backend}");
+                    throw new SpirvCompilationException($"Invalid GraphicsBackend: {backend}");
             }
         }
     }

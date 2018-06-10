@@ -1,17 +1,15 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Text;
 
 namespace Veldrid.SPIRV
 {
     public static class SpirvCompilation
     {
-        public static unsafe VertexFragmentCompilationResult Compile(
+        public static unsafe VertexFragmentCompilationResult CompileVertexFragment(
             byte[] vsBytes,
             byte[] fsBytes,
-            CompilationTarget target) => Compile(vsBytes, fsBytes, target, new CompilationOptions());
+            CompilationTarget target) => CompileVertexFragment(vsBytes, fsBytes, target, new CompilationOptions());
 
-        public static unsafe VertexFragmentCompilationResult Compile(
+        public static unsafe VertexFragmentCompilationResult CompileVertexFragment(
             byte[] vsBytes,
             byte[] fsBytes,
             CompilationTarget target,
@@ -19,7 +17,7 @@ namespace Veldrid.SPIRV
         {
             ShaderSetCompilationInfo info;
             info.Target = target;
-            info.FixClipSpaceZ = options.FixClipSpaceZ;
+            info.DepthRange = options.DepthRange;
             info.InvertY = options.InvertVertexOutputY;
             fixed (byte* vsBytesPtr = vsBytes)
             fixed (byte* fsBytesPtr = fsBytes)
@@ -42,12 +40,57 @@ namespace Veldrid.SPIRV
                     result = VeldridSpirvNative.Compile(&info);
                     if (!result->Succeeded)
                     {
-                        throw new InvalidOperationException("Compilation failed: " + GetString(result->ErrorMessage, result->ErrorMessageLength));
+                        throw new SpirvCompilationException("Compilation failed: " + GetString(result->ErrorMessage, result->ErrorMessageLength));
                     }
 
                     string vsCode = GetString(result->VertexShader, result->VertexShaderLength);
                     string fsCode = GetString(result->FragmentShader, result->FragmentShaderLength);
                     return new VertexFragmentCompilationResult(vsCode, fsCode);
+                }
+                finally
+                {
+                    if (result != null)
+                    {
+                        VeldridSpirvNative.FreeResult(result);
+                    }
+                }
+            }
+        }
+
+        public static unsafe ComputeCompilationResult CompileCompute(
+            byte[] csBytes,
+            CompilationTarget target) => CompileCompute(csBytes, target, new CompilationOptions());
+
+        public static unsafe ComputeCompilationResult CompileCompute(
+            byte[] csBytes,
+            CompilationTarget target,
+            CompilationOptions options)
+        {
+            ShaderSetCompilationInfo info;
+            info.Target = target;
+            info.DepthRange = options.DepthRange;
+            info.InvertY = options.InvertVertexOutputY;
+            fixed (byte* csBytesPtr = csBytes)
+            fixed (SpecializationConstant* specConstants = options.Specializations)
+            {
+                info.ComputeShader.HasValue = true;
+                info.ComputeShader.Length = (uint)csBytes.Length / 4;
+                info.ComputeShader.ShaderCode = (uint*)csBytesPtr;
+
+                info.Specializations.Count = (uint)options.Specializations.Length;
+                info.Specializations.Values = specConstants;
+
+                ShaderCompilationResult* result = null;
+                try
+                {
+                    result = VeldridSpirvNative.Compile(&info);
+                    if (!result->Succeeded)
+                    {
+                        throw new SpirvCompilationException("Compilation failed: " + GetString(result->ErrorMessage, result->ErrorMessageLength));
+                    }
+
+                    string csCode = GetString(result->ComputeShader, result->ComputeShaderLength);
+                    return new ComputeCompilationResult(csCode);
                 }
                 finally
                 {

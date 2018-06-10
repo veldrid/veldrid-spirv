@@ -4,7 +4,7 @@ namespace Veldrid.SPIRV
 {
     public class CompilationOptions
     {
-        public bool FixClipSpaceZ { get; set; }
+        public InputDepthRange DepthRange { get; set; }
         public bool InvertVertexOutputY { get; set; }
         public SpecializationConstant[] Specializations { get; set; }
 
@@ -13,9 +13,14 @@ namespace Veldrid.SPIRV
             Specializations = Array.Empty<SpecializationConstant>();
         }
 
-        public CompilationOptions(bool fixClipSpaceZ, bool invertVertexOutputY, SpecializationConstant[] specializations)
+        public CompilationOptions(InputDepthRange depthRange, bool invertVertexOutputY)
+            : this(depthRange, invertVertexOutputY, Array.Empty<SpecializationConstant>())
         {
-            FixClipSpaceZ = fixClipSpaceZ;
+        }
+
+        public CompilationOptions(InputDepthRange depthRange, bool invertVertexOutputY, SpecializationConstant[] specializations)
+        {
+            DepthRange = depthRange;
             InvertVertexOutputY = invertVertexOutputY;
             Specializations = specializations;
         }
