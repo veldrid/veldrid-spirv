@@ -1,9 +1,14 @@
 param (
     [string]$configuration = "Release",
-    [Parameter(Mandatory=$true)][string]$tag
+    [Parameter(Mandatory=$true)][string]$tag,
+    [switch]$public
 )
 
 Write-Host Building $configuration NuGet package for tag $tag...
+if (!$public)
+{
+    Write-Host This is a development build. Pass "-public" to remove the git commit from the package ID.
+}
 
 Write-Host Downloading native binaries from GitHub Releases...
 
@@ -26,6 +31,8 @@ if( -not $? )
     exit
 }
 
+Write-Host - libveldrid-spirv.dll
+
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.so",
     "$PSScriptRoot/download/libveldrid-spirv.so")
@@ -35,6 +42,8 @@ if( -not $? )
     Write-Error "Couldn't download libveldrid-spirv.so. This most likely indicates the Linux native build failed."
     exit
 }
+
+Write-Host - libveldrid-spirv.so
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.dylib",
@@ -46,8 +55,10 @@ if( -not $? )
     exit
 }
 
+Write-Host - libveldrid-spirv.dylib
+
 Write-Host Generating NuGet package...
 
 dotnet restore src\Veldrid.SPIRV\Veldrid.SPIRV.csproj
 
-dotnet msbuild src\Veldrid.SPIRV\Veldrid.SPIRV.csproj /p:Configuration=$configuration /p:NativeAssetsPath=$PSScriptRoot/download/ /t:Pack
+dotnet msbuild src\Veldrid.SPIRV\Veldrid.SPIRV.csproj /p:Configuration=$configuration /t:Pack /p:NativeAssetsPath=$PSScriptRoot/download/ /p:PublicRelease=$public
