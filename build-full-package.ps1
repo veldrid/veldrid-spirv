@@ -1,12 +1,17 @@
 param (
-    [string]$configuration = "Debug",
+    [string]$configuration = "Release",
     [Parameter(Mandatory=$true)][string]$tag
 )
 
-Write-Host Building $configuration for tag $tag
+Write-Host Building $configuration NuGet package for tag $tag...
 
-Remove-Item $PSScriptRoot\download\ -Force -Recurse
-New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\
+Write-Host Downloading native binaries from GitHub Releases...
+
+if (Test-Path $PSScriptRoot\download\)
+{
+    Remove-Item $PSScriptRoot\download\ -Force -Recurse | Out-Null
+}
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\ | Out-Null
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -40,5 +45,9 @@ if( -not $? )
     Write-Error "Couldn't download libveldrid-spirv.dylib. This most likely indicates the macOS native build failed."
     exit
 }
+
+Write-Host Generating NuGet package...
+
+dotnet restore src\Veldrid.SPIRV\Veldrid.SPIRV.csproj
 
 dotnet msbuild src\Veldrid.SPIRV\Veldrid.SPIRV.csproj /p:Configuration=$configuration /p:NativeAssetsPath=$PSScriptRoot/download/ /t:Pack
