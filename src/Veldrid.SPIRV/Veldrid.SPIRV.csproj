@@ -27,4 +27,9 @@
     </ItemGroup>
   </Target>
 
+  <PropertyGroup>
+    <Description>Veldrid integration for the SPIRV-Cross native library. Contains functionality to cross-compile SPIR-V bytecode into HLSL, GLSL, ESSL, and MSL shaders for use with Veldrid.</Description>
+    <PackageTags>3D Graphics Direct3D DirectX Vulkan OpenGL Metal Core Standard Game</PackageTags>
+  </PropertyGroup>
+
 </Project>
