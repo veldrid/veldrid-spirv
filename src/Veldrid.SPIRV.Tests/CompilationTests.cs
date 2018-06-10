@@ -31,7 +31,7 @@ namespace Veldrid.SPIRV.Tests
                 vsBytes,
                 fsBytes,
                 target,
-                new CompilationOptions(InputDepthRange.ZeroToOne, false, specializations));
+                new CompilationOptions(false, false, specializations));
             Assert.NotNull(result.VertexShader);
             Assert.NotNull(result.FragmentShader);
         }
@@ -59,7 +59,7 @@ namespace Veldrid.SPIRV.Tests
                    vsBytes,
                    fsBytes,
                    target,
-                   new CompilationOptions(InputDepthRange.ZeroToOne, false)));
+                   new CompilationOptions(false, false)));
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Veldrid.SPIRV
     internal struct ShaderSetCompilationInfo
     {
         public CompilationTarget Target;
-        public InputDepthRange DepthRange;
+        public Bool32 FixClipSpaceZ;
         public Bool32 InvertY;
         public SpecializationList Specializations;
         public ShaderCompilationInfo VertexShader;

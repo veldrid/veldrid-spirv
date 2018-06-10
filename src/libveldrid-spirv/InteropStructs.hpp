@@ -52,17 +52,11 @@ enum CompilationTarget
     MSL,
 };
 
-enum InputDepthRange
-{
-    ZeroToOne,
-    NegativeOneToOne,
-};
-
 #pragma pack(push, 1)
 struct ShaderSetCompilationInfo
 {
     CompilationTarget Target;
-    InputDepthRange DepthRange;
+    Bool32 FixClipSpaceZ;
     Bool32 InvertY;
     SpecializationList Specializations;
     ShaderCompilationInfo VertexShader;

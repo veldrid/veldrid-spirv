@@ -17,7 +17,7 @@ namespace Veldrid.SPIRV
         {
             ShaderSetCompilationInfo info;
             info.Target = target;
-            info.DepthRange = options.DepthRange;
+            info.FixClipSpaceZ = options.FixClipSpaceZ;
             info.InvertY = options.InvertVertexOutputY;
             fixed (byte* vsBytesPtr = vsBytes)
             fixed (byte* fsBytesPtr = fsBytes)
@@ -68,7 +68,7 @@ namespace Veldrid.SPIRV
         {
             ShaderSetCompilationInfo info;
             info.Target = target;
-            info.DepthRange = options.DepthRange;
+            info.FixClipSpaceZ = options.FixClipSpaceZ;
             info.InvertY = options.InvertVertexOutputY;
             fixed (byte* csBytesPtr = csBytes)
             fixed (SpecializationConstant* specConstants = options.Specializations)

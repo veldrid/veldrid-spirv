@@ -172,7 +172,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
         ret->set_hlsl_options(opts);
         CompilerGLSL::Options commonOpts;
         commonOpts.vertex.flip_vert_y = info.InvertY;
-        commonOpts.vertex.fixup_clipspace = info.DepthRange == NegativeOneToOne;
+        commonOpts.vertex.fixup_clipspace = info.FixClipSpaceZ;
         ret->set_common_options(commonOpts);
         return ret;
     }
@@ -191,7 +191,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
         {
             opts.version = info.Target == GLSL ? 330 : 300;
         }
-        opts.vertex.fixup_clipspace = info.DepthRange == ZeroToOne;
+        opts.vertex.fixup_clipspace = info.FixClipSpaceZ;
         opts.vertex.flip_vert_y = info.InvertY;
         ret->set_common_options(opts);
         return ret;
@@ -203,7 +203,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
         ret->set_msl_options(opts);
         CompilerGLSL::Options commonOpts;
         commonOpts.vertex.flip_vert_y = info.InvertY;
-        commonOpts.vertex.fixup_clipspace = info.DepthRange == NegativeOneToOne;
+        commonOpts.vertex.fixup_clipspace = info.FixClipSpaceZ;
         ret->set_common_options(commonOpts);
         return ret;
     }
