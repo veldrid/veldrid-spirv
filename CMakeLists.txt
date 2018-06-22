@@ -1,5 +1,9 @@
 cmake_minimum_required (VERSION 3.0)
 
+set(SHADERC_SKIP_TESTS ON)
+set(SHADERC_SKIP_INSTALL ON)
+add_subdirectory(ext/shaderc)
+
 set(CMAKE_CXX_STANDARD 17)
 include_directories(ext/SPIRV-Cross)
 include_directories(ext/SPIRV-Cross/include)
@@ -28,5 +32,5 @@ set(LIBSHADERC_SOURCES
 
 project (veldrid-spirv)
 add_library(veldrid-spirv SHARED ${LIBVELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})
-target_link_libraries(veldrid-spirv ${CMAKE_SOURCE_DIR}/ext/shaderc/build/libshaderc/Release/shaderc_shared.lib)
+target_link_libraries(veldrid-spirv shaderc)
 set_target_properties(veldrid-spirv PROPERTIES PREFIX "lib")
