@@ -3,6 +3,7 @@ os:
 
 language: cpp
 script:
+- "ext/sync-shaderc.sh"
 - "./build-native.sh release"
 
 deploy:
