@@ -333,8 +333,8 @@ CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
     result->Succeeded = true;
 
     result->SetDataBufferCount(2);
-    result->SetData(0, vsText.length(), vsText.c_str());
-    result->SetData(1, fsText.length(), fsText.c_str());
+    result->SetData(0, static_cast<uint32_t>(vsText.length()), vsText.c_str());
+    result->SetData(1, static_cast<uint32_t>(fsText.length()), fsText.c_str());
 
     return result;
 }
@@ -392,7 +392,7 @@ CompilationResult* CompileCompute(const CrossCompileInfo& info)
     CompilationResult* result = new CompilationResult();
     result->Succeeded = true;
     result->SetDataBufferCount(1);
-    result->SetData(0, csText.length(), csText.c_str());
+    result->SetData(0, static_cast<uint32_t>(csText.length()), csText.c_str());
 
     return result;
 }
@@ -473,6 +473,31 @@ VD_EXPORT CompilationResult* CompileGlslToSpirv(GlslCompileInfo* info)
     try
     {
         shaderc::CompileOptions options;
+
+        if (info->Debug)
+        {
+            options.SetGenerateDebugInfo();
+        }
+        else
+        {
+            options.SetOptimizationLevel(shaderc_optimization_level_performance);
+        }
+
+        for (uint32_t i = 0; i < info->MacroCount; i++)
+        {
+            const MacroDefinition& macro = info->Macros[i];
+            if (macro.ValueLength == 0)
+            {
+                options.AddMacroDefinition(std::string(macro.Name, macro.NameLength));
+            }
+            else
+            {
+                options.AddMacroDefinition(
+                    std::string(macro.Name, macro.NameLength),
+                    std::string(macro.Value, macro.ValueLength));
+            }
+        }
+
         return CompileGLSLToSPIRV(
             std::string(info->SourceText, info->SourceTextLength),
             info->Kind,

@@ -10,5 +10,8 @@ namespace Veldrid.SPIRV
         public uint FileNameLength;
         public byte* FileName;
         public ShadercShaderKind Kind;
+        public Bool32 Debug;
+        public uint MacroCount;
+        public NativeMacroDefinition* Macros;
     };
 }

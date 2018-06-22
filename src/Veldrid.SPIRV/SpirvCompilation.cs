@@ -31,7 +31,10 @@ namespace Veldrid.SPIRV
                         (uint)vsBytes.Length,
                         sourceTextPtr,
                         string.Empty,
-                        ShaderStages.Vertex);
+                        ShaderStages.Vertex,
+                        false,
+                        0,
+                        null);
                     vsSpirvBytes = vsCompileResult.SpirvBytes;
                 }
             }
@@ -48,7 +51,10 @@ namespace Veldrid.SPIRV
                         (uint)fsBytes.Length,
                         sourceTextPtr,
                         string.Empty,
-                        ShaderStages.Fragment);
+                        ShaderStages.Fragment,
+                        false,
+                        0,
+                        null);
                     fsSpirvBytes = fsCompileResult.SpirvBytes;
                 }
             }
@@ -119,7 +125,10 @@ namespace Veldrid.SPIRV
                         (uint)csBytes.Length,
                         sourceTextPtr,
                         string.Empty,
-                        ShaderStages.Compute);
+                        ShaderStages.Compute,
+                        false,
+                        0,
+                        null);
                     csSpirvBytes = vsCompileResult.SpirvBytes;
                 }
             }
@@ -164,7 +173,8 @@ namespace Veldrid.SPIRV
         public static unsafe SpirvCompilationResult CompileGlslToSpirv(
             string sourceText,
             string fileName,
-            ShaderStages stage)
+            ShaderStages stage,
+            GlslCompileOptions options)
         {
             int sourceAsciiCount = Encoding.ASCII.GetByteCount(sourceText);
             byte* sourceAsciiPtr = stackalloc byte[sourceAsciiCount];
@@ -173,19 +183,39 @@ namespace Veldrid.SPIRV
                 Encoding.ASCII.GetBytes(sourceTextPtr, sourceText.Length, sourceAsciiPtr, sourceAsciiCount);
             }
 
-            return CompileGlslToSpirv((uint)sourceAsciiCount, sourceAsciiPtr, fileName, stage);
+            int macroCount = options.Macros.Length;
+            NativeMacroDefinition* macros = stackalloc NativeMacroDefinition[(int)macroCount];
+            for (int i = 0; i < macroCount; i++)
+            {
+                macros[i] = new NativeMacroDefinition(options.Macros[i]);
+            }
+
+            return CompileGlslToSpirv(
+                (uint)sourceAsciiCount,
+                sourceAsciiPtr,
+                fileName,
+                stage,
+                options.Debug,
+                (uint)macroCount,
+                macros);
         }
 
-        public static unsafe SpirvCompilationResult CompileGlslToSpirv(
+        internal static unsafe SpirvCompilationResult CompileGlslToSpirv(
             uint sourceLength,
             byte* sourceTextPtr,
             string fileName,
-            ShaderStages stage)
+            ShaderStages stage,
+            bool debug,
+            uint macroCount,
+            NativeMacroDefinition* macros)
         {
             GlslCompileInfo info;
             info.Kind = GetShadercKind(stage);
             info.SourceTextLength = sourceLength;
             info.SourceText = sourceTextPtr;
+            info.Debug = debug;
+            info.MacroCount = macroCount;
+            info.Macros = macros;
 
             if (string.IsNullOrEmpty(fileName)) { fileName = "<veldrid-spirv-input>"; }
             int fileNameAsciiCount = Encoding.ASCII.GetByteCount(fileName);

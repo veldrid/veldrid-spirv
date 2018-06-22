@@ -121,6 +121,16 @@ struct CompilationResult
 };
 
 #pragma pack(push, 1)
+struct MacroDefinition
+{
+    uint32_t NameLength;
+    char Name[128];
+    uint32_t ValueLength;
+    char Value[128];
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 struct GlslCompileInfo
 {
     uint32_t SourceTextLength;
@@ -128,6 +138,9 @@ struct GlslCompileInfo
     uint32_t FileNameLength;
     char* FileName;
     shaderc_shader_kind Kind;
+    Bool32 Debug;
+    uint32_t MacroCount;
+    MacroDefinition* Macros;
 };
 #pragma pack(pop)
 }

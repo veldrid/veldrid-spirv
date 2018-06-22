@@ -102,11 +102,16 @@ namespace Veldrid.SPIRV.Tests
             SpirvCompilationResult result = SpirvCompilation.CompileGlslToSpirv(
                 TestUtil.LoadShaderText(name),
                 name,
-                stage);
+                stage,
+                new GlslCompileOptions(
+                    false,
+                    new MacroDefinition("Name0", "Value0"),
+                    new MacroDefinition("Name1", "Value1"),
+                    new MacroDefinition("Name2")));
+
             Assert.NotNull(result.SpirvBytes);
             Assert.True(result.SpirvBytes.Length > 4);
             Assert.True(result.SpirvBytes.Length % 4 == 0);
-            System.IO.File.WriteAllBytes("outbytes.spv", result.SpirvBytes);
         }
     }
 }
