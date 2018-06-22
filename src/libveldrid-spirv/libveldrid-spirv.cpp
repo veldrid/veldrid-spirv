@@ -441,7 +441,7 @@ CompilationResult* CompileGLSLToSPIRV(
     const shaderc::CompileOptions& options)
 {
     shaderc::Compiler compiler;
-    shaderc::CompilationResult result = compiler.CompileGlslToSpv(sourceText, kind, fileName.c_str(), options);
+    shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(sourceText, kind, fileName.c_str(), options);
 
     if (result.GetCompilationStatus() != shaderc_compilation_status_success)
     {
