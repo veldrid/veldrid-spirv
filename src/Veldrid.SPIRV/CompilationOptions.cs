@@ -2,23 +2,23 @@
 
 namespace Veldrid.SPIRV
 {
-    public class CompilationOptions
+    public class CrossCompileOptions
     {
         public bool FixClipSpaceZ { get; set; }
         public bool InvertVertexOutputY { get; set; }
         public SpecializationConstant[] Specializations { get; set; }
 
-        public CompilationOptions()
+        public CrossCompileOptions()
         {
             Specializations = Array.Empty<SpecializationConstant>();
         }
 
-        public CompilationOptions(bool fixClipSpaceZ, bool invertVertexOutputY)
+        public CrossCompileOptions(bool fixClipSpaceZ, bool invertVertexOutputY)
             : this(fixClipSpaceZ, invertVertexOutputY, Array.Empty<SpecializationConstant>())
         {
         }
 
-        public CompilationOptions(bool fixClipSpaceZ, bool invertVertexOutputY, SpecializationConstant[] specializations)
+        public CrossCompileOptions(bool fixClipSpaceZ, bool invertVertexOutputY, SpecializationConstant[] specializations)
         {
             FixClipSpaceZ = fixClipSpaceZ;
             InvertVertexOutputY = invertVertexOutputY;

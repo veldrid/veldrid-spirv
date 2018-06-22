@@ -10,14 +10,14 @@ namespace Veldrid.SPIRV
             ShaderDescription vertexShaderDescription,
             ShaderDescription fragmentShaderDescription)
         {
-            return CreateFromSPIRV(factory, vertexShaderDescription, fragmentShaderDescription, new CompilationOptions());
+            return CreateFromSPIRV(factory, vertexShaderDescription, fragmentShaderDescription, new CrossCompileOptions());
         }
 
         public static Shader[] CreateFromSPIRV(
             this ResourceFactory factory,
             ShaderDescription vertexShaderDescription,
             ShaderDescription fragmentShaderDescription,
-            CompilationOptions options)
+            CrossCompileOptions options)
         {
             GraphicsBackend backend = factory.BackendType;
             if (backend == GraphicsBackend.Vulkan)

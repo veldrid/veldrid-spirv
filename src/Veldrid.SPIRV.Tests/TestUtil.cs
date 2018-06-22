@@ -10,9 +10,9 @@ namespace Veldrid.SPIRV.Tests
             return File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "TestShaders", name));
         }
 
-        public static byte[] LoadShaderBytes(string name)
+        public static byte[] LoadBytes(string name)
         {
-            return File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "TestShaders", $"{name}.spv"));
+            return File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "TestShaders", name));
         }
     }
 }

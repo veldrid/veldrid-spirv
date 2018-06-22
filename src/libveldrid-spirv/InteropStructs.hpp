@@ -4,6 +4,7 @@
 #include <vector>
 #include "spirv_common.hpp"
 #include "shaderc.hpp"
+#include <assert.h>
 
 namespace Veldrid
 {
@@ -13,19 +14,19 @@ struct Bool32
     operator bool() const { return Value != 0; }
 };
 
-struct ShaderCompilationInfo
+struct ShaderData
 {
     Bool32 HasValue;
     uint32_t Length;
     uint32_t* ShaderCode; // SPIR-V bytecode
 
-    ShaderCompilationInfo(std::vector<uint32_t>& vec)
+    ShaderData(std::vector<uint32_t>& vec)
     {
         ShaderCode = vec.data();
         Length = static_cast<uint32_t>(vec.size());
     }
 
-    ShaderCompilationInfo()
+    ShaderData()
     {
         ShaderCode = nullptr;
         Length = 0;
@@ -44,7 +45,7 @@ struct SpecializationList
     SpecializationValue* Values;
 };
 
-enum CompilationTarget
+enum CrossCompileTarget
 {
     HLSL,
     GLSL,
@@ -53,59 +54,74 @@ enum CompilationTarget
 };
 
 #pragma pack(push, 1)
-struct ShaderSetCompilationInfo
+struct CrossCompileInfo
 {
-    CompilationTarget Target;
+    CrossCompileTarget Target;
     Bool32 FixClipSpaceZ;
     Bool32 InvertY;
     SpecializationList Specializations;
-    ShaderCompilationInfo VertexShader;
-    ShaderCompilationInfo FragmentShader;
-    ShaderCompilationInfo ComputeShader;
+    ShaderData VertexShader;
+    ShaderData FragmentShader;
+    ShaderData ComputeShader;
 };
 #pragma pack(pop)
-struct ShaderCompilationResult
+struct CompilationResult
 {
     uint32_t Succeeded;
-    uint32_t ErrorMessageLength;
-    uint8_t* ErrorMessage;
-    uint32_t VertexShaderLength;
-    uint8_t* VertexShader;
-    uint32_t FragmentShaderLength;
-    uint8_t* FragmentShader;
-    uint32_t ComputeShaderLength;
-    uint8_t* ComputeShader;
+    uint32_t DataBufferCount;
+    uint32_t* DataBufferLengths;
+    void** DataBuffers;
 
-    ShaderCompilationResult() { }
-
-    ShaderCompilationResult(const std::string& errorMessage)
+    CompilationResult()
     {
         Succeeded = 0;
-        ErrorMessageLength = static_cast<uint32_t>(errorMessage.length());
-        ErrorMessage = new uint8_t[ErrorMessageLength];
-        memcpy(ErrorMessage, errorMessage.c_str(), ErrorMessageLength);
-
-        VertexShaderLength = 0;
-        VertexShader = nullptr;
-
-        FragmentShaderLength = 0;
-        FragmentShader = nullptr;
-
-        ComputeShaderLength = 0;
-        ComputeShader = nullptr;
+        DataBufferCount = 0;
+        DataBufferLengths = nullptr;
+        DataBuffers = nullptr;
     }
 
-    ~ShaderCompilationResult()
+    CompilationResult(const std::string& errorMessage)
     {
-        if (ErrorMessage != nullptr) { delete[] ErrorMessage; }
-        if (VertexShader != nullptr) { delete[] VertexShader; }
-        if (FragmentShader != nullptr) { delete[] FragmentShader; }
-        if (ComputeShader != nullptr) { delete[] ComputeShader; }
+        Succeeded = 0;
+        DataBufferCount = 1;
+        DataBuffers = new void*[1];
+        DataBufferLengths = new uint32_t[1];
+        size_t errorLength = errorMessage.length();
+        DataBufferLengths[0] = static_cast<uint32_t>(errorLength);
+        DataBuffers[0] = new uint8_t[errorLength];
+        memcpy(DataBuffers[0], errorMessage.c_str(), errorLength);
+    }
+
+    ~CompilationResult()
+    {
+        for (uint32_t i = 0; i < DataBufferCount; i++)
+        {
+            delete[] DataBuffers[i];
+        }
+
+        delete[] DataBuffers;
+        delete[] DataBufferLengths;
+    }
+
+    void SetDataBufferCount(uint32_t count)
+    {
+        assert(DataBufferLengths == nullptr && DataBuffers == nullptr);
+        DataBufferCount = count;
+        DataBufferLengths = new uint32_t[count];
+        DataBuffers = new void*[count];
+    }
+
+    void SetData(uint32_t index, uint32_t dataSize, const void* data)
+    {
+        assert(DataBufferCount > index);
+        DataBufferLengths[index] = dataSize;
+        DataBuffers[index] = new void*[dataSize];
+        memcpy(DataBuffers[index], data, dataSize);
     }
 };
 
 #pragma pack(push, 1)
-struct GlslCompilationInfo
+struct GlslCompileInfo
 {
     uint32_t SourceTextLength;
     char* SourceText;

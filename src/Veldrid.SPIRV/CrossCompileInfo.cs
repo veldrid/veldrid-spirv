@@ -4,14 +4,14 @@ using System.Runtime.InteropServices;
 namespace Veldrid.SPIRV
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal struct ShaderSetCompilationInfo
+    internal struct CrossCompileInfo
     {
         public CompilationTarget Target;
         public Bool32 FixClipSpaceZ;
         public Bool32 InvertY;
         public SpecializationList Specializations;
-        public ShaderCompilationInfo VertexShader;
-        public ShaderCompilationInfo FragmentShader;
-        public ShaderCompilationInfo ComputeShader;
+        public ShaderData VertexShader;
+        public ShaderData FragmentShader;
+        public ShaderData ComputeShader;
     }
 }

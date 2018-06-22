@@ -114,7 +114,7 @@ void AddResources(
 }
 
 uint32_t GetResourceIndex(
-    CompilationTarget target,
+    CrossCompileTarget target,
     ResourceKind resourceKind,
     uint32_t& bufferIndex,
     uint32_t& textureIndex,
@@ -161,7 +161,7 @@ uint32_t GetResourceIndex(
     }
 }
 
-Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilationInfo& info)
+Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const CrossCompileInfo& info)
 {
     switch (info.Target)
     {
@@ -213,7 +213,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const ShaderSetCompilati
     }
 }
 
-void SetSpecializations(spirv_cross::Compiler* compiler, const ShaderSetCompilationInfo& info)
+void SetSpecializations(spirv_cross::Compiler* compiler, const CrossCompileInfo& info)
 {
     auto specConstants = compiler->get_specialization_constants();
     for (uint32_t i = 0; i < info.Specializations.Count; i++)
@@ -237,12 +237,8 @@ void SetSpecializations(spirv_cross::Compiler* compiler, const ShaderSetCompilat
     }
 }
 
-ShaderCompilationResult* CompileVertexFragment(const ShaderSetCompilationInfo& info)
+CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
 {
-    int size = sizeof(ShaderSetCompilationInfo);
-    int size2 = sizeof(SpecializationList);
-    int size3 = sizeof(SpecializationValue);
-
     std::vector<uint32_t> vsBytes(
         info.VertexShader.ShaderCode,
         info.VertexShader.ShaderCode + info.VertexShader.Length);
@@ -333,25 +329,17 @@ ShaderCompilationResult* CompileVertexFragment(const ShaderSetCompilationInfo& i
     delete vsCompiler;
     delete fsCompiler;
 
-    ShaderCompilationResult* result = new ShaderCompilationResult();
+    CompilationResult* result = new CompilationResult();
     result->Succeeded = true;
-    result->ErrorMessageLength = 0;
-    result->ErrorMessage = nullptr;
-    result->ComputeShaderLength = 0;
-    result->ComputeShader = nullptr;
 
-    result->VertexShaderLength = static_cast<uint32_t>(vsText.length());
-    result->VertexShader = new uint8_t[result->VertexShaderLength];
-    memcpy(result->VertexShader, vsText.c_str(), result->VertexShaderLength);
-
-    result->FragmentShaderLength = static_cast<uint32_t>(fsText.length());
-    result->FragmentShader = new uint8_t[result->FragmentShaderLength];
-    memcpy(result->FragmentShader, fsText.c_str(), result->FragmentShaderLength);
+    result->SetDataBufferCount(2);
+    result->SetData(0, vsText.length(), vsText.c_str());
+    result->SetData(1, fsText.length(), fsText.c_str());
 
     return result;
 }
 
-ShaderCompilationResult* CompileCompute(const ShaderSetCompilationInfo& info)
+CompilationResult* CompileCompute(const CrossCompileInfo& info)
 {
     std::vector<uint32_t> csBytes(
         info.ComputeShader.ShaderCode,
@@ -401,23 +389,15 @@ ShaderCompilationResult* CompileCompute(const ShaderSetCompilationInfo& info)
 
     delete csCompiler;
 
-    ShaderCompilationResult* result = new ShaderCompilationResult();
+    CompilationResult* result = new CompilationResult();
     result->Succeeded = true;
-    result->ErrorMessageLength = 0;
-    result->ErrorMessage = nullptr;
-    result->VertexShaderLength = 0;
-    result->VertexShader = nullptr;
-    result->FragmentShaderLength = 0;
-    result->FragmentShader = nullptr;
-
-    result->ComputeShaderLength = static_cast<uint32_t>(csText.length());
-    result->ComputeShader = new uint8_t[result->ComputeShaderLength];
-    memcpy(result->ComputeShader, csText.c_str(), result->ComputeShaderLength);
+    result->SetDataBufferCount(1);
+    result->SetData(0, csText.length(), csText.c_str());
 
     return result;
 }
 
-ShaderCompilationResult* Compile(const ShaderSetCompilationInfo& info)
+CompilationResult* Compile(const CrossCompileInfo& info)
 {
     if (info.VertexShader.HasValue && info.FragmentShader.HasValue)
     {
@@ -428,7 +408,7 @@ ShaderCompilationResult* Compile(const ShaderSetCompilationInfo& info)
         return CompileCompute(info);
     }
 
-    return new ShaderCompilationResult("The given combination of shaders was not valid.");
+    return new CompilationResult("The given combination of shaders was not valid.");
 }
 
 std::vector<uint32_t> ReadFile(std::string path)
@@ -454,7 +434,7 @@ void WriteToFile(const std::string& path, const std::string& text)
     outFile.close();
 }
 
-ShaderCompilationResult* CompileGLSLToSPIRV(
+CompilationResult* CompileGLSLToSPIRV(
     const std::string sourceText,
     shaderc_shader_kind kind,
     std::string fileName,
@@ -465,26 +445,18 @@ ShaderCompilationResult* CompileGLSLToSPIRV(
 
     if (result.GetCompilationStatus() != shaderc_compilation_status_success)
     {
-        return new ShaderCompilationResult(result.GetErrorMessage());
+        return new CompilationResult(result.GetErrorMessage());
     }
 
     uint32_t length = static_cast<uint32_t>(result.end() - result.begin()) * sizeof(uint32_t);
-    ShaderCompilationResult* ret = new ShaderCompilationResult();
-    ret->ErrorMessageLength = 0;
-    ret->ErrorMessage = nullptr;
-    ret->FragmentShaderLength = 0;
-    ret->FragmentShader = nullptr;
-    ret->ComputeShaderLength = 0;
-    ret->ComputeShader = nullptr;
-
+    CompilationResult* ret = new CompilationResult();
     ret->Succeeded = 1;
-    ret->VertexShaderLength = length;
-    ret->VertexShader = new uint8_t[length];
-    memcpy(ret->VertexShader, result.begin(), length);
+    ret->SetDataBufferCount(1);
+    ret->SetData(0, length, result.begin());
     return ret;
 }
 
-VD_EXPORT ShaderCompilationResult* Compile(ShaderSetCompilationInfo* info)
+VD_EXPORT CompilationResult* CrossCompile(CrossCompileInfo* info)
 {
     try
     {
@@ -492,12 +464,11 @@ VD_EXPORT ShaderCompilationResult* Compile(ShaderSetCompilationInfo* info)
     }
     catch (std::exception e)
     {
-        return new ShaderCompilationResult(e.what());
+        return new CompilationResult(e.what());
     }
 }
 
-
-VD_EXPORT ShaderCompilationResult* CompileGlslToSpirv(GlslCompilationInfo* info)
+VD_EXPORT CompilationResult* CompileGlslToSpirv(GlslCompileInfo* info)
 {
     try
     {
@@ -510,11 +481,11 @@ VD_EXPORT ShaderCompilationResult* CompileGlslToSpirv(GlslCompilationInfo* info)
     }
     catch (std::exception e)
     {
-        return new ShaderCompilationResult(e.what());
+        return new CompilationResult(e.what());
     }
 }
 
-VD_EXPORT void FreeResult(ShaderCompilationResult* result)
+VD_EXPORT void FreeResult(CompilationResult* result)
 {
     delete result;
 }

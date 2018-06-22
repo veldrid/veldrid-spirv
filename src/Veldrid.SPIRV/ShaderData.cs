@@ -3,7 +3,7 @@
 namespace Veldrid.SPIRV
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal unsafe struct ShaderCompilationInfo
+    internal unsafe struct ShaderData
     {
         public Bool32 HasValue;
         public uint Length;
