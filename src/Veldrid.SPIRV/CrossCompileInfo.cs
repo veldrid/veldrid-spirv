@@ -9,9 +9,9 @@ namespace Veldrid.SPIRV
         public CompilationTarget Target;
         public Bool32 FixClipSpaceZ;
         public Bool32 InvertY;
-        public SpecializationList Specializations;
-        public ShaderData VertexShader;
-        public ShaderData FragmentShader;
-        public ShaderData ComputeShader;
+        public InteropArray Specializations;
+        public InteropArray VertexShader;
+        public InteropArray FragmentShader;
+        public InteropArray ComputeShader;
     }
 }

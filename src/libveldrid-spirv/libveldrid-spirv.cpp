@@ -184,7 +184,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const CrossCompileInfo& 
         CompilerGLSL::Options opts = {};
         opts.es = info.Target == ESSL;
         opts.enable_420pack_extension = false;
-        if (info.ComputeShader.HasValue)
+        if (info.ComputeShader.Count > 0)
         {
             opts.version = info.Target == GLSL ? 430 : 310;
         }
@@ -218,7 +218,7 @@ void SetSpecializations(spirv_cross::Compiler* compiler, const CrossCompileInfo&
     auto specConstants = compiler->get_specialization_constants();
     for (uint32_t i = 0; i < info.Specializations.Count; i++)
     {
-        uint32_t constID = info.Specializations.Values[i].ID;
+        uint32_t constID = info.Specializations[i].ID;
         uint32_t varID = 0;
 
         for (auto& constant : specConstants)
@@ -232,21 +232,23 @@ void SetSpecializations(spirv_cross::Compiler* compiler, const CrossCompileInfo&
         if (varID != 0)
         {
             auto& constVar = compiler->get_constant(varID);
-            constVar.m.c[0].r[0].u64 = info.Specializations.Values[i].Constant;
+            constVar.m.c[0].r[0].u64 = info.Specializations[i].Constant;
         }
     }
 }
 
 CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
 {
+    int size1 = sizeof(CrossCompileInfo);
+    int size2 = sizeof(InteropArray<uint32_t>);
     std::vector<uint32_t> vsBytes(
-        info.VertexShader.ShaderCode,
-        info.VertexShader.ShaderCode + info.VertexShader.Length);
+        info.VertexShader.Data,
+        info.VertexShader.Data + info.VertexShader.Count);
     Compiler* vsCompiler = GetCompiler(vsBytes, info);
 
     std::vector<uint32_t> fsBytes(
-        info.FragmentShader.ShaderCode,
-        info.FragmentShader.ShaderCode + info.FragmentShader.Length);
+        info.FragmentShader.Data,
+        info.FragmentShader.Data + info.FragmentShader.Count);
     Compiler* fsCompiler = GetCompiler(fsBytes, info);
 
     SetSpecializations(vsCompiler, info);
@@ -332,9 +334,9 @@ CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
     CompilationResult* result = new CompilationResult();
     result->Succeeded = true;
 
-    result->SetDataBufferCount(2);
-    result->SetData(0, static_cast<uint32_t>(vsText.length()), vsText.c_str());
-    result->SetData(1, static_cast<uint32_t>(fsText.length()), fsText.c_str());
+    result->DataBuffers.Resize(2);
+    result->DataBuffers[0].CopyFrom(static_cast<uint32_t>(vsText.length()), (uint8_t*)vsText.c_str());
+    result->DataBuffers[1].CopyFrom(static_cast<uint32_t>(fsText.length()), (uint8_t*)fsText.c_str());
 
     return result;
 }
@@ -342,8 +344,8 @@ CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
 CompilationResult* CompileCompute(const CrossCompileInfo& info)
 {
     std::vector<uint32_t> csBytes(
-        info.ComputeShader.ShaderCode,
-        info.ComputeShader.ShaderCode + info.ComputeShader.Length);
+        info.ComputeShader.Data,
+        info.ComputeShader.Data + info.ComputeShader.Count);
     Compiler* csCompiler = GetCompiler(csBytes, info);
 
     SetSpecializations(csCompiler, info);
@@ -391,19 +393,19 @@ CompilationResult* CompileCompute(const CrossCompileInfo& info)
 
     CompilationResult* result = new CompilationResult();
     result->Succeeded = true;
-    result->SetDataBufferCount(1);
-    result->SetData(0, static_cast<uint32_t>(csText.length()), csText.c_str());
+    result->DataBuffers.Resize(1);
+    result->DataBuffers[0].CopyFrom(static_cast<uint32_t>(csText.length()), (uint8_t*)csText.c_str());
 
     return result;
 }
 
 CompilationResult* Compile(const CrossCompileInfo& info)
 {
-    if (info.VertexShader.HasValue && info.FragmentShader.HasValue)
+    if (info.VertexShader.Count > 0 && info.FragmentShader.Count > 0)
     {
         return CompileVertexFragment(info);
     }
-    else if (info.ComputeShader.HasValue)
+    else if (info.ComputeShader.Count > 0)
     {
         return CompileCompute(info);
     }
@@ -451,8 +453,8 @@ CompilationResult* CompileGLSLToSPIRV(
     uint32_t length = static_cast<uint32_t>(result.end() - result.begin()) * sizeof(uint32_t);
     CompilationResult* ret = new CompilationResult();
     ret->Succeeded = 1;
-    ret->SetDataBufferCount(1);
-    ret->SetData(0, length, result.begin());
+    ret->DataBuffers.Resize(1);
+    ret->DataBuffers[0].CopyFrom(length, (uint8_t*)result.begin());
     return ret;
 }
 
@@ -483,7 +485,7 @@ VD_EXPORT CompilationResult* CompileGlslToSpirv(GlslCompileInfo* info)
             options.SetOptimizationLevel(shaderc_optimization_level_performance);
         }
 
-        for (uint32_t i = 0; i < info->MacroCount; i++)
+        for (uint32_t i = 0; i < info->Macros.Count; i++)
         {
             const MacroDefinition& macro = info->Macros[i];
             if (macro.ValueLength == 0)
@@ -499,9 +501,9 @@ VD_EXPORT CompilationResult* CompileGlslToSpirv(GlslCompileInfo* info)
         }
 
         return CompileGLSLToSPIRV(
-            std::string(info->SourceText, info->SourceTextLength),
+            std::string(info->SourceText.Data, info->SourceText.Count),
             info->Kind,
-            std::string(info->FileName, info->FileNameLength),
+            std::string(info->FileName.Data, info->FileName.Count),
             options);
     }
     catch (std::exception e)

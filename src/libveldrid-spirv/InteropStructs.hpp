@@ -8,43 +8,78 @@
 
 namespace Veldrid
 {
+#pragma pack(push, 1)
 struct Bool32
 {
     uint32_t Value;
     operator bool() const { return Value != 0; }
+    Bool32() { }
+    Bool32(bool value) { Value = value ? 1 : 0; }
 };
+#pragma pack(pop)
 
-struct ShaderData
+#pragma pack(push, 1)
+template<typename T>
+struct InteropArray
 {
-    Bool32 HasValue;
-    uint32_t Length;
-    uint32_t* ShaderCode; // SPIR-V bytecode
+    uint32_t SizeInBytes() const { return Count * sizeof(T); }
+    uint32_t Count;
+    T* Data;
 
-    ShaderData(std::vector<uint32_t>& vec)
+    T& operator [](uint32_t i) { return Data[i]; }
+
+    const T& operator [](uint32_t i) const { return Data[i]; }
+
+    InteropArray()
     {
-        ShaderCode = vec.data();
-        Length = static_cast<uint32_t>(vec.size());
+        Count = 0;
+        Data = nullptr;
     }
 
-    ShaderData()
+    InteropArray(uint32_t count, T* data) { CopyFrom(count, data); }
+
+    ~InteropArray()
     {
-        ShaderCode = nullptr;
-        Length = 0;
+        if (Data != nullptr)
+        {
+            delete[] Data;
+        }
+    }
+
+    void Resize(uint32_t newCount)
+    {
+        if (Data != nullptr)
+        {
+            delete[] Data;
+        }
+
+        Count = newCount;
+        Data = new T[newCount];
+    }
+
+    void CopyFrom(uint32_t count, const T* data)
+    {
+        if (Data != nullptr)
+        {
+            delete[] Data;
+        }
+
+        Count = count;
+        Data = new T[count];
+        memcpy(Data, data, count * sizeof(T));
     }
 };
+#pragma pack(pop)
 
+#pragma pack(push, 1)
 struct SpecializationValue
 {
     uint32_t ID;
     uint64_t Constant;
 };
+#pragma pack(pop)
 
-struct SpecializationList
-{
-    uint32_t Count;
-    SpecializationValue* Values;
-};
-
+#pragma pack(push, 1)
 enum CrossCompileTarget
 {
     HLSL,
@@ -52,6 +87,7 @@ enum CrossCompileTarget
     ESSL,
     MSL,
 };
+#pragma pack(pop)
 
 #pragma pack(push, 1)
 struct CrossCompileInfo
@@ -59,66 +95,34 @@ struct CrossCompileInfo
     CrossCompileTarget Target;
     Bool32 FixClipSpaceZ;
     Bool32 InvertY;
-    SpecializationList Specializations;
-    ShaderData VertexShader;
-    ShaderData FragmentShader;
-    ShaderData ComputeShader;
+    InteropArray<SpecializationValue> Specializations;
+    InteropArray<uint32_t> VertexShader;
+    InteropArray<uint32_t> FragmentShader;
+    InteropArray<uint32_t> ComputeShader;
 };
 #pragma pack(pop)
+
+#pragma pack(push, 1)
 struct CompilationResult
 {
-    uint32_t Succeeded;
-    uint32_t DataBufferCount;
-    uint32_t* DataBufferLengths;
-    uint8_t** DataBuffers;
+    Bool32 Succeeded;
+    InteropArray<InteropArray<uint8_t>> DataBuffers;
 
     CompilationResult()
     {
-        Succeeded = 0;
-        DataBufferCount = 0;
-        DataBufferLengths = nullptr;
-        DataBuffers = nullptr;
+        Succeeded.Value = 0;
+        DataBuffers.Count = 0;
+        DataBuffers.Data = nullptr;
     }
 
     CompilationResult(const std::string& errorMessage)
     {
-        Succeeded = 0;
-        DataBufferCount = 1;
-        DataBuffers = new uint8_t*[1];
-        DataBufferLengths = new uint32_t[1];
-        size_t errorLength = errorMessage.length();
-        DataBufferLengths[0] = static_cast<uint32_t>(errorLength);
-        DataBuffers[0] = new uint8_t[errorLength];
-        memcpy(DataBuffers[0], errorMessage.c_str(), errorLength);
-    }
-
-    ~CompilationResult()
-    {
-        for (uint32_t i = 0; i < DataBufferCount; i++)
-        {
-            delete[] DataBuffers[i];
-        }
-
-        delete[] DataBuffers;
-        delete[] DataBufferLengths;
-    }
-
-    void SetDataBufferCount(uint32_t count)
-    {
-        assert(DataBufferLengths == nullptr && DataBuffers == nullptr);
-        DataBufferCount = count;
-        DataBufferLengths = new uint32_t[count];
-        DataBuffers = new uint8_t*[count];
-    }
-
-    void SetData(uint32_t index, uint32_t dataSize, const void* data)
-    {
-        assert(DataBufferCount > index);
-        DataBufferLengths[index] = dataSize;
-        DataBuffers[index] = new uint8_t[dataSize];
-        memcpy(DataBuffers[index], data, dataSize);
+        Succeeded.Value = 0;
+        DataBuffers.Resize(1);
+        DataBuffers[0].CopyFrom(static_cast<uint32_t>(errorMessage.length()), (uint8_t*)(errorMessage.c_str()));
     }
 };
+#pragma pack(pop)
 
 #pragma pack(push, 1)
 struct MacroDefinition
@@ -133,14 +137,11 @@ struct MacroDefinition
 #pragma pack(push, 1)
 struct GlslCompileInfo
 {
-    uint32_t SourceTextLength;
-    char* SourceText;
-    uint32_t FileNameLength;
-    char* FileName;
+    InteropArray<char> SourceText;
+    InteropArray<char> FileName;
     shaderc_shader_kind Kind;
     Bool32 Debug;
-    uint32_t MacroCount;
-    MacroDefinition* Macros;
+    InteropArray<MacroDefinition> Macros;
 };
 #pragma pack(pop)
 }

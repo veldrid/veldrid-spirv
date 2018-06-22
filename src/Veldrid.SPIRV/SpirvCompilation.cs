@@ -16,6 +16,9 @@ namespace Veldrid.SPIRV
             CompilationTarget target,
             CrossCompileOptions options)
         {
+            int size1 = sizeof(CrossCompileInfo);
+            int size2 = sizeof(InteropArray);
+
             byte[] vsSpirvBytes;
             byte[] fsSpirvBytes;
 
@@ -67,16 +70,9 @@ namespace Veldrid.SPIRV
             fixed (byte* fsBytesPtr = fsSpirvBytes)
             fixed (SpecializationConstant* specConstants = options.Specializations)
             {
-                info.VertexShader.HasValue = true;
-                info.VertexShader.Length = (uint)vsSpirvBytes.Length / 4;
-                info.VertexShader.ShaderCode = (uint*)vsBytesPtr;
-
-                info.FragmentShader.HasValue = true;
-                info.FragmentShader.Length = (uint)fsSpirvBytes.Length / 4;
-                info.FragmentShader.ShaderCode = (uint*)fsBytesPtr;
-
-                info.Specializations.Count = (uint)options.Specializations.Length;
-                info.Specializations.Values = specConstants;
+                info.VertexShader = new InteropArray((uint)vsSpirvBytes.Length / 4, vsBytesPtr);
+                info.FragmentShader = new InteropArray((uint)fsSpirvBytes.Length / 4, fsBytesPtr);
+                info.Specializations = new InteropArray((uint)options.Specializations.Length, specConstants);
 
                 CompilationResult* result = null;
                 try
@@ -140,12 +136,8 @@ namespace Veldrid.SPIRV
             fixed (byte* csBytesPtr = csSpirvBytes)
             fixed (SpecializationConstant* specConstants = options.Specializations)
             {
-                info.ComputeShader.HasValue = true;
-                info.ComputeShader.Length = (uint)csSpirvBytes.Length / 4;
-                info.ComputeShader.ShaderCode = (uint*)csBytesPtr;
-
-                info.Specializations.Count = (uint)options.Specializations.Length;
-                info.Specializations.Values = specConstants;
+                info.ComputeShader = new InteropArray((uint)csSpirvBytes.Length / 4, csBytesPtr);
+                info.Specializations = new InteropArray((uint)options.Specializations.Length, specConstants);
 
                 CompilationResult* result = null;
                 try

@@ -7,20 +7,18 @@ namespace Veldrid.SPIRV
     internal unsafe struct CompilationResult
     {
         public Bool32 Succeeded;
-        public uint DataBufferCount;
-        public uint* DataBufferLengths;
-        public void** DataBuffers;
+        public InteropArray DataBuffers;
 
         public uint GetLength(uint index)
         {
-            if (index >= DataBufferCount) { throw new ArgumentOutOfRangeException(nameof(index)); }
-            return DataBufferLengths[index];
+            if (index >= DataBuffers.Count) { throw new ArgumentOutOfRangeException(nameof(index)); }
+            return DataBuffers.Ref<InteropArray>(index).Count;
         }
 
         public void* GetData(uint index)
         {
-            if (index >= DataBufferCount) { throw new ArgumentOutOfRangeException(nameof(index)); }
-            return DataBuffers[index];
+            if (index >= DataBuffers.Count) { throw new ArgumentOutOfRangeException(nameof(index)); }
+            return DataBuffers.Ref<InteropArray>(index).Data;
         }
     }
 }
