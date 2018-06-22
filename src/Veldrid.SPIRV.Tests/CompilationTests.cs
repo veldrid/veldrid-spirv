@@ -5,39 +5,39 @@ namespace Veldrid.SPIRV.Tests
     public class CompilationTests
     {
         [Theory]
-        [InlineData("instance.vert", "instance.frag", CompilationTarget.HLSL)]
-        [InlineData("instance.vert", "instance.frag", CompilationTarget.GLSL)]
-        [InlineData("instance.vert", "instance.frag", CompilationTarget.ESSL)]
-        [InlineData("instance.vert", "instance.frag", CompilationTarget.MSL)]
-        [InlineData("instance.vert.spv", "instance.frag.spv", CompilationTarget.HLSL)]
-        [InlineData("instance.vert.spv", "instance.frag.spv", CompilationTarget.GLSL)]
-        [InlineData("instance.vert.spv", "instance.frag.spv", CompilationTarget.ESSL)]
-        [InlineData("instance.vert.spv", "instance.frag.spv", CompilationTarget.MSL)]
-        [InlineData("instance.vert", "instance.frag.spv", CompilationTarget.HLSL)]
-        [InlineData("instance.vert", "instance.frag.spv", CompilationTarget.GLSL)]
-        [InlineData("instance.vert", "instance.frag.spv", CompilationTarget.ESSL)]
-        [InlineData("instance.vert", "instance.frag.spv", CompilationTarget.MSL)]
-        [InlineData("instance.vert.spv", "instance.frag", CompilationTarget.HLSL)]
-        [InlineData("instance.vert.spv", "instance.frag", CompilationTarget.GLSL)]
-        [InlineData("instance.vert.spv", "instance.frag", CompilationTarget.ESSL)]
-        [InlineData("instance.vert.spv", "instance.frag", CompilationTarget.MSL)]
-        [InlineData("planet.vert", "planet.frag", CompilationTarget.HLSL)]
-        [InlineData("planet.vert", "planet.frag", CompilationTarget.GLSL)]
-        [InlineData("planet.vert", "planet.frag", CompilationTarget.ESSL)]
-        [InlineData("planet.vert", "planet.frag", CompilationTarget.MSL)]
-        [InlineData("planet.vert.spv", "planet.frag.spv", CompilationTarget.HLSL)]
-        [InlineData("planet.vert.spv", "planet.frag.spv", CompilationTarget.GLSL)]
-        [InlineData("planet.vert.spv", "planet.frag.spv", CompilationTarget.ESSL)]
-        [InlineData("planet.vert.spv", "planet.frag.spv", CompilationTarget.MSL)]
-        [InlineData("starfield.vert", "starfield.frag", CompilationTarget.HLSL)]
-        [InlineData("starfield.vert", "starfield.frag", CompilationTarget.GLSL)]
-        [InlineData("starfield.vert", "starfield.frag", CompilationTarget.ESSL)]
-        [InlineData("starfield.vert", "starfield.frag", CompilationTarget.MSL)]
-        [InlineData("starfield.vert.spv", "starfield.frag.spv", CompilationTarget.HLSL)]
-        [InlineData("starfield.vert.spv", "starfield.frag.spv", CompilationTarget.GLSL)]
-        [InlineData("starfield.vert.spv", "starfield.frag.spv", CompilationTarget.ESSL)]
-        [InlineData("starfield.vert.spv", "starfield.frag.spv", CompilationTarget.MSL)]
-        public void VertexFragmentSucceeds(string vs, string fs, CompilationTarget target)
+        [InlineData("instance.vert", "instance.frag", CrossCompileTarget.HLSL)]
+        [InlineData("instance.vert", "instance.frag", CrossCompileTarget.GLSL)]
+        [InlineData("instance.vert", "instance.frag", CrossCompileTarget.ESSL)]
+        [InlineData("instance.vert", "instance.frag", CrossCompileTarget.MSL)]
+        [InlineData("instance.vert.spv", "instance.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("instance.vert.spv", "instance.frag.spv", CrossCompileTarget.GLSL)]
+        [InlineData("instance.vert.spv", "instance.frag.spv", CrossCompileTarget.ESSL)]
+        [InlineData("instance.vert.spv", "instance.frag.spv", CrossCompileTarget.MSL)]
+        [InlineData("instance.vert", "instance.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("instance.vert", "instance.frag.spv", CrossCompileTarget.GLSL)]
+        [InlineData("instance.vert", "instance.frag.spv", CrossCompileTarget.ESSL)]
+        [InlineData("instance.vert", "instance.frag.spv", CrossCompileTarget.MSL)]
+        [InlineData("instance.vert.spv", "instance.frag", CrossCompileTarget.HLSL)]
+        [InlineData("instance.vert.spv", "instance.frag", CrossCompileTarget.GLSL)]
+        [InlineData("instance.vert.spv", "instance.frag", CrossCompileTarget.ESSL)]
+        [InlineData("instance.vert.spv", "instance.frag", CrossCompileTarget.MSL)]
+        [InlineData("planet.vert", "planet.frag", CrossCompileTarget.HLSL)]
+        [InlineData("planet.vert", "planet.frag", CrossCompileTarget.GLSL)]
+        [InlineData("planet.vert", "planet.frag", CrossCompileTarget.ESSL)]
+        [InlineData("planet.vert", "planet.frag", CrossCompileTarget.MSL)]
+        [InlineData("planet.vert.spv", "planet.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("planet.vert.spv", "planet.frag.spv", CrossCompileTarget.GLSL)]
+        [InlineData("planet.vert.spv", "planet.frag.spv", CrossCompileTarget.ESSL)]
+        [InlineData("planet.vert.spv", "planet.frag.spv", CrossCompileTarget.MSL)]
+        [InlineData("starfield.vert", "starfield.frag", CrossCompileTarget.HLSL)]
+        [InlineData("starfield.vert", "starfield.frag", CrossCompileTarget.GLSL)]
+        [InlineData("starfield.vert", "starfield.frag", CrossCompileTarget.ESSL)]
+        [InlineData("starfield.vert", "starfield.frag", CrossCompileTarget.MSL)]
+        [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.GLSL)]
+        [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.ESSL)]
+        [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.MSL)]
+        public void VertexFragmentSucceeds(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);
             byte[] fsBytes = TestUtil.LoadBytes(fs);
@@ -57,15 +57,15 @@ namespace Veldrid.SPIRV.Tests
         }
 
         [Theory]
-        [InlineData("simple.comp", CompilationTarget.HLSL)]
-        [InlineData("simple.comp", CompilationTarget.GLSL)]
-        [InlineData("simple.comp", CompilationTarget.ESSL)]
-        [InlineData("simple.comp", CompilationTarget.MSL)]
-        [InlineData("simple.comp.spv", CompilationTarget.HLSL)]
-        [InlineData("simple.comp.spv", CompilationTarget.GLSL)]
-        [InlineData("simple.comp.spv", CompilationTarget.ESSL)]
-        [InlineData("simple.comp.spv", CompilationTarget.MSL)]
-        public void ComputeSucceeds(string cs, CompilationTarget target)
+        [InlineData("simple.comp", CrossCompileTarget.HLSL)]
+        [InlineData("simple.comp", CrossCompileTarget.GLSL)]
+        [InlineData("simple.comp", CrossCompileTarget.ESSL)]
+        [InlineData("simple.comp", CrossCompileTarget.MSL)]
+        [InlineData("simple.comp.spv", CrossCompileTarget.HLSL)]
+        [InlineData("simple.comp.spv", CrossCompileTarget.GLSL)]
+        [InlineData("simple.comp.spv", CrossCompileTarget.ESSL)]
+        [InlineData("simple.comp.spv", CrossCompileTarget.MSL)]
+        public void ComputeSucceeds(string cs, CrossCompileTarget target)
         {
             byte[] csBytes = TestUtil.LoadBytes(cs);
             ComputeCompilationResult result = SpirvCompilation.CompileCompute(csBytes, target);
@@ -73,11 +73,11 @@ namespace Veldrid.SPIRV.Tests
         }
 
         [Theory]
-        [InlineData("overlapping-resources.vert.spv", "overlapping-resources.frag.spv", CompilationTarget.HLSL)]
-        [InlineData("overlapping-resources.vert", "overlapping-resources.frag.spv", CompilationTarget.HLSL)]
-        [InlineData("overlapping-resources.vert.spv", "overlapping-resources.frag", CompilationTarget.HLSL)]
-        [InlineData("overlapping-resources.vert", "overlapping-resources.frag", CompilationTarget.HLSL)]
-        public void CompilationFails(string vs, string fs, CompilationTarget target)
+        [InlineData("overlapping-resources.vert.spv", "overlapping-resources.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("overlapping-resources.vert", "overlapping-resources.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("overlapping-resources.vert.spv", "overlapping-resources.frag", CrossCompileTarget.HLSL)]
+        [InlineData("overlapping-resources.vert", "overlapping-resources.frag", CrossCompileTarget.HLSL)]
+        public void CompilationFails(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);
             byte[] fsBytes = TestUtil.LoadBytes(fs);

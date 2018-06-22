@@ -6,7 +6,7 @@ namespace Veldrid.SPIRV
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct CrossCompileInfo
     {
-        public CompilationTarget Target;
+        public CrossCompileTarget Target;
         public Bool32 FixClipSpaceZ;
         public Bool32 InvertY;
         public InteropArray Specializations;

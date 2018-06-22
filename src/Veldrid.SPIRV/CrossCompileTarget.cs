@@ -1,6 +1,6 @@
 ﻿namespace Veldrid.SPIRV
 {
-    public enum CompilationTarget : uint
+    public enum CrossCompileTarget : uint
     {
         HLSL,
         GLSL,

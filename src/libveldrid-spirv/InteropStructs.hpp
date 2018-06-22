@@ -72,7 +72,7 @@ struct InteropArray
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-struct SpecializationValue
+struct SpecializationConstant
 {
     uint32_t ID;
     uint64_t Constant;
@@ -80,7 +80,7 @@ struct SpecializationValue
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-enum CrossCompileTarget
+enum CrossCompileTarget : uint32_t
 {
     HLSL,
     GLSL,
@@ -95,7 +95,7 @@ struct CrossCompileInfo
     CrossCompileTarget Target;
     Bool32 FixClipSpaceZ;
     Bool32 InvertY;
-    InteropArray<SpecializationValue> Specializations;
+    InteropArray<SpecializationConstant> Specializations;
     InteropArray<uint32_t> VertexShader;
     InteropArray<uint32_t> FragmentShader;
     InteropArray<uint32_t> ComputeShader;

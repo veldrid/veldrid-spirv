@@ -5,13 +5,19 @@ namespace Veldrid.SPIRV
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal unsafe struct GlslCompileInfo
     {
-        public uint SourceTextLength;
-        public byte* SourceText;
-        public uint FileNameLength;
-        public byte* FileName;
+        /// <summary>
+        /// Element type: byte
+        /// </summary>
+        public InteropArray SourceText;
+        /// <summary>
+        /// Element type: byte
+        /// </summary>
+        public InteropArray FileName;
         public ShadercShaderKind Kind;
         public Bool32 Debug;
-        public uint MacroCount;
-        public NativeMacroDefinition* Macros;
+        /// <summary>
+        /// Element type: NativeMacroDefinition
+        /// </summary>
+        public InteropArray Macros;
     };
 }

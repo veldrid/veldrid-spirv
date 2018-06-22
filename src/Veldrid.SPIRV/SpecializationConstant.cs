@@ -1,11 +1,13 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Veldrid.SPIRV
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct SpecializationConstant
     {
-        internal uint ID;
-        internal ulong Constant;
+        public uint ID;
+        public ulong Constant;
 
         public static SpecializationConstant Create(uint id, bool value) => CreateT(id, value ? 1u : 0u);
         public static SpecializationConstant Create(uint id, uint value) => CreateT(id, value);

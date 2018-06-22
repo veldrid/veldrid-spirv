@@ -8,12 +8,12 @@ namespace Veldrid.SPIRV
         public static unsafe VertexFragmentCompilationResult CompileVertexFragment(
             byte[] vsBytes,
             byte[] fsBytes,
-            CompilationTarget target) => CompileVertexFragment(vsBytes, fsBytes, target, new CrossCompileOptions());
+            CrossCompileTarget target) => CompileVertexFragment(vsBytes, fsBytes, target, new CrossCompileOptions());
 
         public static unsafe VertexFragmentCompilationResult CompileVertexFragment(
             byte[] vsBytes,
             byte[] fsBytes,
-            CompilationTarget target,
+            CrossCompileTarget target,
             CrossCompileOptions options)
         {
             int size1 = sizeof(CrossCompileInfo);
@@ -100,11 +100,11 @@ namespace Veldrid.SPIRV
 
         public static unsafe ComputeCompilationResult CompileCompute(
             byte[] csBytes,
-            CompilationTarget target) => CompileCompute(csBytes, target, new CrossCompileOptions());
+            CrossCompileTarget target) => CompileCompute(csBytes, target, new CrossCompileOptions());
 
         public static unsafe ComputeCompilationResult CompileCompute(
             byte[] csBytes,
-            CompilationTarget target,
+            CrossCompileTarget target,
             CrossCompileOptions options)
         {
             byte[] csSpirvBytes;
@@ -203,11 +203,9 @@ namespace Veldrid.SPIRV
         {
             GlslCompileInfo info;
             info.Kind = GetShadercKind(stage);
-            info.SourceTextLength = sourceLength;
-            info.SourceText = sourceTextPtr;
+            info.SourceText = new InteropArray(sourceLength, sourceTextPtr);
             info.Debug = debug;
-            info.MacroCount = macroCount;
-            info.Macros = macros;
+            info.Macros = new InteropArray(macroCount,  macros);
 
             if (string.IsNullOrEmpty(fileName)) { fileName = "<veldrid-spirv-input>"; }
             int fileNameAsciiCount = Encoding.ASCII.GetByteCount(fileName);
@@ -219,8 +217,7 @@ namespace Veldrid.SPIRV
                     Encoding.ASCII.GetBytes(fileNameTextPtr, fileName.Length, fileNameAsciiPtr, fileNameAsciiCount);
                 }
             }
-            info.FileNameLength = (uint)fileNameAsciiCount;
-            info.FileName = fileNameAsciiPtr;
+            info.FileName = new InteropArray((uint)fileNameAsciiCount, fileNameAsciiPtr);
 
             CompilationResult* result = null;
             try

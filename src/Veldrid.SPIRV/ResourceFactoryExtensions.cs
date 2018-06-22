@@ -29,7 +29,7 @@ namespace Veldrid.SPIRV
                 };
             }
 
-            CompilationTarget target = GetCompilationTarget(factory.BackendType);
+            CrossCompileTarget target = GetCompilationTarget(factory.BackendType);
             VertexFragmentCompilationResult compilationResult = SpirvCompilation.CompileVertexFragment(
                 vertexShaderDescription.ShaderBytes,
                 fragmentShaderDescription.ShaderBytes,
@@ -72,18 +72,18 @@ namespace Veldrid.SPIRV
             }
         }
 
-        private static CompilationTarget GetCompilationTarget(GraphicsBackend backend)
+        private static CrossCompileTarget GetCompilationTarget(GraphicsBackend backend)
         {
             switch (backend)
             {
                 case GraphicsBackend.Direct3D11:
-                    return CompilationTarget.HLSL;
+                    return CrossCompileTarget.HLSL;
                 case GraphicsBackend.OpenGL:
-                    return CompilationTarget.GLSL;
+                    return CrossCompileTarget.GLSL;
                 case GraphicsBackend.Metal:
-                    return CompilationTarget.MSL;
+                    return CrossCompileTarget.MSL;
                 case GraphicsBackend.OpenGLES:
-                    return CompilationTarget.ESSL;
+                    return CrossCompileTarget.ESSL;
                 default:
                     throw new SpirvCompilationException($"Invalid GraphicsBackend: {backend}");
             }
