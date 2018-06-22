@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Veldrid;
+using Veldrid.SPIRV;
+using Veldrid.SPIRV.Tests;
+using Xunit;
 
 class Program
 {

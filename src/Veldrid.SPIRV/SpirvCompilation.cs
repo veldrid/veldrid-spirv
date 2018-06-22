@@ -102,6 +102,56 @@ namespace Veldrid.SPIRV
             }
         }
 
+        public static unsafe SpirvCompilationResult CompileGlslToSpirv(
+            string sourceText,
+            string fileName,
+            ShaderStages stage)
+        {
+            GlslCompilationInfo info;
+            int sourceAsciiCount = Encoding.ASCII.GetByteCount(sourceText);
+            byte* sourceAsciiPtr = stackalloc byte[sourceAsciiCount];
+            fixed (char* sourceTextPtr = sourceText)
+            {
+                Encoding.ASCII.GetBytes(sourceTextPtr, sourceText.Length, sourceAsciiPtr, sourceAsciiCount);
+            }
+            info.SourceTextLength = (uint)sourceAsciiCount;
+            info.SourceText = sourceAsciiPtr;
+
+            int fileNameAsciiCount = Encoding.ASCII.GetByteCount(fileName);
+            byte* fileNameAsciiPtr = stackalloc byte[fileNameAsciiCount];
+            fixed (char* fileNameTextPtr = fileName)
+            {
+                Encoding.ASCII.GetBytes(fileNameTextPtr, fileName.Length, fileNameAsciiPtr, fileNameAsciiCount);
+            }
+            info.FileNameLength = (uint)fileNameAsciiCount;
+            info.FileName = fileNameAsciiPtr;
+
+            ShaderCompilationResult* result = null;
+            try
+            {
+                result = VeldridSpirvNative.CompileGlslToSpirv(&info);
+                if (!result->Succeeded)
+                {
+                    throw new SpirvCompilationException("Compilation failed: " + GetString(result->ErrorMessage, result->ErrorMessageLength));
+                }
+
+                byte[] spirvBytes = new byte[result->VertexShaderLength];
+                fixed (byte* spirvBytesPtr = &spirvBytes[0])
+                {
+                    System.Buffer.MemoryCopy(result->VertexShader, spirvBytesPtr, result->VertexShaderLength, result->VertexShaderLength);
+                }
+
+                return new SpirvCompilationResult(spirvBytes);
+            }
+            finally
+            {
+                if (result != null)
+                {
+                    VeldridSpirvNative.FreeResult(result);
+                }
+            }
+        }
+
         private static unsafe string GetString(byte* data, uint length)
         {
             return Encoding.UTF8.GetString(data, (int)length);

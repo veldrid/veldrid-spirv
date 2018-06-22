@@ -264,3 +264,6 @@ build/
 
 # Downloaded assets for package build
 download/
+
+# Shaderc
+ext/shaderc

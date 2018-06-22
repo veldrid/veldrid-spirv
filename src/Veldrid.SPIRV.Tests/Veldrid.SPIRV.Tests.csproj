@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="TestShaders/*.spv" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="TestShaders/*" CopyToOutputDirectory="PreserveNewest" />
     <Content
       Include="$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dll"
       Condition="Exists('$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dll')"

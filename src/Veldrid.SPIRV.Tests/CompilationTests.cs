@@ -61,5 +61,18 @@ namespace Veldrid.SPIRV.Tests
                    target,
                    new CompilationOptions(false, false)));
         }
+
+        [Theory]
+        [InlineData("instance.vert", ShaderStages.Vertex)]
+        public void GlslToSpirv_Succeeds(string name, ShaderStages stage)
+        {
+            SpirvCompilationResult result = SpirvCompilation.CompileGlslToSpirv(
+                TestUtil.LoadShaderText(name),
+                name,
+                stage);
+            Assert.NotNull(result.SpirvBytes);
+            Assert.True(result.SpirvBytes.Length > 4);
+            Assert.True(result.SpirvBytes.Length % 4 == 0);
+        }
     }
 }

@@ -9,6 +9,7 @@
 #include "spirv_msl.hpp"
 #include <map>
 #include <sstream>
+#include "shaderc.hpp"
 
 using namespace spirv_cross;
 
@@ -453,11 +454,59 @@ void WriteToFile(const std::string& path, const std::string& text)
     outFile.close();
 }
 
+ShaderCompilationResult* CompileGLSLToSPIRV(
+    const std::string sourceText,
+    shaderc_shader_kind kind,
+    std::string fileName,
+    const shaderc::CompileOptions& options)
+{
+    shaderc::Compiler compiler;
+    shaderc::CompilationResult result = compiler.CompileGlslToSpv(sourceText, kind, fileName.c_str(), options);
+
+    if (result.GetCompilationStatus() != shaderc_compilation_status_success)
+    {
+        return new ShaderCompilationResult(result.GetErrorMessage());
+    }
+
+    uint32_t length = static_cast<uint32_t>(result.end() - result.begin()) * sizeof(uint32_t);
+    ShaderCompilationResult* ret = new ShaderCompilationResult();
+    ret->ErrorMessageLength = 0;
+    ret->ErrorMessage = nullptr;
+    ret->FragmentShaderLength = 0;
+    ret->FragmentShader = nullptr;
+    ret->ComputeShaderLength = 0;
+    ret->ComputeShader = nullptr;
+
+    ret->Succeeded = 1;
+    ret->VertexShaderLength = length;
+    ret->VertexShader = new uint8_t[length];
+    memcpy(ret->VertexShader, result.begin(), length);
+    return ret;
+}
+
 VD_EXPORT ShaderCompilationResult* Compile(ShaderSetCompilationInfo* info)
 {
     try
     {
         return Compile(*info);
+    }
+    catch (std::exception e)
+    {
+        return new ShaderCompilationResult(e.what());
+    }
+}
+
+
+VD_EXPORT ShaderCompilationResult* CompileGlslToSpirv(GlslCompilationInfo* info)
+{
+    try
+    {
+        shaderc::CompileOptions options;
+        return CompileGLSLToSPIRV(
+            std::string(info->SourceText, info->SourceTextLength),
+            info->Kind,
+            std::string(info->FileName, info->FileNameLength),
+            options);
     }
     catch (std::exception e)
     {

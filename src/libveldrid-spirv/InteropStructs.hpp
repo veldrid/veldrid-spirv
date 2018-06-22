@@ -2,8 +2,8 @@
 
 #include "stdint.h"
 #include <vector>
-#include "CompilationTarget.hpp"
 #include "spirv_common.hpp"
+#include "shaderc.hpp"
 
 namespace Veldrid
 {
@@ -63,7 +63,6 @@ struct ShaderSetCompilationInfo
     ShaderCompilationInfo FragmentShader;
     ShaderCompilationInfo ComputeShader;
 };
-
 #pragma pack(pop)
 struct ShaderCompilationResult
 {
@@ -104,4 +103,15 @@ struct ShaderCompilationResult
         if (ComputeShader != nullptr) { delete[] ComputeShader; }
     }
 };
+
+#pragma pack(push, 1)
+struct GlslCompilationInfo
+{
+    uint32_t SourceTextLength;
+    char* SourceText;
+    uint32_t FileNameLength;
+    char* FileName;
+    shaderc_shader_kind Kind;
+};
+#pragma pack(pop)
 }
