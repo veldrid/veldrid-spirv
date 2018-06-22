@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-scripthPath="`dirname \"$0\"`"
+scriptPath="`dirname \"$0\"`"
 
-$scripthPath/build-native.sh Release
-dotnet pack -c Release $scripthPath/src/Veldrid.SPIRV/Veldrid.SPIRV.csproj
+$scriptPath/build-native.sh Release
+dotnet pack -c Release $scriptPath/src/Veldrid.SPIRV/Veldrid.SPIRV.csproj

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-scripthPath="`dirname \"$0\"`"
+scriptPath="`dirname \"$0\"`"
 
 _CMakeBuildType=Debug
 
@@ -24,8 +24,8 @@ while :; do
     shift
 done
 
-mkdir -p $scripthPath/build/$_CMakeBuildType
-pushd $scripthPath/build/$_CMakeBuildType
+mkdir -p $scriptPath/build/$_CMakeBuildType
+pushd $scriptPath/build/$_CMakeBuildType
 cmake ../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType
 make
 popd

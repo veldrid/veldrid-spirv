@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-scripthPath="`dirname \"$0\"`"
+scriptPath="`dirname \"$0\"`"
 
-python $scripthPath/update_shaderc_sources.py --dir $scripthPath/shaderc --file $scripthPath/known_good.json
+python $scriptPath/update_shaderc_sources.py --dir $scriptPath/shaderc --file $scriptPath/known_good.json

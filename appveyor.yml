@@ -5,12 +5,8 @@ image:
 install:
 - git submodule update --init --recursive
 build_script:
-- sh:
-  - ext/sync-shaderc.sh
-  - ./build-native.sh release
-- cmd:
-  - call .\ext\sync-shaderc.cmd
-  - call .\build-native.cmd Release
+- sh: ./ci-build.sh
+- cmd: call .\ci-build.cmd
 artifacts:
 - path: build/Release/libveldrid-spirv.so
   name: libveldrid-spirv.so
