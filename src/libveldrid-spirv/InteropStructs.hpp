@@ -70,7 +70,7 @@ struct CompilationResult
     uint32_t Succeeded;
     uint32_t DataBufferCount;
     uint32_t* DataBufferLengths;
-    void** DataBuffers;
+    uint8_t** DataBuffers;
 
     CompilationResult()
     {
@@ -84,7 +84,7 @@ struct CompilationResult
     {
         Succeeded = 0;
         DataBufferCount = 1;
-        DataBuffers = new void*[1];
+        DataBuffers = new uint8_t*[1];
         DataBufferLengths = new uint32_t[1];
         size_t errorLength = errorMessage.length();
         DataBufferLengths[0] = static_cast<uint32_t>(errorLength);
@@ -108,14 +108,14 @@ struct CompilationResult
         assert(DataBufferLengths == nullptr && DataBuffers == nullptr);
         DataBufferCount = count;
         DataBufferLengths = new uint32_t[count];
-        DataBuffers = new void*[count];
+        DataBuffers = new uint8_t*[count];
     }
 
     void SetData(uint32_t index, uint32_t dataSize, const void* data)
     {
         assert(DataBufferCount > index);
         DataBufferLengths[index] = dataSize;
-        DataBuffers[index] = new void*[dataSize];
+        DataBuffers[index] = new uint8_t[dataSize];
         memcpy(DataBuffers[index], data, dataSize);
     }
 };
