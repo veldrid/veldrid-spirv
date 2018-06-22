@@ -38,6 +38,29 @@ struct InteropArray
 
     InteropArray(uint32_t count, T* data) { CopyFrom(count, data); }
 
+    InteropArray(const InteropArray& other)
+    {
+        Count = other.Count;
+        Data = new T[Count];
+        memcpy(Data, other.Data, Count * sizeof(T));
+    }
+
+    InteropArray(InteropArray&& other)
+    {
+        Count = other.Count;
+        Data = other.Data;
+
+        other.Count = 0;
+        other.Data = nullptr;
+    }
+
+    InteropArray& operator=(InteropArray other)
+    {
+        Count = other.Count;
+        std::swap(Data, other.Data);
+        return *this;
+    }
+
     ~InteropArray()
     {
         if (Data != nullptr)
