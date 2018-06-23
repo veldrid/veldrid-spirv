@@ -35,7 +35,7 @@ namespace Veldrid.SPIRV
                         sourceTextPtr,
                         string.Empty,
                         ShaderStages.Vertex,
-                        false,
+                        target == CrossCompileTarget.GLSL || target == CrossCompileTarget.ESSL,
                         0,
                         null);
                     vsSpirvBytes = vsCompileResult.SpirvBytes;
@@ -55,7 +55,7 @@ namespace Veldrid.SPIRV
                         sourceTextPtr,
                         string.Empty,
                         ShaderStages.Fragment,
-                        false,
+                        target == CrossCompileTarget.GLSL || target == CrossCompileTarget.ESSL,
                         0,
                         null);
                     fsSpirvBytes = fsCompileResult.SpirvBytes;
@@ -122,7 +122,7 @@ namespace Veldrid.SPIRV
                         sourceTextPtr,
                         string.Empty,
                         ShaderStages.Compute,
-                        false,
+                        target == CrossCompileTarget.GLSL || target == CrossCompileTarget.ESSL,
                         0,
                         null);
                     csSpirvBytes = vsCompileResult.SpirvBytes;

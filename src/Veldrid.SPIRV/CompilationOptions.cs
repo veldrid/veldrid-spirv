@@ -18,7 +18,7 @@ namespace Veldrid.SPIRV
         {
         }
 
-        public CrossCompileOptions(bool fixClipSpaceZ, bool invertVertexOutputY, SpecializationConstant[] specializations)
+        public CrossCompileOptions(bool fixClipSpaceZ, bool invertVertexOutputY, params SpecializationConstant[] specializations)
         {
             FixClipSpaceZ = fixClipSpaceZ;
             InvertVertexOutputY = invertVertexOutputY;

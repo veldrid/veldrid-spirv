@@ -239,8 +239,6 @@ void SetSpecializations(spirv_cross::Compiler* compiler, const CrossCompileInfo&
 
 CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
 {
-    int size1 = sizeof(CrossCompileInfo);
-    int size2 = sizeof(InteropArray<uint32_t>);
     std::vector<uint32_t> vsBytes(
         info.VertexShader.Data,
         info.VertexShader.Data + info.VertexShader.Count);
@@ -254,25 +252,25 @@ CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
     SetSpecializations(vsCompiler, info);
     SetSpecializations(fsCompiler, info);
 
+    ShaderResources vsResources = vsCompiler->get_shader_resources();
+    ShaderResources fsResources = fsCompiler->get_shader_resources();
+
+    std::map<BindingInfo, ResourceInfo> allResources;
+
+    AddResources(vsResources.uniform_buffers, vsCompiler, allResources, 0);
+    AddResources(vsResources.storage_buffers, vsCompiler, allResources, 0, false, true);
+    AddResources(vsResources.separate_images, vsCompiler, allResources, 0, true, false);
+    AddResources(vsResources.storage_images, vsCompiler, allResources, 0, true, true);
+    AddResources(vsResources.separate_samplers, vsCompiler, allResources, 0);
+
+    AddResources(fsResources.uniform_buffers, fsCompiler, allResources, 1);
+    AddResources(fsResources.storage_buffers, fsCompiler, allResources, 1, false, true);
+    AddResources(fsResources.separate_images, fsCompiler, allResources, 1, true, false);
+    AddResources(fsResources.storage_images, fsCompiler, allResources, 1, true, true);
+    AddResources(fsResources.separate_samplers, fsCompiler, allResources, 1);
+
     if (info.Target == HLSL || info.Target == MSL)
     {
-        ShaderResources vsResources = vsCompiler->get_shader_resources();
-        ShaderResources fsResources = fsCompiler->get_shader_resources();
-
-        std::map<BindingInfo, ResourceInfo> allResources;
-
-        AddResources(vsResources.uniform_buffers, vsCompiler, allResources, 0);
-        AddResources(vsResources.storage_buffers, vsCompiler, allResources, 0, false, true);
-        AddResources(vsResources.separate_images, vsCompiler, allResources, 0, true, false);
-        AddResources(vsResources.storage_images, vsCompiler, allResources, 0, true, true);
-        AddResources(vsResources.separate_samplers, vsCompiler, allResources, 0);
-
-        AddResources(fsResources.uniform_buffers, fsCompiler, allResources, 1);
-        AddResources(fsResources.storage_buffers, fsCompiler, allResources, 1, false, true);
-        AddResources(fsResources.separate_images, fsCompiler, allResources, 1, true, false);
-        AddResources(fsResources.storage_images, fsCompiler, allResources, 1, true, true);
-        AddResources(fsResources.separate_samplers, fsCompiler, allResources, 1);
-
         uint32_t bufferIndex = 0;
         uint32_t textureIndex = 0;
         uint32_t uavIndex = 0;
@@ -308,7 +306,6 @@ CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
             fsCompiler->set_name(remap.combined_id, fsCompiler->get_name(remap.image_id));
         }
 
-        auto vsResources = vsCompiler->get_shader_resources();
         for (auto& output : vsResources.stage_outputs)
         {
             uint32_t location = vsCompiler->get_decoration(output.id, spv::Decoration::DecorationLocation);
@@ -316,7 +313,6 @@ CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
             vsCompiler->set_name(output.id, newName);
         }
 
-        auto fsResources = fsCompiler->get_shader_resources();
         for (auto& input : fsResources.stage_inputs)
         {
             uint32_t location = fsCompiler->get_decoration(input.id, spv::Decoration::DecorationLocation);
@@ -325,8 +321,71 @@ CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
         }
     }
 
+    if (info.Target == ESSL)
+    {
+        for (auto& uniformBuffer : vsResources.uniform_buffers)
+        {
+            vsCompiler->unset_decoration(uniformBuffer.id, spv::Decoration::DecorationBinding);
+        }
+
+        uint32_t bufferIndex = 0;
+        uint32_t imageIndex = 0;
+        for (auto& it : allResources)
+        {
+            if (it.second.Kind == StorageBufferReadWrite || it.second.Kind == StorageBufferReadWrite)
+            {
+                uint32_t id = bufferIndex++;
+                if (it.second.IDs[0] != 0)
+                {
+                    vsCompiler->set_decoration(it.second.IDs[0], spv::Decoration::DecorationBinding, id);
+                }
+                if (it.second.IDs[1] != 0)
+                {
+                    fsCompiler->set_decoration(it.second.IDs[1], spv::Decoration::DecorationBinding, id);
+                }
+            }
+            else if (it.second.Kind == StorageImage)
+            {
+                uint32_t id = imageIndex++;
+                if (it.second.IDs[0] != 0)
+                {
+                    vsCompiler->set_decoration(it.second.IDs[0], spv::Decoration::DecorationBinding, id);
+                }
+                if (it.second.IDs[1] != 0)
+                {
+                    fsCompiler->set_decoration(it.second.IDs[1], spv::Decoration::DecorationBinding, id);
+                }
+            }
+        }
+    }
+
     std::string vsText = vsCompiler->compile();
+
+    bool usesStorageResource = vsResources.storage_buffers.size() > 0 || vsResources.storage_images.size() > 0;
+    if (info.Target == GLSL && usesStorageResource)
+    {
+        std::string key = "#version 330";
+        vsText.replace(vsText.find(key), key.length(), "#version 430");
+    }
+    else if (info.Target == ESSL && usesStorageResource)
+    {
+        std::string key = "#version 300";
+        vsText.replace(vsText.find(key), key.length(), "#version 310");
+    }
+
     std::string fsText = fsCompiler->compile();
+
+    usesStorageResource = fsResources.storage_buffers.size() > 0 || fsResources.storage_images.size() > 0;
+    if (info.Target == GLSL && usesStorageResource)
+    {
+        std::string key = "#version 330";
+        fsText.replace(vsText.find(key), key.length(), "#version 430");
+    }
+    else if (info.Target == ESSL && usesStorageResource)
+    {
+        std::string key = "#version 300";
+        fsText.replace(vsText.find(key), key.length(), "#version 310");
+    }
 
     delete vsCompiler;
     delete fsCompiler;
@@ -350,18 +409,18 @@ CompilationResult* CompileCompute(const CrossCompileInfo& info)
 
     SetSpecializations(csCompiler, info);
 
+    ShaderResources csResources = csCompiler->get_shader_resources();
+
+    std::map<BindingInfo, ResourceInfo> allResources;
+
+    AddResources(csResources.uniform_buffers, csCompiler, allResources, 0);
+    AddResources(csResources.storage_buffers, csCompiler, allResources, 0, false, true);
+    AddResources(csResources.separate_images, csCompiler, allResources, 0, true, false);
+    AddResources(csResources.storage_images, csCompiler, allResources, 0, true, true);
+    AddResources(csResources.separate_samplers, csCompiler, allResources, 0);
+
     if (info.Target == HLSL || info.Target == MSL)
     {
-        ShaderResources fsResources = csCompiler->get_shader_resources();
-
-        std::map<BindingInfo, ResourceInfo> allResources;
-
-        AddResources(fsResources.uniform_buffers, csCompiler, allResources, 0);
-        AddResources(fsResources.storage_buffers, csCompiler, allResources, 0, false, true);
-        AddResources(fsResources.separate_images, csCompiler, allResources, 0, true, false);
-        AddResources(fsResources.storage_images, csCompiler, allResources, 0, true, true);
-        AddResources(fsResources.separate_samplers, csCompiler, allResources, 0);
-
         uint32_t bufferIndex = 0;
         uint32_t textureIndex = 0;
         uint32_t uavIndex = 0;
@@ -384,6 +443,28 @@ CompilationResult* CompileCompute(const CrossCompileInfo& info)
         for (auto &remap : csCompiler->get_combined_image_samplers())
         {
             csCompiler->set_name(remap.combined_id, csCompiler->get_name(remap.image_id));
+        }
+    }
+
+    if (info.Target == ESSL)
+    {
+        for (auto& uniformBuffer : csResources.uniform_buffers)
+        {
+            csCompiler->unset_decoration(uniformBuffer.id, spv::Decoration::DecorationBinding);
+        }
+
+        uint32_t bufferIndex = 0;
+        uint32_t imageIndex = 0;
+        for (auto& it : allResources)
+        {
+            if (it.second.Kind == StorageBufferReadWrite || it.second.Kind == StorageBufferReadWrite)
+            {
+                csCompiler->set_decoration(it.second.IDs[0], spv::Decoration::DecorationBinding, bufferIndex++);
+            }
+            else if (it.second.Kind == StorageImage)
+            {
+                csCompiler->set_decoration(it.second.IDs[0], spv::Decoration::DecorationBinding, imageIndex++);
+            }
         }
     }
 

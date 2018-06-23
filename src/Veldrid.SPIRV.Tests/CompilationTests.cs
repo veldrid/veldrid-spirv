@@ -37,6 +37,14 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.GLSL)]
         [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.ESSL)]
         [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.MSL)]
+        //[InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.HLSL)]
+        //[InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.GLSL)]
+        //[InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.ESSL)]
+        //[InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.MSL)]
+        //[InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.HLSL)]
+        //[InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.GLSL)]
+        //[InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.ESSL)]
+        //[InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.MSL)]
         public void VertexFragmentSucceeds(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);
@@ -85,6 +93,18 @@ namespace Veldrid.SPIRV.Tests
                SpirvCompilation.CompileVertexFragment(
                    vsBytes,
                    fsBytes,
+                   target,
+                   new CrossCompileOptions(false, false)));
+        }
+
+        [Theory]
+        [InlineData("vertex-gen.comp", CrossCompileTarget.HLSL)] // SPIRV-Cross limitation, see https://github.com/KhronosGroup/SPIRV-Cross/issues/620
+        public void CompilationFails_Compute(string cs, CrossCompileTarget target)
+        {
+            byte[] csBytes = TestUtil.LoadBytes(cs);
+            Assert.Throws<SpirvCompilationException>(() =>
+               SpirvCompilation.CompileCompute(
+                   csBytes,
                    target,
                    new CrossCompileOptions(false, false)));
         }
