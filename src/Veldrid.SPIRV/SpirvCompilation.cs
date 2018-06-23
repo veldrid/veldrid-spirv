@@ -22,7 +22,7 @@ namespace Veldrid.SPIRV
             byte[] vsSpirvBytes;
             byte[] fsSpirvBytes;
 
-            if (HasSpirvHeader(vsBytes))
+            if (Util.HasSpirvHeader(vsBytes))
             {
                 vsSpirvBytes = vsBytes;
             }
@@ -42,7 +42,7 @@ namespace Veldrid.SPIRV
                 }
             }
 
-            if (HasSpirvHeader(fsBytes))
+            if (Util.HasSpirvHeader(fsBytes))
             {
                 fsSpirvBytes = fsBytes;
             }
@@ -81,11 +81,11 @@ namespace Veldrid.SPIRV
                     if (!result->Succeeded)
                     {
                         throw new SpirvCompilationException(
-                            "Compilation failed: " + GetString((byte*)result->GetData(0), result->GetLength(0)));
+                            "Compilation failed: " + Util.GetString((byte*)result->GetData(0), result->GetLength(0)));
                     }
 
-                    string vsCode = GetString((byte*)result->GetData(0), result->GetLength(0));
-                    string fsCode = GetString((byte*)result->GetData(1), result->GetLength(1));
+                    string vsCode = Util.GetString((byte*)result->GetData(0), result->GetLength(0));
+                    string fsCode = Util.GetString((byte*)result->GetData(1), result->GetLength(1));
                     return new VertexFragmentCompilationResult(vsCode, fsCode);
                 }
                 finally
@@ -109,7 +109,7 @@ namespace Veldrid.SPIRV
         {
             byte[] csSpirvBytes;
 
-            if (HasSpirvHeader(csBytes))
+            if (Util.HasSpirvHeader(csBytes))
             {
                 csSpirvBytes = csBytes;
             }
@@ -146,10 +146,10 @@ namespace Veldrid.SPIRV
                     if (!result->Succeeded)
                     {
                         throw new SpirvCompilationException(
-                            "Compilation failed: " + GetString((byte*)result->GetData(0), result->GetLength(0)));
+                            "Compilation failed: " + Util.GetString((byte*)result->GetData(0), result->GetLength(0)));
                     }
 
-                    string csCode = GetString((byte*)result->GetData(0), result->GetLength(0));
+                    string csCode = Util.GetString((byte*)result->GetData(0), result->GetLength(0));
                     return new ComputeCompilationResult(csCode);
                 }
                 finally
@@ -226,7 +226,7 @@ namespace Veldrid.SPIRV
                 if (!result->Succeeded)
                 {
                     throw new SpirvCompilationException(
-                        "Compilation failed: " + GetString((byte*)result->GetData(0), result->GetLength(0)));
+                        "Compilation failed: " + Util.GetString((byte*)result->GetData(0), result->GetLength(0)));
                 }
 
                 uint length = result->GetLength(0);
@@ -245,20 +245,6 @@ namespace Veldrid.SPIRV
                     VeldridSpirvNative.FreeResult(result);
                 }
             }
-        }
-
-        private static unsafe string GetString(byte* data, uint length)
-        {
-            return Encoding.UTF8.GetString(data, (int)length);
-        }
-
-        private static bool HasSpirvHeader(byte[] bytes)
-        {
-            return bytes.Length > 4
-                && bytes[0] == 0x03
-                && bytes[1] == 0x02
-                && bytes[2] == 0x23
-                && bytes[3] == 0x07;
         }
 
         private static ShadercShaderKind GetShadercKind(ShaderStages stage)

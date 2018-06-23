@@ -22,6 +22,9 @@ namespace Veldrid.SPIRV
             GraphicsBackend backend = factory.BackendType;
             if (backend == GraphicsBackend.Vulkan)
             {
+                vertexShaderDescription.ShaderBytes = EnsureSpirv(vertexShaderDescription);
+                fragmentShaderDescription.ShaderBytes = EnsureSpirv(fragmentShaderDescription);
+
                 return new Shader[]
                 {
                     factory.CreateShader(ref vertexShaderDescription),
@@ -55,6 +58,29 @@ namespace Veldrid.SPIRV
                 fragmentEntryPoint));
 
             return new Shader[] { vertexShader, fragmentShader };
+        }
+
+        private static unsafe byte[] EnsureSpirv(ShaderDescription description)
+        {
+            if (Util.HasSpirvHeader(description.ShaderBytes))
+            {
+                return description.ShaderBytes;
+            }
+            else
+            {
+                fixed (byte* sourceAsciiPtr = description.ShaderBytes)
+                {
+                    SpirvCompilationResult glslCompileResult = SpirvCompilation.CompileGlslToSpirv(
+                        (uint)description.ShaderBytes.Length,
+                        sourceAsciiPtr,
+                        null,
+                        description.Stage,
+                        description.Debug,
+                        0,
+                        null);
+                    return glslCompileResult.SpirvBytes;
+                }
+            }
         }
 
         private static byte[] GetBytes(GraphicsBackend backend, string code)
