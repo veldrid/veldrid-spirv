@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
-    <PackageReference Include="Veldrid" Version="4.2.0" />
+    <PackageReference Include="Veldrid" Version="4.3.0" />
   </ItemGroup>
 
   <Target Name="BeforePackage" BeforeTargets="AssignTargetPaths">
