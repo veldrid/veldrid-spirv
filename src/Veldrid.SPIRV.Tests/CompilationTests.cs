@@ -37,23 +37,15 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.GLSL)]
         [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.ESSL)]
         [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.MSL)]
-        //[InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.HLSL)]
-        //[InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.GLSL)]
-        //[InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.ESSL)]
-        //[InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.MSL)]
-        //[InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.HLSL)]
-        //[InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.GLSL)]
-        //[InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.ESSL)]
-        //[InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.MSL)]
         public void VertexFragmentSucceeds(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);
             byte[] fsBytes = TestUtil.LoadBytes(fs);
             SpecializationConstant[] specializations =
             {
-                SpecializationConstant.Create(100, 125u),
-                SpecializationConstant.Create(101, true),
-                SpecializationConstant.Create(102, 0.75f),
+                new SpecializationConstant(100, 125u),
+                new SpecializationConstant(101, true),
+                new SpecializationConstant(102, 0.75f),
             };
             VertexFragmentCompilationResult result = SpirvCompilation.CompileVertexFragment(
                 vsBytes,
@@ -85,6 +77,10 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("overlapping-resources.vert", "overlapping-resources.frag.spv", CrossCompileTarget.HLSL)]
         [InlineData("overlapping-resources.vert.spv", "overlapping-resources.frag", CrossCompileTarget.HLSL)]
         [InlineData("overlapping-resources.vert", "overlapping-resources.frag", CrossCompileTarget.HLSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.HLSL)] // SPIRV-Cross Limitation: cannot read struct from ByteAddressBuffer.
+        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag", CrossCompileTarget.HLSL)]
         public void CompilationFails(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);

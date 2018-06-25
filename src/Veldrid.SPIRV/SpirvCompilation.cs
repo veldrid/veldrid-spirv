@@ -3,13 +3,31 @@ using System.Text;
 
 namespace Veldrid.SPIRV
 {
+    /// <summary>
+    /// Static functions for cross-compiling SPIR-V bytecode to various shader languages, and for compiling GLSL to SPIR-V.
+    /// </summary>
     public static class SpirvCompilation
     {
+        /// <summary>
+        /// Cross-compiles the given vertex-fragment pair into some target language.
+        /// </summary>
+        /// <param name="vsBytes">The vertex shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="fsBytes">The fragment shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="target">The target language.</param>
+        /// <returns>A <see cref="VertexFragmentCompilationResult"/> containing the compiled output.</returns>
         public static unsafe VertexFragmentCompilationResult CompileVertexFragment(
             byte[] vsBytes,
             byte[] fsBytes,
             CrossCompileTarget target) => CompileVertexFragment(vsBytes, fsBytes, target, new CrossCompileOptions());
 
+        /// <summary>
+        /// Cross-compiles the given vertex-fragment pair into some target language.
+        /// </summary>
+        /// <param name="vsBytes">The vertex shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="fsBytes">The fragment shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="target">The target language.</param>
+        /// <param name="options">The options for shader translation.</param>
+        /// <returns>A <see cref="VertexFragmentCompilationResult"/> containing the compiled output.</returns>
         public static unsafe VertexFragmentCompilationResult CompileVertexFragment(
             byte[] vsBytes,
             byte[] fsBytes,
@@ -98,10 +116,23 @@ namespace Veldrid.SPIRV
             }
         }
 
+        /// <summary>
+        /// Cross-compiles the given vertex-fragment pair into some target language.
+        /// </summary>
+        /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="target">The target language.</param>
+        /// <returns>A <see cref="ComputeCompilationResult"/> containing the compiled output.</returns>
         public static unsafe ComputeCompilationResult CompileCompute(
             byte[] csBytes,
             CrossCompileTarget target) => CompileCompute(csBytes, target, new CrossCompileOptions());
 
+        /// <summary>
+        /// Cross-compiles the given vertex-fragment pair into some target language.
+        /// </summary>
+        /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="target">The target language.</param>
+        /// <param name="options">The options for shader translation.</param>
+        /// <returns>A <see cref="ComputeCompilationResult"/> containing the compiled output.</returns>
         public static unsafe ComputeCompilationResult CompileCompute(
             byte[] csBytes,
             CrossCompileTarget target,
@@ -162,6 +193,14 @@ namespace Veldrid.SPIRV
             }
         }
 
+        /// <summary>
+        /// Compiles the given GLSL source code into SPIR-V.
+        /// </summary>
+        /// <param name="sourceText">The shader source code.</param>
+        /// <param name="fileName">A descriptive name for the shader. May be null.</param>
+        /// <param name="stage">The <see cref="ShaderStages"/> which the shader is used in.</param>
+        /// <param name="options">Parameters for the GLSL compiler.</param>
+        /// <returns>A <see cref="SpirvCompilationResult"/> containing the compiled SPIR-V bytecode.</returns>
         public static unsafe SpirvCompilationResult CompileGlslToSpirv(
             string sourceText,
             string fileName,

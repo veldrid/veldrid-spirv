@@ -3,12 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>$(BinDir)\$(AssemblyName).xml</DocumentationFile>
     <NativeAssetsPath Condition="'$(NativeAssetsPath)' == ''">$(RepositoryRootDirectory)/build/$(Configuration)</NativeAssetsPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
-    <PackageReference Include="Veldrid" Version="4.3.0" />
+    <PackageReference Include="Veldrid" Version="4.4.0-beta1" />
   </ItemGroup>
 
   <Target Name="BeforePackage" BeforeTargets="AssignTargetPaths">

@@ -18,6 +18,8 @@ layout(set = 0, binding = 1) uniform RotationInfo
 layout(constant_id=100) const uint SpecializedCount = 4;
 layout(constant_id=101) const bool InvertY = false;
 
+const float TestConst = InvertY ? 1.f : 0.f;
+
 layout(std140, set = 2, binding = 0) readonly buffer ExampleData
 {
     vec4 Data[SpecializedCount];

@@ -1,19 +1,45 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace Veldrid.SPIRV
 {
+    /// <summary>
+    /// Contains extension methods for loading <see cref="Shader"/> modules from SPIR-V bytecode.
+    /// </summary>
     public static class ResourceFactoryExtensions
     {
-        public static Shader[] CreateFromSPIRV(
+        /// <summary>
+        /// Creates a vertex and fragment shader pair from the given <see cref="ShaderDescription"/> pair containing SPIR-V
+        /// bytecode or GLSL source code.
+        /// </summary>
+        /// <param name="factory">The <see cref="ResourceFactory"/> used to compile the translated shader code.</param>
+        /// <param name="vertexShaderDescription">The vertex shader's description. <see cref="ShaderDescription.ShaderBytes"/>
+        /// should contain SPIR-V bytecode or Vulkan-style GLSL source code which can be compiled to SPIR-V.</param>
+        /// <param name="fragmentShaderDescription">The fragment shader's description.
+        /// <see cref="ShaderDescription.ShaderBytes"/> should contain SPIR-V bytecode or Vulkan-style GLSL source code which
+        /// can be compiled to SPIR-V.</param>
+        /// <returns>A two-element array, containing the vertex shader (element 0) and the fragment shader (element 1).</returns>
+        public static Shader[] CreateFromSpirv(
             this ResourceFactory factory,
             ShaderDescription vertexShaderDescription,
             ShaderDescription fragmentShaderDescription)
         {
-            return CreateFromSPIRV(factory, vertexShaderDescription, fragmentShaderDescription, new CrossCompileOptions());
+            return CreateFromSpirv(factory, vertexShaderDescription, fragmentShaderDescription, new CrossCompileOptions());
         }
 
-        public static Shader[] CreateFromSPIRV(
+        /// <summary>
+        /// Creates a vertex and fragment shader pair from the given <see cref="ShaderDescription"/> pair containing SPIR-V
+        /// bytecode or GLSL source code.
+        /// </summary>
+        /// <param name="factory">The <see cref="ResourceFactory"/> used to compile the translated shader code.</param>
+        /// <param name="vertexShaderDescription">The vertex shader's description. <see cref="ShaderDescription.ShaderBytes"/>
+        /// should contain SPIR-V bytecode or Vulkan-style GLSL source code which can be compiled to SPIR-V.</param>
+        /// <param name="fragmentShaderDescription">The fragment shader's description.
+        /// <see cref="ShaderDescription.ShaderBytes"/> should contain SPIR-V bytecode or Vulkan-style GLSL source code which
+        /// can be compiled to SPIR-V.</param>
+        /// <param name="options">The <see cref="CrossCompileOptions"/> which will control the parameters used to translate the
+        /// shaders from SPIR-V to the target language.</param>
+        /// <returns>A two-element array, containing the vertex shader (element 0) and the fragment shader (element 1).</returns>
+        public static Shader[] CreateFromSpirv(
             this ResourceFactory factory,
             ShaderDescription vertexShaderDescription,
             ShaderDescription fragmentShaderDescription,
@@ -60,14 +86,34 @@ namespace Veldrid.SPIRV
             return new Shader[] { vertexShader, fragmentShader };
         }
 
-        public static Shader CreateFromSPIRV(
+        /// <summary>
+        /// Creates a compute shader from the given <see cref="ShaderDescription"/> containing SPIR-V bytecode or GLSL source
+        /// code.
+        /// </summary>
+        /// <param name="factory">The <see cref="ResourceFactory"/> used to compile the translated shader code.</param>
+        /// <param name="computeShaderDescription">The compute shader's description.
+        /// <see cref="ShaderDescription.ShaderBytes"/> should contain SPIR-V bytecode or Vulkan-style GLSL source code which
+        /// can be compiled to SPIR-V.</param>
+        /// <returns>The compiled compute <see cref="Shader"/>.</returns>
+        public static Shader CreateFromSpirv(
             this ResourceFactory factory,
             ShaderDescription computeShaderDescription)
         {
-            return CreateFromSPIRV(factory, computeShaderDescription, new CrossCompileOptions());
+            return CreateFromSpirv(factory, computeShaderDescription, new CrossCompileOptions());
         }
 
-        public static Shader CreateFromSPIRV(
+        /// <summary>
+        /// Creates a compute shader from the given <see cref="ShaderDescription"/> containing SPIR-V bytecode or GLSL source
+        /// code.
+        /// </summary>
+        /// <param name="factory">The <see cref="ResourceFactory"/> used to compile the translated shader code.</param>
+        /// <param name="computeShaderDescription">The compute shader's description.
+        /// <see cref="ShaderDescription.ShaderBytes"/> should contain SPIR-V bytecode or Vulkan-style GLSL source code which
+        /// can be compiled to SPIR-V.</param>
+        /// <param name="options">The <see cref="CrossCompileOptions"/> which will control the parameters used to translate the
+        /// shaders from SPIR-V to the target language.</param>
+        /// <returns>The compiled compute <see cref="Shader"/>.</returns>
+        public static Shader CreateFromSpirv(
             this ResourceFactory factory,
             ShaderDescription computeShaderDescription,
             CrossCompileOptions options)
