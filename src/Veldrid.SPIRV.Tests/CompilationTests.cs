@@ -65,6 +65,10 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("simple.comp.spv", CrossCompileTarget.GLSL)]
         [InlineData("simple.comp.spv", CrossCompileTarget.ESSL)]
         [InlineData("simple.comp.spv", CrossCompileTarget.MSL)]
+        [InlineData("vertex-gen.comp", CrossCompileTarget.HLSL)]
+        [InlineData("vertex-gen.comp", CrossCompileTarget.GLSL)]
+        [InlineData("vertex-gen.comp", CrossCompileTarget.ESSL)]
+        [InlineData("vertex-gen.comp", CrossCompileTarget.MSL)]
         public void ComputeSucceeds(string cs, CrossCompileTarget target)
         {
             byte[] csBytes = TestUtil.LoadBytes(cs);
@@ -89,18 +93,6 @@ namespace Veldrid.SPIRV.Tests
                SpirvCompilation.CompileVertexFragment(
                    vsBytes,
                    fsBytes,
-                   target,
-                   new CrossCompileOptions(false, false)));
-        }
-
-        [Theory]
-        [InlineData("vertex-gen.comp", CrossCompileTarget.HLSL)] // SPIRV-Cross limitation, see https://github.com/KhronosGroup/SPIRV-Cross/issues/620
-        public void CompilationFails_Compute(string cs, CrossCompileTarget target)
-        {
-            byte[] csBytes = TestUtil.LoadBytes(cs);
-            Assert.Throws<SpirvCompilationException>(() =>
-               SpirvCompilation.CompileCompute(
-                   csBytes,
                    target,
                    new CrossCompileOptions(false, false)));
         }
