@@ -80,17 +80,24 @@ namespace Veldrid.SPIRV
                 }
             }
 
+            int specConstantsCount = options.Specializations.Length;
+            NativeSpecializationConstant* nativeSpecConstants = stackalloc NativeSpecializationConstant[specConstantsCount];
+            for (int i = 0; i < specConstantsCount; i++)
+            {
+                nativeSpecConstants[i].ID = options.Specializations[i].ID;
+                nativeSpecConstants[i].Constant = options.Specializations[i].Data;
+            }
+
             CrossCompileInfo info;
             info.Target = target;
             info.FixClipSpaceZ = options.FixClipSpaceZ;
             info.InvertY = options.InvertVertexOutputY;
             fixed (byte* vsBytesPtr = vsSpirvBytes)
             fixed (byte* fsBytesPtr = fsSpirvBytes)
-            fixed (SpecializationConstant* specConstants = options.Specializations)
             {
                 info.VertexShader = new InteropArray((uint)vsSpirvBytes.Length / 4, vsBytesPtr);
                 info.FragmentShader = new InteropArray((uint)fsSpirvBytes.Length / 4, fsBytesPtr);
-                info.Specializations = new InteropArray((uint)options.Specializations.Length, specConstants);
+                info.Specializations = new InteropArray((uint)specConstantsCount, nativeSpecConstants);
 
                 CompilationResult* result = null;
                 try
