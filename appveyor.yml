@@ -10,9 +10,9 @@ build_script:
 artifacts:
 - path: build/Release/libveldrid-spirv.so
   name: libveldrid-spirv.so
-- path: build\x64\Release\libveldrid-spirv.dll
+- path: build\x64\Release\libveldrid-spirv.win-x64.dll
   name: libveldrid-spirv.win-x64.dll
-- path: build\x86\Release\libveldrid-spirv.dll
+- path: build\x86\Release\libveldrid-spirv.win-x86.dll
   name: libveldrid-spirv.win-x86.dll
 
 deploy:
