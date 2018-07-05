@@ -33,7 +33,7 @@ if( -not $? )
     exit
 }
 
-Write-Host - libveldrid-spirv.dll (x86)
+Write-Host "- libveldrid-spirv.dll (x86)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.win-x64.dll",
@@ -45,7 +45,7 @@ if( -not $? )
     exit
 }
 
-Write-Host - libveldrid-spirv.dll (x64)
+Write-Host "- libveldrid-spirv.dll (x64)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.so",
