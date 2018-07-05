@@ -16,7 +16,9 @@ if (Test-Path $PSScriptRoot\download\)
 {
     Remove-Item $PSScriptRoot\download\ -Force -Recurse | Out-Null
 }
-New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\ | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\Release | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\x86\Release | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\x64\Release | Out-Null
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -31,7 +33,7 @@ if( -not $? )
     exit
 }
 
-Write-Host - libveldrid-spirv.dll
+Write-Host - libveldrid-spirv.dll (x86)
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.win-x64.dll",
@@ -43,7 +45,7 @@ if( -not $? )
     exit
 }
 
-Write-Host - libveldrid-spirv.dll
+Write-Host - libveldrid-spirv.dll (x64)
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.so",
