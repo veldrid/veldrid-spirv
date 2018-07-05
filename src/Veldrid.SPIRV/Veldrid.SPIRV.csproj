@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>$(BinDir)\$(AssemblyName).xml</DocumentationFile>
-    <NativeAssetsPath Condition="'$(NativeAssetsPath)' == ''">$(RepositoryRootDirectory)/build/$(Configuration)</NativeAssetsPath>
+    <NativeAssetsPath Condition="'$(NativeAssetsPath)' == ''">$(RepositoryRootDirectory)/build/</NativeAssetsPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,9 +14,10 @@
 
   <Target Name="BeforePackage" BeforeTargets="AssignTargetPaths">
     <ItemGroup>
-      <_NativeAssetName Include="libveldrid-spirv.dll" PackagePath="runtimes/win-x64/native" />
-      <_NativeAssetName Include="libveldrid-spirv.so" PackagePath="runtimes/linux-x64/native" />
-      <_NativeAssetName Include="libveldrid-spirv.dylib" PackagePath="runtimes/osx-x64/native" />
+      <_NativeAssetName Include="x86/$(Configuration)/libveldrid-spirv.dll" PackagePath="runtimes/win-x86/native" />
+      <_NativeAssetName Include="x64/$(Configuration)/libveldrid-spirv.dll" PackagePath="runtimes/win-x64/native" />
+      <_NativeAssetName Include="$(Configuration)/libveldrid-spirv.so" PackagePath="runtimes/linux-x64/native" />
+      <_NativeAssetName Include="$(Configuration)/libveldrid-spirv.dylib" PackagePath="runtimes/osx-x64/native" />
 
       <_ExistingAssets Include="@(_NativeAssetName)" Condition="Exists('$(NativeAssetsPath)/%(Identity)')" />
 

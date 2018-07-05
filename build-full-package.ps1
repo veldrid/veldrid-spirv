@@ -22,12 +22,24 @@ New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\ | Out-Null
 
 $client = New-Object System.Net.WebClient
 $client.DownloadFile(
-    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.dll",
-    "$PSScriptRoot/download/libveldrid-spirv.dll")
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.win-x86.dll",
+    "$PSScriptRoot/download/x86/$configuration/libveldrid-spirv.dll")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
-    Write-Error "Couldn't download libveldrid-spirv.dll. This most likely indicates the Windows native build failed."
+    Write-Error "Couldn't download x86 libveldrid-spirv.dll. This most likely indicates the Windows native build failed."
+    exit
+}
+
+Write-Host - libveldrid-spirv.dll
+
+$client.DownloadFile(
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.win-x64.dll",
+    "$PSScriptRoot/download/x64/$configuration/libveldrid-spirv.dll")
+if( -not $? )
+{
+    $msg = $Error[0].Exception.Message
+    Write-Error "Couldn't download x64 libveldrid-spirv.dll. This most likely indicates the Windows native build failed."
     exit
 }
 
@@ -35,7 +47,7 @@ Write-Host - libveldrid-spirv.dll
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.so",
-    "$PSScriptRoot/download/libveldrid-spirv.so")
+    "$PSScriptRoot/download/$configuration/libveldrid-spirv.so")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
@@ -47,7 +59,7 @@ Write-Host - libveldrid-spirv.so
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.dylib",
-    "$PSScriptRoot/download/libveldrid-spirv.dylib")
+    "$PSScriptRoot/download/$configuration/libveldrid-spirv.dylib")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
