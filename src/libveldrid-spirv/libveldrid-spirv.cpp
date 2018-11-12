@@ -332,7 +332,7 @@ CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
         uint32_t imageIndex = 0;
         for (auto& it : allResources)
         {
-            if (it.second.Kind == StorageBufferReadWrite || it.second.Kind == StorageBufferReadWrite)
+            if (it.second.Kind == StorageBufferReadOnly || it.second.Kind == StorageBufferReadWrite)
             {
                 uint32_t id = bufferIndex++;
                 if (it.second.IDs[0] != 0)
@@ -457,7 +457,7 @@ CompilationResult* CompileCompute(const CrossCompileInfo& info)
         uint32_t imageIndex = 0;
         for (auto& it : allResources)
         {
-            if (it.second.Kind == StorageBufferReadWrite || it.second.Kind == StorageBufferReadWrite)
+            if (it.second.Kind == StorageBufferReadOnly || it.second.Kind == StorageBufferReadWrite)
             {
                 csCompiler->set_decoration(it.second.IDs[0], spv::Decoration::DecorationBinding, bufferIndex++);
             }
