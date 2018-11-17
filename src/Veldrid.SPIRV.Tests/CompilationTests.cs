@@ -37,6 +37,10 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.GLSL)]
         [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.ESSL)]
         [InlineData("starfield.vert.spv", "starfield.frag.spv", CrossCompileTarget.MSL)]
+        [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.GLSL)]
+        [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.ESSL)]
+        [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.MSL)]
         public void VertexFragmentSucceeds(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);
