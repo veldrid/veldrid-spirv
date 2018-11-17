@@ -17,7 +17,7 @@ Shader[] shaders = factory.CreateFromSpirv(
 // Use "shaders" array to construct a Pipeline
 ```
 
-You can also use load GLSL source code and do the same as above. Behind the scenes, Veldrid.SPIRV will compile the GLSL to SPIR-V and then perform the cross-compile to the target language.
+You can also directly load GLSL source code and do the same as above. Behind the scenes, Veldrid.SPIRV will compile the GLSL to SPIR-V and then perform the cross-compile to the target language.
 
 ## Specialization Constants
 
