@@ -52,6 +52,7 @@ namespace Veldrid.SPIRV
                         (uint)vsBytes.Length,
                         sourceTextPtr,
                         string.Empty,
+                        options.SourceLanguage,
                         ShaderStages.Vertex,
                         target == CrossCompileTarget.GLSL || target == CrossCompileTarget.ESSL,
                         0,
@@ -72,6 +73,7 @@ namespace Veldrid.SPIRV
                         (uint)fsBytes.Length,
                         sourceTextPtr,
                         string.Empty,
+                        options.SourceLanguage,
                         ShaderStages.Fragment,
                         target == CrossCompileTarget.GLSL || target == CrossCompileTarget.ESSL,
                         0,
@@ -124,19 +126,19 @@ namespace Veldrid.SPIRV
         }
 
         /// <summary>
-        /// Cross-compiles the given vertex-fragment pair into some target language.
+        /// Cross-compiles the given compute shader into some target language.
         /// </summary>
-        /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL/HLSL source code.</param>
         /// <param name="target">The target language.</param>
         /// <returns>A <see cref="ComputeCompilationResult"/> containing the compiled output.</returns>
         public static unsafe ComputeCompilationResult CompileCompute(
             byte[] csBytes,
-            CrossCompileTarget target) => CompileCompute(csBytes, target, new CrossCompileOptions());
+            CrossCompileTarget target) => CompileCompute(csBytes, language, target, new CrossCompileOptions());
 
         /// <summary>
-        /// Cross-compiles the given vertex-fragment pair into some target language.
+        /// Cross-compiles the given compute shader into some target language.
         /// </summary>
-        /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL/HLSL source code.</param>
         /// <param name="target">The target language.</param>
         /// <param name="options">The options for shader translation.</param>
         /// <returns>A <see cref="ComputeCompilationResult"/> containing the compiled output.</returns>
@@ -155,15 +157,16 @@ namespace Veldrid.SPIRV
             {
                 fixed (byte* sourceTextPtr = csBytes)
                 {
-                    SpirvCompilationResult vsCompileResult = CompileGlslToSpirv(
+                    SpirvCompilationResult compileResult = CompileGlslToSpirv(
                         (uint)csBytes.Length,
                         sourceTextPtr,
                         string.Empty,
+                        options.SourceLanguage,
                         ShaderStages.Compute,
                         target == CrossCompileTarget.GLSL || target == CrossCompileTarget.ESSL,
                         0,
                         null);
-                    csSpirvBytes = vsCompileResult.SpirvBytes;
+                    csSpirvBytes = compileResult.SpirvBytes;
                 }
             }
 
@@ -201,12 +204,12 @@ namespace Veldrid.SPIRV
         }
 
         /// <summary>
-        /// Compiles the given GLSL source code into SPIR-V.
+        /// Compiles the given GLSL/HLSL source code into SPIR-V.
         /// </summary>
         /// <param name="sourceText">The shader source code.</param>
         /// <param name="fileName">A descriptive name for the shader. May be null.</param>
         /// <param name="stage">The <see cref="ShaderStages"/> which the shader is used in.</param>
-        /// <param name="options">Parameters for the GLSL compiler.</param>
+        /// <param name="options">Parameters for the compiler.</param>
         /// <returns>A <see cref="SpirvCompilationResult"/> containing the compiled SPIR-V bytecode.</returns>
         public static unsafe SpirvCompilationResult CompileGlslToSpirv(
             string sourceText,
@@ -232,6 +235,7 @@ namespace Veldrid.SPIRV
                 (uint)sourceAsciiCount,
                 sourceAsciiPtr,
                 fileName,
+                options.Language,
                 stage,
                 options.Debug,
                 (uint)macroCount,
@@ -242,12 +246,14 @@ namespace Veldrid.SPIRV
             uint sourceLength,
             byte* sourceTextPtr,
             string fileName,
+            SourceLanguage language,
             ShaderStages stage,
             bool debug,
             uint macroCount,
             NativeMacroDefinition* macros)
         {
             GlslCompileInfo info;
+            info.Language = language;
             info.Kind = GetShadercKind(stage);
             info.SourceText = new InteropArray(sourceLength, sourceTextPtr);
             info.Debug = debug;

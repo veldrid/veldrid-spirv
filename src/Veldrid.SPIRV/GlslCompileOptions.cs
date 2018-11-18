@@ -3,10 +3,13 @@ using System;
 namespace Veldrid.SPIRV
 {
     /// <summary>
-    /// An object used to control the options for compiling from GLSL to SPIR-V.
+    /// An object used to control the options for compiling from GLSL/HLSL to SPIR-V.
     /// </summary>
     public class GlslCompileOptions
     {
+        /// <summary>Source language from which to compile. The default is GLSL.</summary>
+        public SourceLanguage Language { get; set; }
+
         /// <summary>
         /// Indicates whether the compiled output should preserve debug information. NOTE: If the resulting SPIR-V is intended to
         /// be used as the source of an OpenGL-style GLSL shader, then this property should be set to <see langword="true"/>.
@@ -28,6 +31,7 @@ namespace Veldrid.SPIRV
         /// </summary>
         public GlslCompileOptions()
         {
+            Language = SourceLanguage.GLSL;
             Macros = Array.Empty<MacroDefinition>();
         }
 
@@ -41,6 +45,7 @@ namespace Veldrid.SPIRV
         /// when compiling the GLSL source code.</param>
         public GlslCompileOptions(bool debug, params MacroDefinition[] macros)
         {
+            Language = SourceLanguage.GLSL;
             Debug = debug;
             Macros = macros;
         }

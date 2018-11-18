@@ -7,6 +7,9 @@ namespace Veldrid.SPIRV
     /// </summary>
     public class CrossCompileOptions
     {
+        /// <summary>Source language from which to translate. The default is GLSL.</summary>
+        public SourceLanguage SourceLanguage { get; set; }
+
         /// <summary>
         /// Indicates whether or not the compiled shader output should include a clip-space Z-range fixup at the end of the
         /// vertex shader.
@@ -33,6 +36,7 @@ namespace Veldrid.SPIRV
         /// </summary>
         public CrossCompileOptions()
         {
+            SourceLanguage = SourceLanguage.GLSL;
             Specializations = Array.Empty<SpecializationConstant>();
         }
 
@@ -58,7 +62,23 @@ namespace Veldrid.SPIRV
         /// <param name="specializations">An array of <see cref="SpecializationConstant"/> which will be substituted into the
         /// shader as new constants.</param>
         public CrossCompileOptions(bool fixClipSpaceZ, bool invertVertexOutputY, params SpecializationConstant[] specializations)
+            : this(SourceLanguage.GLSL, fixClipSpaceZ, invertVertexOutputY, specializations)
         {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="CrossCompileOptions"/>, used to control the parameters of shader translation.
+        /// </summary>
+        /// <param name="sourceLanguage">Source language from which to translate.</param>
+        /// <param name="fixClipSpaceZ">Indicates whether or not the compiled shader output should include a clip-space Z-range
+        /// fixup at the end of the vertex shader.</param>
+        /// <param name="invertVertexOutputY">Indicates whether or not the compiled shader output should include a fixup at the
+        /// end of the vertex shader which inverts the clip-space Y value.</param>
+        /// <param name="specializations">An array of <see cref="SpecializationConstant"/> which will be substituted into the
+        /// shader as new constants.</param>
+        public CrossCompileOptions(SourceLanguage sourceLanguage, bool fixClipSpaceZ, bool invertVertexOutputY, params SpecializationConstant[] specializations)
+        {
+            SourceLanguage = sourceLanguage;
             FixClipSpaceZ = fixClipSpaceZ;
             InvertVertexOutputY = invertVertexOutputY;
             Specializations = specializations;
