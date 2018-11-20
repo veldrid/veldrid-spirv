@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 
 namespace Veldrid.SPIRV
@@ -133,7 +133,7 @@ namespace Veldrid.SPIRV
         /// <returns>A <see cref="ComputeCompilationResult"/> containing the compiled output.</returns>
         public static unsafe ComputeCompilationResult CompileCompute(
             byte[] csBytes,
-            CrossCompileTarget target) => CompileCompute(csBytes, language, target, new CrossCompileOptions());
+            CrossCompileTarget target) => CompileCompute(csBytes, target, new CrossCompileOptions());
 
         /// <summary>
         /// Cross-compiles the given compute shader into some target language.
