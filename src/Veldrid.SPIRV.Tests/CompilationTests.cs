@@ -81,7 +81,7 @@ namespace Veldrid.SPIRV.Tests
                 vsBytes,
                 fsBytes,
                 target,
-                new CrossCompileOptions(SourceLanguage.HLSL, false, false, specializations));
+                new CrossCompileOptions(SourceLanguage.HLSL, false, false));
             Assert.NotNull(result.VertexShader);
             Assert.NotNull(result.FragmentShader);
         }
@@ -140,7 +140,6 @@ namespace Veldrid.SPIRV.Tests
             SpirvCompilationResult result = SpirvCompilation.CompileGlslToSpirv(
                 TestUtil.LoadShaderText(name),
                 name,
-                SourceLanguage.GLSL,
                 stage,
                 new GlslCompileOptions(
                     false,
@@ -165,10 +164,10 @@ namespace Veldrid.SPIRV.Tests
             SpirvCompilationResult result = SpirvCompilation.CompileGlslToSpirv(
                 TestUtil.LoadShaderText(name),
                 name,
-                SourceLanguage.HLSL,
                 stage,
                 new GlslCompileOptions(
                     false,
+                    SourceLanguage.HLSL,
                     new MacroDefinition("Name0", "Value0"),
                     new MacroDefinition("Name1", "Value1"),
                     new MacroDefinition("Name2")));
