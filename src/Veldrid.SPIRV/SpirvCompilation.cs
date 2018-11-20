@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 
 namespace Veldrid.SPIRV
@@ -253,7 +253,7 @@ namespace Veldrid.SPIRV
             NativeMacroDefinition* macros)
         {
             GlslCompileInfo info;
-            info.Language = language;
+            info.Language = GetShadercLanguage(language);
             info.Kind = GetShadercKind(stage);
             info.SourceText = new InteropArray(sourceLength, sourceTextPtr);
             info.Debug = debug;
@@ -296,6 +296,16 @@ namespace Veldrid.SPIRV
                 {
                     VeldridSpirvNative.FreeResult(result);
                 }
+            }
+        }
+
+        private static ShadercSourceLanguage GetShadercLanguage(SourceLanguage language)
+        {
+            switch (language)
+            {
+                case SourceLanguage.GLSL: return ShadercSourceLanguage.GLSL;
+                case SourceLanguage.HLSL: return ShadercSourceLanguage.HLSL;
+                default: throw new SpirvCompilationException($"Invalid shader source language: {language}");
             }
         }
 
