@@ -49,5 +49,21 @@ namespace Veldrid.SPIRV
             Debug = debug;
             Macros = macros;
         }
+        
+        /// <summary>
+        /// Constructs a new <see cref="GlslCompileOptions"/>.
+        /// </summary>
+        /// <param name="debug">Indicates whether the compiled output should preserve debug information. NOTE: If the resulting
+        /// SPIR-V is intended to be used as the source of an OpenGL-style GLSL shader, then this property should be set to
+        /// <see langword="true"/>.</param>
+        /// <param name="language">Source language from which to compile a shader.</param>
+        /// <param name="macros">An array of <see cref="MacroDefinition"/> which defines the set of preprocessor macros to define
+        /// when compiling the GLSL source code.</param>
+        public GlslCompileOptions(bool debug, SourceLanguage language, params MacroDefinition[] macros)
+        {
+            Language = language;
+            Debug = debug;
+            Macros = macros;
+        }
     }
 }
