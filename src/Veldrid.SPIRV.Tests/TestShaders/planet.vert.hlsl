@@ -1,4 +1,5 @@
-cbuffer ProjView : register(b0)
+[[vk::binding(0)]]
+cbuffer ProjView
 {
     float4x4 View;
     float4x4 Proj;

@@ -1,10 +1,12 @@
-cbuffer ProjView : register(b0)
+[[vk::binding(0)]]
+cbuffer ProjView
 {
     float4x4 View;
     float4x4 Proj;
 }
 
-cbuffer RotationInfo : register(b1)
+[[vk::binding(1)]]
+cbuffer RotationInfo
 {
     float LocalRotation;
     float GlobalRotation;

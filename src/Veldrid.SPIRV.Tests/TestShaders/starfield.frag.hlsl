@@ -1,7 +1,8 @@
 #define HASHSCALE3 float3(443.897, 441.423, 437.195)
 #define STARFREQUENCY 0.01
 
-cbuffer InvCameraInfo : register(b0)
+[[vk::binding(0)]]
+cbuffer InvCameraInfo
 {
     float4x4 InvProj;
     float4x4 InvView;

@@ -6,7 +6,8 @@ struct FragmentIn
     float3 TexCoord : TEXCOORD0;
 };
 
-cbuffer LightInfo : register(b2)
+[[vk::binding(2)]]
+cbuffer LightInfo
 {
     float3 LightDirection;
     float padding0;
@@ -14,8 +15,10 @@ cbuffer LightInfo : register(b2)
     float padding1;
 }
 
-Texture2DArray Tex : register(t0);
-SamplerState Samp : register(s0);
+[[vk::binding(0)]]
+Texture2DArray Tex;
+[[vk::binding(1)]]
+SamplerState Samp;
 
 float4 FS(FragmentIn input) : SV_Target0
 {
