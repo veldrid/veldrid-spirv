@@ -170,6 +170,7 @@ Compiler* GetCompiler(std::vector<uint32_t> spirvBytes, const CrossCompileInfo& 
         auto ret = new CompilerHLSL(spirvBytes);
         CompilerHLSL::Options opts = {};
         opts.shader_model = 50;
+        opts.point_size_compat = true;
         ret->set_hlsl_options(opts);
         CompilerGLSL::Options commonOpts;
         commonOpts.vertex.flip_vert_y = info.InvertY;
@@ -294,15 +295,15 @@ CompilationResult* CompileVertexFragment(const CrossCompileInfo& info)
 
     if (info.Target == GLSL || info.Target == ESSL)
     {
-		vsCompiler->build_dummy_sampler_for_combined_images();
+        vsCompiler->build_dummy_sampler_for_combined_images();
         vsCompiler->build_combined_image_samplers();
         for (auto& remap : vsCompiler->get_combined_image_samplers())
         {
             vsCompiler->set_name(remap.combined_id, vsCompiler->get_name(remap.image_id));
         }
 
-		fsCompiler->build_dummy_sampler_for_combined_images();
-		fsCompiler->build_combined_image_samplers();
+        fsCompiler->build_dummy_sampler_for_combined_images();
+        fsCompiler->build_combined_image_samplers();
         for (auto& remap : fsCompiler->get_combined_image_samplers())
         {
             fsCompiler->set_name(remap.combined_id, fsCompiler->get_name(remap.image_id));
@@ -441,7 +442,7 @@ CompilationResult* CompileCompute(const CrossCompileInfo& info)
 
     if (info.Target == GLSL || info.Target == ESSL)
     {
-		csCompiler->build_dummy_sampler_for_combined_images();
+        csCompiler->build_dummy_sampler_for_combined_images();
         csCompiler->build_combined_image_samplers();
         for (auto &remap : csCompiler->get_combined_image_samplers())
         {
