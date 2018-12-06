@@ -30,11 +30,14 @@ set(SPIRV_CROSS_SOURCES
 set(LIBSHADERC_SOURCES
     ext/shaderc/libshaderc/include/shaderc/shaderc.h)
 
-if (IOS_PLATFORM STREQUAL "")
-    set(LIBRARY_TYPE SHARED)
-else()
+if (DEFINED IOS_PLATFORM)
     set(LIBRARY_TYPE STATIC)
+    message( "Configured to build a static library." )
+else()
+    set(LIBRARY_TYPE SHARED)
+    message( "Configured to build a shared library." )
 endif()
+
 
 project (veldrid-spirv)
 add_library(veldrid-spirv ${LIBRARY_TYPE} ${LIBVELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})
