@@ -24,7 +24,6 @@ while :; do
             _CMakeToolchain=-DCMAKE_TOOLCHAIN_FILE=$scriptPath/ios/ios.toolchain.cmake
             _CMakeIOSPlatform=-DIOS_PLATFORM=OS64
             _CMakeEnableBitcode=-DENABLE_BITCODE=0
-            _OutputPathPrefix=ios-
             ;;
         *)
             __UnprocessedBuildArgs="$__UnprocessedBuildArgs $1"
@@ -33,7 +32,7 @@ while :; do
     shift
 done
 
-_OutputPath=$scriptPath/build/$OutputPathPrefix$_CMakeBuildType
+_OutputPath=$scriptPath/build/$_OutputPathPrefix$_CMakeBuildType
 
 mkdir -p $_OutputPath
 pushd $_OutputPath
