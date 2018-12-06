@@ -30,7 +30,15 @@ set(SPIRV_CROSS_SOURCES
 set(LIBSHADERC_SOURCES
     ext/shaderc/libshaderc/include/shaderc/shaderc.h)
 
+if (IOS_PLATFORM STREQUAL "")
+    set(LIBRARY_TYPE SHARED)
+else()
+    set(LIBRARY_TYPE STATIC)
+endif()
+
 project (veldrid-spirv)
-add_library(veldrid-spirv SHARED ${LIBVELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})
+add_library(veldrid-spirv ${LIBRARY_TYPE} ${LIBVELDRID_SPIRV_SOURCES} ${SPIRV_CROSS_SOURCES})
 target_link_libraries(veldrid-spirv shaderc)
 set_target_properties(veldrid-spirv PROPERTIES PREFIX "lib")
+
+set_target_properties(veldrid-spirv PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
