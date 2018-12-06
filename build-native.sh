@@ -24,6 +24,7 @@ while :; do
             _CMakeToolchain=-DCMAKE_TOOLCHAIN_FILE=$scriptPath/ios/ios.toolchain.cmake
             _CMakeIOSPlatform=-DIOS_PLATFORM=OS64
             _CMakeEnableBitcode=-DENABLE_BITCODE=0
+            _OutputPathPrefix=ios-
             ;;
         *)
             __UnprocessedBuildArgs="$__UnprocessedBuildArgs $1"
