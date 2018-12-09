@@ -2,6 +2,10 @@
 
 scriptPath="`dirname \"$0\"`"
 
+which python
+python --version
+exit
+
 $scriptPath/ext/sync-shaderc.sh
 $scriptPath/build-native.sh release
 
