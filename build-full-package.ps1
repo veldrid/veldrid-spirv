@@ -68,8 +68,29 @@ if( -not $? )
     Write-Error "Couldn't download libveldrid-spirv.dylib. This most likely indicates the macOS native build failed."
     exit
 }
+Write-Host - libveldrid-spirv.dylib (64-bit macOS)
 
-Write-Host - libveldrid-spirv.dylib
+$client.DownloadFile(
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.a",
+    "$PSScriptRoot/download/$configuration/libveldrid-spirv.a")
+if( -not $? )
+{
+    $msg = $Error[0].Exception.Message
+    Write-Error "Couldn't download libveldrid-spirv.a. This most likely indicates the iOS native build failed."
+    exit
+}
+Write-Host - libveldrid-spirv.a (64-bit iOS)
+
+$client.DownloadFile(
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libshaderc_combined.a",
+    "$PSScriptRoot/download/$configuration/libshaderc_combined.a")
+if( -not $? )
+{
+    $msg = $Error[0].Exception.Message
+    Write-Error "Couldn't download libshaderc_combined.a. This most likely indicates the iOS native build failed."
+    exit
+}
+Write-Host - libshaderc_combined.a (64-bit iOS)
 
 Write-Host Generating NuGet package...
 

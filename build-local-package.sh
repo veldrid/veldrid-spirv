@@ -2,7 +2,7 @@
 
 scriptPath="`dirname \"$0\"`"
 
-_BuildConfig = Debug
+_BuildConfig=Debug
 
 while :; do
     if [ $# -le 0 ]; then
