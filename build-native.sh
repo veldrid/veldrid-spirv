@@ -34,9 +34,14 @@ while :; do
 done
 
 _OutputPath=$scriptPath/build/$_OutputPathPrefix$_CMakeBuildType
+_PythonExePath=$(which python)
+if [[ $_PythonExePath == "" ]]; then
+    echo Build failed: could not locate python executable.
+    exit 1
+fi
 
 mkdir -p $_OutputPath
 pushd $_OutputPath
-cmake ../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeToolchain $_CMakeIOSPlatform $_CMakeEnableBitcode
+cmake ../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeToolchain $_CMakeIOSPlatform $_CMakeEnableBitcode -DPYTHON_EXE=$_PythonExePath
 make
 popd
