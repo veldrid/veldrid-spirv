@@ -1,12 +1,28 @@
 version: 1.0.{build}
-image:
-- Ubuntu
-- Visual Studio 2017
+
 install:
 - git submodule update --init --recursive
+
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      _NATIVE_BUILD_ARGS: Release win-x64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      _NATIVE_BUILD_ARGS: Release win-x86
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi arm64-v8a
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi armeabi-v7a
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
+
+before_build:
+- sh: ./ext/sync-shaderc.sh
+- cmd: call .\ext\sync-shaderc.cmd
+
 build_script:
 - sh: ./ci-build.sh
-- cmd: call .\ci-build.cmd
+- cmd: call .\build-native.cmd %_NATIVE_BUILD_ARGS%
+
 artifacts:
 - path: build/Release/libveldrid-spirv.so
   name: libveldrid-spirv.so
