@@ -23,7 +23,7 @@ goto ArgLoop
 
 set _CMAKE_ARGS=-DCMAKE_BUILD_TYPE=%_CMAKE_BUILD_TYPE%
 if defined _NDK_DIR (
-  set _CMAKE_ARGS=%_CMAKE_ARGS% -G "MinGW Makefiles" -DCMAKE_MAKE_PROGRAM="%_NDK_DIR%\prebuilt\windows-x86_64\bin\make.exe" -DCMAKE_TOOLCHAIN_FILE="%_NDK_DIR%\build\cmake\android.toolchain.cmake" -DCMAKE_CXX_FLAGS_RELEASE=-g0
+  set _CMAKE_ARGS=%_CMAKE_ARGS% -G "MinGW Makefiles" -DANDROID_ABI=%_ANDROID_ABI% -DCMAKE_MAKE_PROGRAM="%_NDK_DIR%\prebuilt\windows-x86_64\bin\make.exe" -DCMAKE_TOOLCHAIN_FILE="%_NDK_DIR%\build\cmake\android.toolchain.cmake" -DCMAKE_CXX_FLAGS_RELEASE=-g0
   set _OS_DIR=android
 
   if not defined _BUILD_ARCH (
