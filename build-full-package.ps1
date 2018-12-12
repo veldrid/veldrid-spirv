@@ -53,11 +53,11 @@ $client.DownloadFile(
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
-    Write-Error "Couldn't download libveldrid-spirv.so. This most likely indicates the Linux native build failed."
+    Write-Error "Couldn't download libveldrid-spirv.so (64-bit Linux). This most likely indicates the Linux native build failed."
     exit
 }
 
-Write-Host - libveldrid-spirv.so
+Write-Host - libveldrid-spirv.so (64-bit Linux)
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.dylib",
@@ -91,6 +91,31 @@ if( -not $? )
     exit
 }
 Write-Host "- libshaderc_combined.a (64-bit iOS)"
+
+$client.DownloadFile(
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.android-arm64-v8a.so.a",
+    "$PSScriptRoot/download/$configuration/android-arm64-v8a/libveldrid-spirv.so")
+if( -not $? )
+{
+    $msg = $Error[0].Exception.Message
+    Write-Error "Couldn't download libveldrid-spirv.so (64-bit Android arm64-v8a). This most likely indicates the arm64-v8a Android native build failed."
+    exit
+}
+Write-Host "- libveldrid-spirv.so (Android arm64-v8a)"
+
+$client.DownloadFile(
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.android-armeabi-v7a.so.a",
+    "$PSScriptRoot/download/$configuration/android-armeabi-v7a/libveldrid-spirv.so")
+if( -not $? )
+{
+    $msg = $Error[0].Exception.Message
+    Write-Error "Couldn't download libveldrid-spirv.so (Android armeabi-v7a). This most likely indicates the armeabi-v7a Android native build failed."
+    exit
+}
+Write-Host "- libveldrid-spirv.so (Android armeabi-v7a)"
+
+
+
 
 Write-Host Generating NuGet package...
 

@@ -21,6 +21,10 @@
       <PackagePath>build/Xamarin.iOS10/Veldrid.SPIRV.dll.config</PackagePath>
       <Pack>true</Pack>
     </Content>
+    <Content Include="build\MonoAndroid10\Veldrid.SPIRV.targets">
+      <PackagePath>build/MonoAndroid10/Veldrid.SPIRV.targets</PackagePath>
+      <Pack>true</Pack>
+    </Content>
   </ItemGroup>
 
   <Target Name="BeforePackage" BeforeTargets="AssignTargetPaths">
@@ -31,6 +35,8 @@
       <_NativeAssetName Include="$(Configuration)/libveldrid-spirv.dylib" PackagePath="runtimes/osx-x64/native" />
       <_NativeAssetName Include="$(Configuration)/libveldrid-spirv.a" PackagePath="build/Xamarin.iOS10/native" />
       <_NativeAssetName Include="$(Configuration)/libshaderc_combined.a" PackagePath="build/Xamarin.iOS10/native" />
+      <_NativeAssetName Include="$(Configuration)/android-arm64-v8a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/arm64-v8a" />
+      <_NativeAssetName Include="$(Configuration)/android-armeabi-v7a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/android-armeabi-v7a" />
 
       <_ExistingAssets Include="@(_NativeAssetName)" Condition="Exists('$(NativeAssetsPath)/%(Identity)')" />
 
