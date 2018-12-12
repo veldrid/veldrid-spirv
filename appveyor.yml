@@ -30,9 +30,9 @@ artifacts:
   name: libveldrid-spirv.win-x64.dll
 - path: build\win-x86\Release\libveldrid-spirv.dll
   name: libveldrid-spirv.win-x86.dll
-- path: build\android-arm64-v8a\Release\libveldrid-spirv.so
+- path: build\android-arm64-v8a\libveldrid-spirv.so
   name: libveldrid-spirv.android-arm64-v8a.so
-- path: build\android-armeabi-v7a\Release\libveldrid-spirv.so
+- path: build\android-armeabi-v7a\libveldrid-spirv.so
   name: libveldrid-spirv.android-armeabi-v7a.so
 
 deploy:
