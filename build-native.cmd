@@ -44,7 +44,7 @@ If NOT exist "%BUILD_DIR%" (
 )
 pushd %_BUILD_DIR%
 cmake %_CMAKE_ARGS%
-cmake --build .
+cmake --build . --config %_CMAKE_BUILD_TYPE%
 popd
 
 :Success
