@@ -31,3 +31,13 @@ Native build requirements:
 
 * CMake
 * Python
+
+Pre-built binaries are bundled in the NuGet package for the following operating systems:
+
+* Windows x64
+* Windows x86
+* macOS x64
+* Linux x64
+* iOS arm64
+* Android arm64-v8a
+* Android armeabi-v7a
