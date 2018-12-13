@@ -17,8 +17,13 @@ if (Test-Path $PSScriptRoot\download\)
     Remove-Item $PSScriptRoot\download\ -Force -Recurse | Out-Null
 }
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\Release | Out-Null
-New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\x86\Release | Out-Null
-New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\x64\Release | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\Release\win-x86 | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\Release\win-x64 | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\Release\linux-x64 | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\Release\osx-x64 | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\Release\ios | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\Release\android-arm64-v8a | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\Release\android-armeabi-v7a | Out-Null
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -30,7 +35,7 @@ if( -not $? )
 {
     $msg = $Error[0].Exception.Message
     Write-Error "Couldn't download x86 libveldrid-spirv.dll. This most likely indicates the Windows native build failed."
-    // exit
+    exit
 }
 
 Write-Host "- libveldrid-spirv.dll (x86)"
@@ -42,7 +47,7 @@ if( -not $? )
 {
     $msg = $Error[0].Exception.Message
     Write-Error "Couldn't download x64 libveldrid-spirv.dll. This most likely indicates the Windows native build failed."
-    // exit
+    exit
 }
 
 Write-Host "- libveldrid-spirv.dll (x64)"
@@ -93,7 +98,7 @@ if( -not $? )
 Write-Host "- libshaderc_combined.a (64-bit iOS)"
 
 $client.DownloadFile(
-    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.android-arm64-v8a.so.a",
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.android-arm64-v8a.so",
     "$PSScriptRoot/download/$configuration/android-arm64-v8a/libveldrid-spirv.so")
 if( -not $? )
 {
@@ -104,7 +109,7 @@ if( -not $? )
 Write-Host "- libveldrid-spirv.so (Android arm64-v8a)"
 
 $client.DownloadFile(
-    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.android-armeabi-v7a.so.a",
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.android-armeabi-v7a.so",
     "$PSScriptRoot/download/$configuration/android-armeabi-v7a/libveldrid-spirv.so")
 if( -not $? )
 {
