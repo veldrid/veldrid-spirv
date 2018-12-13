@@ -10,7 +10,6 @@ if (!$public)
     Write-Host This is a development build. Pass "-public" to remove the git commit from the package ID.
 }
 
-if ($false) {
 Write-Host Downloading native binaries from GitHub Releases...
 
 if (Test-Path $PSScriptRoot\download\)
@@ -114,9 +113,6 @@ if( -not $? )
     exit
 }
 Write-Host "- libveldrid-spirv.so (Android armeabi-v7a)"
-}
-
-
 
 Write-Host Generating NuGet package...
 
