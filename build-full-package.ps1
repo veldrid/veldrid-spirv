@@ -10,6 +10,7 @@ if (!$public)
     Write-Host This is a development build. Pass "-public" to remove the git commit from the package ID.
 }
 
+if ($false) {
 Write-Host Downloading native binaries from GitHub Releases...
 
 if (Test-Path $PSScriptRoot\download\)
@@ -25,7 +26,7 @@ New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\x64\Release | O
 $client = New-Object System.Net.WebClient
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.win-x86.dll",
-    "$PSScriptRoot/download/x86/$configuration/libveldrid-spirv.dll")
+    "$PSScriptRoot/download/$configuration/win-x86/libveldrid-spirv.dll")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
@@ -37,7 +38,7 @@ Write-Host "- libveldrid-spirv.dll (x86)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.win-x64.dll",
-    "$PSScriptRoot/download/x64/$configuration/libveldrid-spirv.dll")
+    "$PSScriptRoot/download/$configuration/win-x64/libveldrid-spirv.dll")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
@@ -49,7 +50,7 @@ Write-Host "- libveldrid-spirv.dll (x64)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.so",
-    "$PSScriptRoot/download/$configuration/libveldrid-spirv.so")
+    "$PSScriptRoot/download/$configuration/linux-x64/libveldrid-spirv.so")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
@@ -61,7 +62,7 @@ Write-Host "- libveldrid-spirv.so (64-bit Linux)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.dylib",
-    "$PSScriptRoot/download/$configuration/libveldrid-spirv.dylib")
+    "$PSScriptRoot/download/$configuration/osx-x64/libveldrid-spirv.dylib")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
@@ -72,7 +73,7 @@ Write-Host "- libveldrid-spirv.dylib (64-bit macOS)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.a",
-    "$PSScriptRoot/download/$configuration/libveldrid-spirv.a")
+    "$PSScriptRoot/download/$configuration/ios/libveldrid-spirv.a")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
@@ -83,7 +84,7 @@ Write-Host "- libveldrid-spirv.a (64-bit iOS)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libshaderc_combined.a",
-    "$PSScriptRoot/download/$configuration/libshaderc_combined.a")
+    "$PSScriptRoot/download/$configuration/ios/libshaderc_combined.a")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
@@ -113,7 +114,7 @@ if( -not $? )
     exit
 }
 Write-Host "- libveldrid-spirv.so (Android armeabi-v7a)"
-
+}
 
 
 

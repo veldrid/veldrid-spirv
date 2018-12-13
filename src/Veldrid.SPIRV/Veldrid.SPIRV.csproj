@@ -29,12 +29,12 @@
 
   <Target Name="BeforePackage" BeforeTargets="AssignTargetPaths">
     <ItemGroup>
-      <_NativeAssetName Include="x86/$(Configuration)/libveldrid-spirv.dll" PackagePath="runtimes/win-x86/native" />
-      <_NativeAssetName Include="x64/$(Configuration)/libveldrid-spirv.dll" PackagePath="runtimes/win-x64/native" />
-      <_NativeAssetName Include="$(Configuration)/libveldrid-spirv.so" PackagePath="runtimes/linux-x64/native" />
-      <_NativeAssetName Include="$(Configuration)/libveldrid-spirv.dylib" PackagePath="runtimes/osx-x64/native" />
-      <_NativeAssetName Include="$(Configuration)/libveldrid-spirv.a" PackagePath="build/Xamarin.iOS10/native" />
-      <_NativeAssetName Include="$(Configuration)/libshaderc_combined.a" PackagePath="build/Xamarin.iOS10/native" />
+      <_NativeAssetName Include="$(Configuration)/win-x86/libveldrid-spirv.dll" PackagePath="runtimes/win-x86/native" />
+      <_NativeAssetName Include="$(Configuration)/win-x64/libveldrid-spirv.dll" PackagePath="runtimes/win-x64/native" />
+      <_NativeAssetName Include="$(Configuration)/linux-x64/libveldrid-spirv.so" PackagePath="runtimes/linux-x64/native" />
+      <_NativeAssetName Include="$(Configuration)/osx-x64/libveldrid-spirv.dylib" PackagePath="runtimes/osx-x64/native" />
+      <_NativeAssetName Include="$(Configuration)/ios/libveldrid-spirv.a" PackagePath="build/Xamarin.iOS10/native" />
+      <_NativeAssetName Include="$(Configuration)/ios/libshaderc_combined.a" PackagePath="build/Xamarin.iOS10/native" />
       <_NativeAssetName Include="$(Configuration)/android-arm64-v8a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/arm64-v8a" />
       <_NativeAssetName Include="$(Configuration)/android-armeabi-v7a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/android-armeabi-v7a" />
 
