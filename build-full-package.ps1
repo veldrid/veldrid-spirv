@@ -30,7 +30,7 @@ if( -not $? )
 {
     $msg = $Error[0].Exception.Message
     Write-Error "Couldn't download x86 libveldrid-spirv.dll. This most likely indicates the Windows native build failed."
-    exit
+    // exit
 }
 
 Write-Host "- libveldrid-spirv.dll (x86)"
@@ -42,7 +42,7 @@ if( -not $? )
 {
     $msg = $Error[0].Exception.Message
     Write-Error "Couldn't download x64 libveldrid-spirv.dll. This most likely indicates the Windows native build failed."
-    exit
+    // exit
 }
 
 Write-Host "- libveldrid-spirv.dll (x64)"
@@ -57,7 +57,7 @@ if( -not $? )
     exit
 }
 
-Write-Host - libveldrid-spirv.so (64-bit Linux)
+Write-Host "- libveldrid-spirv.so (64-bit Linux)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.dylib",

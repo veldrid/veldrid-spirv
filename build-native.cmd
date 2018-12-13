@@ -16,6 +16,7 @@ if /i [%1] == [win-x64] (set _BUILD_ARCH=x64&& set _CMAKE_GENERATOR_PLATFORM=x64
 if /i [%1] == [win-x86] (set _BUILD_ARCH=x86&& set _CMAKE_GENERATOR_PLATFORM=Win32&& shift & goto ArgLoop)
 if /i [%1] == [--android-ndk] (set _NDK_DIR=%2&& shift && shift & goto ArgLoop)
 if /i [%1] == [--android-abi] (set _ANDROID_ABI=%2&& set _BUILD_ARCH=%2&& shift && shift & goto ArgLoop)
+if /i [%1] == [--artifact-name] (set _ARTIFACT_NAME=%2&& shift && shift & goto ArgLoop)
 shift
 goto ArgLoop
 
@@ -29,14 +30,21 @@ if defined _NDK_DIR (
   if not defined _BUILD_ARCH (
     set _BUILD_ARCH=%_ANDROID_ABI%
   )
+
 ) else (
   set _CMAKE_ARGS=%_CMAKE_ARGS% -DCMAKE_GENERATOR_PLATFORM=%_CMAKE_GENERATOR_PLATFORM%
   set _OS_DIR=win
 )
 
-set _CMAKE_ARGS=%_CMAKE_ARGS% ..\..
-
 set _BUILD_DIR=.\build\%_OS_DIR%-%_BUILD_ARCH%
+
+if defined _NDK_DIR (
+  set _ARTIFACT_SRC=%_BUILD_DIR%\libveldrid-spirv.so
+) else (
+  set _ARTIFACT_SRC=%_BUILD_DIR%\%_CMAKE_BUILD_TYPE%\libveldrid-spirv.dll
+)
+
+set _CMAKE_ARGS=%_CMAKE_ARGS% ..\..
 
 If NOT exist "%BUILD_DIR%" (
   mkdir %_BUILD_DIR%
@@ -45,6 +53,11 @@ pushd %_BUILD_DIR%
 cmake %_CMAKE_ARGS%
 cmake --build . --config %_CMAKE_BUILD_TYPE% --target veldrid-spirv
 popd
+
+if defined _ARTIFACT_NAME (
+  echo "Copying %_ARTIFACT_SRC% -> %_ARTIFACT_NAME%"
+  copy %_ARTIFACT_SRC% %_ARTIFACT_NAME%
+)
 
 :Success
 exit /b 0
