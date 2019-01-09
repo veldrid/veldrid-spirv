@@ -36,7 +36,7 @@
       <_NativeAssetName Include="$(Configuration)/ios/libveldrid-spirv.a" PackagePath="build/Xamarin.iOS10/native" />
       <_NativeAssetName Include="$(Configuration)/ios/libshaderc_combined.a" PackagePath="build/Xamarin.iOS10/native" />
       <_NativeAssetName Include="$(Configuration)/android-arm64-v8a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/arm64-v8a" />
-      <_NativeAssetName Include="$(Configuration)/android-armeabi-v7a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/android-armeabi-v7a" />
+      <_NativeAssetName Include="$(Configuration)/android-armeabi-v7a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/armeabi-v7a" />
 
       <_ExistingAssets Include="@(_NativeAssetName)" Condition="Exists('$(NativeAssetsPath)/%(Identity)')" />
 
