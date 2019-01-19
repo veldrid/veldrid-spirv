@@ -49,6 +49,13 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("uses-point-size.vert.spv", "empty.frag.spv", CrossCompileTarget.GLSL)]
         [InlineData("uses-point-size.vert.spv", "empty.frag.spv", CrossCompileTarget.ESSL)]
         [InlineData("uses-point-size.vert.spv", "empty.frag.spv", CrossCompileTarget.MSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.HLSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.GLSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.ESSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.MSL)]
+        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.GLSL)]
+        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.ESSL)]
+        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.MSL)]
         public void VertexFragmentSucceeds(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);
@@ -93,10 +100,8 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("overlapping-resources.vert", "overlapping-resources.frag.spv", CrossCompileTarget.HLSL)]
         [InlineData("overlapping-resources.vert.spv", "overlapping-resources.frag", CrossCompileTarget.HLSL)]
         [InlineData("overlapping-resources.vert", "overlapping-resources.frag", CrossCompileTarget.HLSL)]
-        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.HLSL)] // SPIRV-Cross Limitation: cannot read struct from ByteAddressBuffer.
+        // SPIRV-Cross limitation: Reading structs from ByteAddressBuffer not yet supported.
         [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.HLSL)]
-        [InlineData("read-from-buffer.vert", "read-from-buffer.frag.spv", CrossCompileTarget.HLSL)]
-        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag", CrossCompileTarget.HLSL)]
         public void CompilationFails(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);
