@@ -2,7 +2,7 @@
 @echo off
 
 set _CMAKE_BUILD_TYPE=Debug
-set _BUILD_ARCH=
+set _BUILD_ARCH=x64
 set _CMAKE_GENERATOR_PLATFORM=x64
 set _NDK_DIR=
 set _ANDROID_ABI=arm64-v8a
