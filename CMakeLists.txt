@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.0)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 add_subdirectory(ext/SPIRV-Cross)
 
 set(SHADERC_SKIP_TESTS ON)
