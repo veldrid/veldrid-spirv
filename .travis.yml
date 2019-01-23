@@ -12,8 +12,7 @@ deploy:
   file: 
   file:
     - "build/Release/libveldrid-spirv.dylib"
-    - "build/ios-Release/libveldrid-spirv.a"
-    - "build/ios-Release/ext/shaderc/libshaderc/libshaderc_combined.a"
+    - "build/ios-Release/libveldrid-spirv-combined.a"
 
   skip_cleanup: true
   on:
