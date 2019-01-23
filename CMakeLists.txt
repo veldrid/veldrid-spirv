@@ -38,3 +38,5 @@ set_target_properties(veldrid-spirv PROPERTIES PREFIX "lib")
 set_target_properties(veldrid-spirv PROPERTIES DEBUG_POSTFIX "")
 
 set_target_properties(veldrid-spirv PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
+
+shaderc_combine_static_lib(veldrid-spirv-combined veldrid-spirv)

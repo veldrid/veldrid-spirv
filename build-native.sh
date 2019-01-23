@@ -6,6 +6,7 @@ _CMakeToolchain=
 _CMakeIOSPlatform=
 _CMakeEnableBitcode=
 _OutputPathPrefix=
+_CMakeBuildTarget=veldrid-spirv
 
 while :; do
     if [ $# -le 0 ]; then
@@ -25,6 +26,7 @@ while :; do
             _CMakeIOSPlatform=-DIOS_PLATFORM=OS64
             _CMakeEnableBitcode=-DENABLE_BITCODE=0
             _OutputPathPrefix=ios-
+            _CMakeBuildTarget=veldrid-spirv-combined_genfile
             ;;
         *)
             __UnprocessedBuildArgs="$__UnprocessedBuildArgs $1"
@@ -43,5 +45,5 @@ fi
 mkdir -p $_OutputPath
 pushd $_OutputPath
 cmake ../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeToolchain $_CMakeIOSPlatform $_CMakeEnableBitcode -DPYTHON_EXE=$_PythonExePath
-make
+cmake --build . --target $_CMakeBuildTarget
 popd

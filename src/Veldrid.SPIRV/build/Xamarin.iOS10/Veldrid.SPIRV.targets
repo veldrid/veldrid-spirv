@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <NativeReference Include="$(MSBuildThisFileDirectory)native\libshaderc_combined.a">
-      <Kind>Static</Kind>
-      <SmartLink>False</SmartLink>
-      <ForceLoad>True</ForceLoad>
-      <IsCxx>True</IsCxx>
-    </NativeReference>
-    <NativeReference Include="$(MSBuildThisFileDirectory)native\libveldrid-spirv.a">
+    <NativeReference Include="$(MSBuildThisFileDirectory)native\libveldrid-spirv-combined.a">
       <Kind>Static</Kind>
       <SmartLink>False</SmartLink>
       <ForceLoad>True</ForceLoad>

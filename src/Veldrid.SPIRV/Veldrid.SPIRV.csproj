@@ -33,8 +33,7 @@
       <_NativeAssetName Include="$(Configuration)/win-x64/libveldrid-spirv.dll" PackagePath="runtimes/win-x64/native" />
       <_NativeAssetName Include="$(Configuration)/linux-x64/libveldrid-spirv.so" PackagePath="runtimes/linux-x64/native" />
       <_NativeAssetName Include="$(Configuration)/osx-x64/libveldrid-spirv.dylib" PackagePath="runtimes/osx-x64/native" />
-      <_NativeAssetName Include="$(Configuration)/ios/libveldrid-spirv.a" PackagePath="build/Xamarin.iOS10/native" />
-      <_NativeAssetName Include="$(Configuration)/ios/libshaderc_combined.a" PackagePath="build/Xamarin.iOS10/native" />
+      <_NativeAssetName Include="$(Configuration)/ios/libveldrid-spirv-combined.a" PackagePath="build/Xamarin.iOS10/native" />
       <_NativeAssetName Include="$(Configuration)/android-arm64-v8a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/arm64-v8a" />
       <_NativeAssetName Include="$(Configuration)/android-armeabi-v7a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/armeabi-v7a" />
 

@@ -76,26 +76,15 @@ if( -not $? )
 Write-Host "- libveldrid-spirv.dylib (64-bit macOS)"
 
 $client.DownloadFile(
-    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.a",
-    "$PSScriptRoot/download/$configuration/ios/libveldrid-spirv.a")
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv-combined.a",
+    "$PSScriptRoot/download/$configuration/ios/libveldrid-spirv-combined.a")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
-    Write-Error "Couldn't download libveldrid-spirv.a. This most likely indicates the iOS native build failed."
+    Write-Error "Couldn't download libveldrid-spirv-combined.a. This most likely indicates the iOS native build failed."
     exit
 }
-Write-Host "- libveldrid-spirv.a (64-bit iOS)"
-
-$client.DownloadFile(
-    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libshaderc_combined.a",
-    "$PSScriptRoot/download/$configuration/ios/libshaderc_combined.a")
-if( -not $? )
-{
-    $msg = $Error[0].Exception.Message
-    Write-Error "Couldn't download libshaderc_combined.a. This most likely indicates the iOS native build failed."
-    exit
-}
-Write-Host "- libshaderc_combined.a (64-bit iOS)"
+Write-Host "- libveldrid-spirv-combined.a (64-bit iOS)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.android-arm64-v8a.so",
