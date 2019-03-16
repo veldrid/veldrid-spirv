@@ -41,6 +41,10 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.GLSL)]
         [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.ESSL)]
         [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.MSL)]
+        [InlineData("empty.vert", "texel-fetch-no-sampler.frag", CrossCompileTarget.HLSL)]
+        [InlineData("empty.vert", "texel-fetch-no-sampler.frag", CrossCompileTarget.GLSL)]
+        [InlineData("empty.vert", "texel-fetch-no-sampler.frag", CrossCompileTarget.ESSL)]
+        [InlineData("empty.vert", "texel-fetch-no-sampler.frag", CrossCompileTarget.MSL)]
         [InlineData("uses-point-size.vert", "empty.frag", CrossCompileTarget.HLSL)]
         [InlineData("uses-point-size.vert", "empty.frag", CrossCompileTarget.GLSL)]
         [InlineData("uses-point-size.vert", "empty.frag", CrossCompileTarget.ESSL)]
@@ -121,6 +125,7 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("planet.frag", ShaderStages.Fragment)]
         [InlineData("starfield.vert", ShaderStages.Vertex)]
         [InlineData("starfield.frag", ShaderStages.Fragment)]
+        [InlineData("texel-fetch-no-sampler.frag", ShaderStages.Fragment)]
         [InlineData("simple.comp", ShaderStages.Compute)]
         public void GlslToSpirv_Succeeds(string name, ShaderStages stage)
         {
