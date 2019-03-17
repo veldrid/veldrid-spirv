@@ -25,6 +25,10 @@
       <PackagePath>build/MonoAndroid10/Veldrid.SPIRV.targets</PackagePath>
       <Pack>true</Pack>
     </Content>
+    <Content Include="build\net40\Veldrid.SPIRV.targets">
+      <PackagePath>build/net40/Veldrid.SPIRV.targets</PackagePath>
+      <Pack>true</Pack>
+    </Content>
   </ItemGroup>
 
   <Target Name="BeforePackage" BeforeTargets="AssignTargetPaths">
