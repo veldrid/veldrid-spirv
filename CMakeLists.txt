@@ -39,4 +39,6 @@ set_target_properties(veldrid-spirv PROPERTIES DEBUG_POSTFIX "")
 
 set_target_properties(veldrid-spirv PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
 
-shaderc_combine_static_lib(veldrid-spirv-combined veldrid-spirv)
+if (DEFINED IOS_PLATFORM)
+    shaderc_combine_static_lib(veldrid-spirv-combined veldrid-spirv)
+endif()
