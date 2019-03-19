@@ -28,11 +28,7 @@ set _CMAKE_ARGS=-DCMAKE_BUILD_TYPE=%_CMAKE_BUILD_TYPE%
 if defined _NDK_DIR (
   set _CMAKE_ARGS=%_CMAKE_ARGS% -G "MinGW Makefiles" -DANDROID_ABI=%_ANDROID_ABI% -DANDROID_PLATFORM=%_ANDROID_PLATFORM% -DCMAKE_MAKE_PROGRAM="%_NDK_DIR%\prebuilt\windows-x86_64\bin\make.exe" -DCMAKE_TOOLCHAIN_FILE="%_NDK_DIR%\build\cmake\android.toolchain.cmake" -DCMAKE_CXX_FLAGS_RELEASE=-g0
   set _OS_DIR=android
-
-  if not defined _BUILD_ARCH (
-    set _BUILD_ARCH=%_ANDROID_ABI%
-  )
-
+  set _BUILD_ARCH=%_ANDROID_ABI%
 ) else (
   set _CMAKE_ARGS=%_CMAKE_ARGS% -DCMAKE_GENERATOR_PLATFORM=%_CMAKE_GENERATOR_PLATFORM%
   set _OS_DIR=win
