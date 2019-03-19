@@ -7,7 +7,7 @@ set _CMAKE_GENERATOR_PLATFORM=x64
 set _NDK_DIR=
 set _ANDROID_ABI=arm64-v8a
 set _OS_DIR=
-set _ANDROID_PLATFORM=android-26
+set _ANDROID_PLATFORM=android-16
 
 :ArgLoop
 if [%1] == [] goto LocateVS
