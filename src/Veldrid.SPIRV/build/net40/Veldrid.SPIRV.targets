@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <_IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</_IsWindows>
-    <_IsMacOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</_IsMacOS>
-    <_IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</_IsLinux>
+    <_Veldrid_SPIRV_IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</_Veldrid_SPIRV_IsWindows>
+    <_Veldrid_SPIRV_IsMacOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</_Veldrid_SPIRV_IsMacOS>
+    <_Veldrid_SPIRV_IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</_Veldrid_SPIRV_IsLinux>
 
-    <_NativeRuntime Condition=" '$(_NativeRuntime)' == '' And '$(_IsMacOS)' == 'true' And ('$(Prefer32Bit)' == 'false' Or '$(PlatformTarget)' == 'x64')">osx-x64</_NativeRuntime>
-    <_NativeRuntime Condition=" '$(_NativeRuntime)' == '' And '$(_IsLinux)' == 'true' And ('$(Prefer32Bit)' == 'false' Or '$(PlatformTarget)' == 'x64')">linux-x64</_NativeRuntime>
-    <_NativeRuntime Condition=" '$(_NativeRuntime)' == '' And '$(_IsWindows)' == 'true' And ('$(Prefer32Bit)' == 'true' Or '$(PlatformTarget)' == 'x86')">win-x86</_NativeRuntime>
-    <_NativeRuntime Condition=" '$(_NativeRuntime)' == '' And '$(_IsWindows)' == 'true' And ('$(Prefer32Bit)' == 'false' Or '$(PlatformTarget)' == 'x64')">win-x64</_NativeRuntime>
+    <_Veldrid_SPIRV_NativeRuntime Condition=" '$(_Veldrid_SPIRV_NativeRuntime)' == '' And '$(_Veldrid_SPIRV_IsMacOS)' == 'true' And ('$(Prefer32Bit)' == 'false' Or '$(PlatformTarget)' == 'x64')">osx-x64</_Veldrid_SPIRV_NativeRuntime>
+    <_Veldrid_SPIRV_NativeRuntime Condition=" '$(_Veldrid_SPIRV_NativeRuntime)' == '' And '$(_Veldrid_SPIRV_IsLinux)' == 'true' And ('$(Prefer32Bit)' == 'false' Or '$(PlatformTarget)' == 'x64')">linux-x64</_Veldrid_SPIRV_NativeRuntime>
+    <_Veldrid_SPIRV_NativeRuntime Condition=" '$(_Veldrid_SPIRV_NativeRuntime)' == '' And '$(_Veldrid_SPIRV_IsWindows)' == 'true' And ('$(Prefer32Bit)' == 'true' Or '$(PlatformTarget)' == 'x86')">win-x86</_Veldrid_SPIRV_NativeRuntime>
+    <_Veldrid_SPIRV_NativeRuntime Condition=" '$(_Veldrid_SPIRV_NativeRuntime)' == '' And '$(_Veldrid_SPIRV_IsWindows)' == 'true' And ('$(Prefer32Bit)' == 'false' Or '$(PlatformTarget)' == 'x64')">win-x64</_Veldrid_SPIRV_NativeRuntime>
 
-    <_NativeLibName Condition="'$(_NativeRuntime)' == 'win-x86' Or '$(_NativeRuntime)' == 'win-x64'">libveldrid-spirv.dll</_NativeLibName>
-    <_NativeLibName Condition="'$(_NativeRuntime)' == 'osx-x64'">libveldrid-spirv.dylib</_NativeLibName>
-    <_NativeLibName Condition="'$(_NativeRuntime)' == 'linux-x64'">libveldrid-spirv.so</_NativeLibName>
+    <_Veldrid_SPIRV_NativeLibName Condition="'$(_Veldrid_SPIRV_NativeRuntime)' == 'win-x86' Or '$(_Veldrid_SPIRV_NativeRuntime)' == 'win-x64'">libveldrid-spirv.dll</_Veldrid_SPIRV_NativeLibName>
+    <_Veldrid_SPIRV_NativeLibName Condition="'$(_Veldrid_SPIRV_NativeRuntime)' == 'osx-x64'">libveldrid-spirv.dylib</_Veldrid_SPIRV_NativeLibName>
+    <_Veldrid_SPIRV_NativeLibName Condition="'$(_Veldrid_SPIRV_NativeRuntime)' == 'linux-x64'">libveldrid-spirv.so</_Veldrid_SPIRV_NativeLibName>
   </PropertyGroup>
   <ItemGroup>
-    <Content Condition="'$(_NativeRuntime)' != ''" Include="$(MSBuildThisFileDirectory)..\..\runtimes\$(_NativeRuntime)\native\$(_NativeLibName)">
+    <Content Condition="'$(_Veldrid_SPIRV_NativeRuntime)' != ''" Include="$(MSBuildThisFileDirectory)..\..\runtimes\$(_Veldrid_SPIRV_NativeRuntime)\native\$(_Veldrid_SPIRV_NativeLibName)">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>False</Visible>
