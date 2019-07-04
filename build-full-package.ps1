@@ -1,10 +1,11 @@
 param (
     [string]$configuration = "Release",
-    [Parameter(Mandatory=$true)][string]$tag,
+    [Parameter(Mandatory=$true)][string]$version,
     [switch]$public
 )
 
-Write-Host Building $configuration NuGet package for tag $tag...
+Write-Host Building $configuration NuGet package for version $version...
+$tag = "v"+$version
 if (!$public)
 {
     Write-Host This is a development build. Pass "-public" to remove the git commit from the package ID.
@@ -113,3 +114,11 @@ Write-Host Generating NuGet package...
 dotnet restore src\Veldrid.SPIRV\Veldrid.SPIRV.csproj
 
 dotnet msbuild src\Veldrid.SPIRV\Veldrid.SPIRV.csproj /p:Configuration=$configuration /t:Pack /p:NativeAssetsPath=$PSScriptRoot/download/ /p:PublicRelease=$public
+
+dotnet restore src\Veldrid.SPIRV.VariantCompiler\Veldrid.SPIRV.VariantCompiler.csproj --source bin\Packages\Release /p:VeldridSPIRVVersion=$version --no-cache
+
+dotnet msbuild src\Veldrid.SPIRV.VariantCompiler\Veldrid.SPIRV.VariantCompiler.csproj /p:Configuration=$configuration /p:PublicRelease=$public /p:VeldridSPIRVVersion=$version
+
+dotnet restore src\Veldrid.SPIRV.BuildTools\Veldrid.SPIRV.BuildTools.csproj --source bin\Packages\Release
+
+dotnet msbuild src\Veldrid.SPIRV.BuildTools\Veldrid.SPIRV.BuildTools.csproj /p:Configuration=$configuration /t:Pack /p:PublicRelease=$public /p:VeldridSPIRVVersion=$version
