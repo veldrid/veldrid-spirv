@@ -42,7 +42,7 @@ namespace Veldrid.SPIRV
         public GlslCompileOptions(bool debug, params MacroDefinition[] macros)
         {
             Debug = debug;
-            Macros = macros;
+            Macros = macros ?? Array.Empty<MacroDefinition>();
         }
     }
 }

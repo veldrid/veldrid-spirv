@@ -111,14 +111,19 @@ Write-Host "- libveldrid-spirv.so (Android armeabi-v7a)"
 
 Write-Host Generating NuGet package...
 
+$env:VeldridSPIRVVersion = $version
+$env:Configuration = $configuration
+$env:NativeAssetsPath = "${PSScriptRoot}/download/"
+$env:PublicRelease = ${public}
+
 dotnet restore src\Veldrid.SPIRV\Veldrid.SPIRV.csproj
 
-dotnet msbuild src\Veldrid.SPIRV\Veldrid.SPIRV.csproj /p:Configuration=$configuration /t:Pack /p:NativeAssetsPath=$PSScriptRoot/download/ /p:PublicRelease=$public
+dotnet msbuild src\Veldrid.SPIRV\Veldrid.SPIRV.csproj /t:Pack
 
-dotnet restore src\Veldrid.SPIRV.VariantCompiler\Veldrid.SPIRV.VariantCompiler.csproj --source bin\Packages\Release /p:VeldridSPIRVVersion=$version --no-cache
+dotnet restore src\Veldrid.SPIRV.VariantCompiler\Veldrid.SPIRV.VariantCompiler.csproj --source ${PSScriptRoot}\bin\Packages\Release --no-cache
 
-dotnet msbuild src\Veldrid.SPIRV.VariantCompiler\Veldrid.SPIRV.VariantCompiler.csproj /p:Configuration=$configuration /p:PublicRelease=$public /p:VeldridSPIRVVersion=$version
+dotnet msbuild src\Veldrid.SPIRV.VariantCompiler\Veldrid.SPIRV.VariantCompiler.csproj
 
-dotnet restore src\Veldrid.SPIRV.BuildTools\Veldrid.SPIRV.BuildTools.csproj --source bin\Packages\Release
+dotnet restore src\Veldrid.SPIRV.BuildTools\Veldrid.SPIRV.BuildTools.csproj --source ${PSScriptRoot}\bin\Packages\Release
 
-dotnet msbuild src\Veldrid.SPIRV.BuildTools\Veldrid.SPIRV.BuildTools.csproj /p:Configuration=$configuration /t:Pack /p:PublicRelease=$public /p:VeldridSPIRVVersion=$version
+dotnet msbuild src\Veldrid.SPIRV.BuildTools\Veldrid.SPIRV.BuildTools.csproj /t:Pack

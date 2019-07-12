@@ -41,11 +41,21 @@ namespace Veldrid.SPIRV
                 descs = serializer.Deserialize<ShaderVariantDescription[]>(jtr);
             }
 
+            HashSet<string> generatedPaths = new HashSet<string>();
+
             VariantCompiler compiler = new VariantCompiler(new List<string>(SearchPaths), OutputPath);
             foreach (ShaderVariantDescription desc in descs)
             {
-                compiler.Compile(desc);
+                string[] newPaths = compiler.Compile(desc);
+                foreach (string s in newPaths)
+                {
+                    generatedPaths.Add(s);
+                }
             }
+
+            string generatedFilesListText = string.Join(Environment.NewLine, generatedPaths);
+            string generatedFilesListPath = Path.Combine(OutputPath, "vspv_generated_files.txt");
+            File.WriteAllText(generatedFilesListPath, generatedFilesListText);
         }
     }
 }
