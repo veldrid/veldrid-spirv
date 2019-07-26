@@ -9,10 +9,15 @@
         /// The translated shader source code.
         /// </summary>
         public string ComputeShader { get; }
+        /// <summary>
+        /// Information about the resources used in the compiled shader.
+        /// </summary>
+        public SpirvReflection Reflection { get; }
 
-        internal ComputeCompilationResult(string computeCode)
+        internal ComputeCompilationResult(string computeCode, SpirvReflection reflection)
         {
             ComputeShader = computeCode;
+            Reflection = reflection;
         }
     }
 

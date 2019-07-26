@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -136,6 +138,7 @@ namespace Veldrid.SPIRV
             {
                 try
                 {
+                    bool writeReflectionFile = true;
                     VertexFragmentCompilationResult result = SpirvCompilation.CompileVertexFragment(
                         vsBytes,
                         fsBytes,
@@ -152,6 +155,22 @@ namespace Veldrid.SPIRV
                         string fsPath = Path.Combine(_outputPath, $"{variant.Name}_Fragment.{GetExtension(target)}");
                         File.WriteAllText(fsPath, result.FragmentShader);
                         generatedFiles.Add(fsPath);
+                    }
+
+                    if (writeReflectionFile)
+                    {
+                        writeReflectionFile = false;
+                        string reflectionPath = Path.Combine(_outputPath, $"{variant.Name}_ReflectionInfo.json");
+
+                        JsonSerializer serializer = new JsonSerializer();
+                        serializer.Formatting = Formatting.Indented;
+                        StringEnumConverter enumConverter = new StringEnumConverter();
+                        serializer.Converters.Add(enumConverter);
+                        using (StreamWriter sw = File.CreateText(reflectionPath))
+                        using (JsonTextWriter jtw = new JsonTextWriter(sw))
+                        {
+                            serializer.Serialize(jtw, result.Reflection);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -238,6 +257,18 @@ namespace Veldrid.SPIRV
                     string csPath = Path.Combine(_outputPath, $"{variant.Name}_Compute.{GetExtension(target)}");
                     File.WriteAllText(csPath, result.ComputeShader);
                     generatedFiles.Add(csPath);
+
+                    string reflectionPath = Path.Combine(_outputPath, $"{variant.Name}_ReflectionInfo.json");
+
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Formatting = Formatting.Indented;
+                    StringEnumConverter enumConverter = new StringEnumConverter();
+                    serializer.Converters.Add(enumConverter);
+                    using (StreamWriter sw = File.CreateText(reflectionPath))
+                    using (JsonTextWriter jtw = new JsonTextWriter(sw))
+                    {
+                        serializer.Serialize(jtw, result.Reflection);
+                    }
                 }
                 catch (Exception e)
                 {

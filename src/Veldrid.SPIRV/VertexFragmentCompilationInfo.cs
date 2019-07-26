@@ -13,11 +13,26 @@
         /// The translated fragment shader source code.
         /// </summary>
         public string FragmentShader { get; }
+        /// <summary>
+        /// Information about the resources used in the compiled shaders.
+        /// </summary>
+        public SpirvReflection Reflection { get; }
 
-        internal VertexFragmentCompilationResult(string vertexCode, string fragmentCode)
+        internal VertexFragmentCompilationResult(
+            string vertexCode,
+            string fragmentCode)
+            : this(vertexCode, fragmentCode, null)
+        {
+        }
+
+        internal VertexFragmentCompilationResult(
+            string vertexCode,
+            string fragmentCode,
+            SpirvReflection reflection)
         {
             VertexShader = vertexCode;
             FragmentShader = fragmentCode;
+            Reflection = reflection;
         }
     }
 }

@@ -111,7 +111,44 @@ namespace Veldrid.SPIRV
 
                     string vsCode = Util.GetString((byte*)result->GetData(0), result->GetLength(0));
                     string fsCode = Util.GetString((byte*)result->GetData(1), result->GetLength(1));
-                    return new VertexFragmentCompilationResult(vsCode, fsCode);
+
+                    ReflectionInfo* reflInfo = &result->ReflectionInfo;
+
+                    VertexElementDescription[] vertexElements = new VertexElementDescription[reflInfo->VertexElements.Count];
+                    for (uint i = 0; i < reflInfo->VertexElements.Count; i++)
+                    {
+                        ref NativeVertexElementDescription nativeDesc
+                            = ref reflInfo->VertexElements.Ref<NativeVertexElementDescription>(i);
+                        vertexElements[i] = new VertexElementDescription(
+                            Util.GetString((byte*)nativeDesc.Name.Data, nativeDesc.Name.Count),
+                            nativeDesc.Semantic,
+                            nativeDesc.Format,
+                            nativeDesc.Offset);
+                    }
+
+                    ResourceLayoutDescription[] layouts = new ResourceLayoutDescription[reflInfo->ResourceLayouts.Count];
+                    for (uint i = 0; i < reflInfo->ResourceLayouts.Count; i++)
+                    {
+                        ref NativeResourceLayoutDescription nativeDesc =
+                            ref reflInfo->ResourceLayouts.Ref<NativeResourceLayoutDescription>(i);
+                        layouts[i].Elements = new ResourceLayoutElementDescription[nativeDesc.ResourceElements.Count];
+                        for (uint j = 0; j < nativeDesc.ResourceElements.Count; j++)
+                        {
+                            ref NativeResourceElementDescription elemDesc =
+                                ref nativeDesc.ResourceElements.Ref<NativeResourceElementDescription>(j);
+                            layouts[i].Elements[j] = new ResourceLayoutElementDescription(
+                                Util.GetString((byte*)elemDesc.Name.Data, elemDesc.Name.Count),
+                                elemDesc.Kind,
+                                elemDesc.Stages,
+                                elemDesc.Options);
+                        }
+                    }
+
+                    SpirvReflection reflection = new SpirvReflection(
+                        vertexElements,
+                        layouts);
+
+                    return new VertexFragmentCompilationResult(vsCode, fsCode, reflection);
                 }
                 finally
                 {
@@ -188,7 +225,32 @@ namespace Veldrid.SPIRV
                     }
 
                     string csCode = Util.GetString((byte*)result->GetData(0), result->GetLength(0));
-                    return new ComputeCompilationResult(csCode);
+
+                    ReflectionInfo* reflInfo = &result->ReflectionInfo;
+
+                    ResourceLayoutDescription[] layouts = new ResourceLayoutDescription[reflInfo->ResourceLayouts.Count];
+                    for (uint i = 0; i < reflInfo->ResourceLayouts.Count; i++)
+                    {
+                        ref NativeResourceLayoutDescription nativeDesc =
+                            ref reflInfo->ResourceLayouts.Ref<NativeResourceLayoutDescription>(i);
+                        layouts[i].Elements = new ResourceLayoutElementDescription[nativeDesc.ResourceElements.Count];
+                        for (uint j = 0; j < nativeDesc.ResourceElements.Count; j++)
+                        {
+                            ref NativeResourceElementDescription elemDesc =
+                                ref nativeDesc.ResourceElements.Ref<NativeResourceElementDescription>(j);
+                            layouts[i].Elements[j] = new ResourceLayoutElementDescription(
+                                Util.GetString((byte*)elemDesc.Name.Data, elemDesc.Name.Count),
+                                elemDesc.Kind,
+                                elemDesc.Stages,
+                                elemDesc.Options);
+                        }
+                    }
+
+                    SpirvReflection reflection = new SpirvReflection(
+                        Array.Empty<VertexElementDescription>(),
+                        layouts);
+
+                    return new ComputeCompilationResult(csCode, reflection);
                 }
                 finally
                 {
@@ -251,7 +313,7 @@ namespace Veldrid.SPIRV
             info.Kind = GetShadercKind(stage);
             info.SourceText = new InteropArray(sourceLength, sourceTextPtr);
             info.Debug = debug;
-            info.Macros = new InteropArray(macroCount,  macros);
+            info.Macros = new InteropArray(macroCount, macros);
 
             if (string.IsNullOrEmpty(fileName)) { fileName = "<veldrid-spirv-input>"; }
             int fileNameAsciiCount = Encoding.ASCII.GetByteCount(fileName);
