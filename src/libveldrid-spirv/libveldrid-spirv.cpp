@@ -447,8 +447,8 @@ CompilationResult *CompileVertexFragment(const CrossCompileInfo &info)
     result->DataBuffers[0].CopyFrom(static_cast<uint32_t>(vsText.length()), (uint8_t *)vsText.c_str());
     result->DataBuffers[1].CopyFrom(static_cast<uint32_t>(fsText.length()), (uint8_t *)fsText.c_str());
 
-    ReflectVertexInfo(*vsCompiler, vsResources, result->ReflectionInfo);
-    result->ReflectionInfo.ResourceLayouts = CreateResourceLayoutArray(allResources, false);
+    ReflectVertexInfo(*vsCompiler, vsResources, result->Reflection);
+    result->Reflection.ResourceLayouts = CreateResourceLayoutArray(allResources, false);
 
     delete vsCompiler;
     delete fsCompiler;
@@ -534,7 +534,7 @@ CompilationResult *CompileCompute(const CrossCompileInfo &info)
     result->DataBuffers.Resize(1);
     result->DataBuffers[0].CopyFrom(static_cast<uint32_t>(csText.length()), (uint8_t *)csText.c_str());
 
-    result->ReflectionInfo.ResourceLayouts = CreateResourceLayoutArray(allResources, true);
+    result->Reflection.ResourceLayouts = CreateResourceLayoutArray(allResources, true);
 
     return result;
 }

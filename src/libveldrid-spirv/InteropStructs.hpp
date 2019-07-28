@@ -253,7 +253,7 @@ struct CompilationResult
 {
     Bool32 Succeeded;
     InteropArray<InteropArray<uint8_t>> DataBuffers;
-    ReflectionInfo ReflectionInfo;
+    ReflectionInfo Reflection;
 
     CompilationResult()
     {
