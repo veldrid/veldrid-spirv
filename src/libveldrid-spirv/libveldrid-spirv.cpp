@@ -85,7 +85,14 @@ void AddResources(
         bi.Binding = compiler->get_decoration(resource.id, spv::Decoration::DecorationBinding);
 
         std::string name = "vdspv_" + std::to_string(bi.Set) + "_" + std::to_string(bi.Binding);
-        compiler->set_name(resource.id, name);
+        if (kind == ResourceKind::UniformBuffer)
+        {
+            compiler->set_name(resource.base_type_id, name);
+        }
+        else
+        {
+            compiler->set_name(resource.id, name);
+        }
 
         ResourceInfo ri = {};
         ri.Name = name;
