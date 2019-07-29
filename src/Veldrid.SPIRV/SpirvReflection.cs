@@ -25,7 +25,14 @@ namespace Veldrid.SPIRV
         /// </summary>
         public ResourceLayoutDescription[] ResourceLayouts { get; }
 
-        internal SpirvReflection(
+        /// <summary>
+        /// Constructs a new <see cref="SpirvReflection"/> instance.
+        /// </summary>
+        /// <param name="vertexElements">/// An array containing a description of each vertex element that is used by
+        /// the compiled shader set.</param>
+        /// <param name="resourceLayouts">An array containing a description of each set of resources used by the
+        /// compiled shader set.</param>
+        public SpirvReflection(
             VertexElementDescription[] vertexElements,
             ResourceLayoutDescription[] resourceLayouts)
         {
