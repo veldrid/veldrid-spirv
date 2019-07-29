@@ -171,6 +171,7 @@ namespace Veldrid.SPIRV
                         {
                             serializer.Serialize(jtw, result.Reflection);
                         }
+                        generatedFiles.Add(reflectionPath);
                     }
                 }
                 catch (Exception e)
@@ -221,7 +222,7 @@ namespace Veldrid.SPIRV
 
         private GlslCompileOptions GetOptions(ShaderVariantDescription variant)
         {
-            return new GlslCompileOptions(true, variant.Macros);
+            return new GlslCompileOptions(false, variant.Macros);
         }
 
         private string LoadGlsl(string fileName)
@@ -269,6 +270,7 @@ namespace Veldrid.SPIRV
                     {
                         serializer.Serialize(jtw, result.Reflection);
                     }
+                    generatedFiles.Add(reflectionPath);
                 }
                 catch (Exception e)
                 {
