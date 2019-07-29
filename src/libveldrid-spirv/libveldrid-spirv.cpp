@@ -102,6 +102,15 @@ void AddResources(
         auto pair = allResources.insert(std::pair<BindingInfo, ResourceInfo>(bi, ri));
         if (!pair.second)
         {
+            if (pair.first->second.IDs[idIndex] != 0)
+            {
+                std::stringstream msg;
+                msg << "The same binding slot ";
+                msg << "(" << std::to_string(bi.Set) << ", " << std::to_string(bi.Binding) << ") ";
+                msg << "was used by multiple distinct resources.";
+                throw std::runtime_error(msg.str());
+            }
+
             pair.first->second.IDs[idIndex] = resource.id;
             if (pair.first->second.Kind != kind)
             {
