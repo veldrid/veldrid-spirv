@@ -128,6 +128,7 @@ struct CrossCompileInfo
     InteropArray<uint32_t> VertexShader;
     InteropArray<uint32_t> FragmentShader;
     InteropArray<uint32_t> ComputeShader;
+    InteropArray<uint32_t> GeometryShader;
 };
 #pragma pack(pop)
 
