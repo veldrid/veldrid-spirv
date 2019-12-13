@@ -21,7 +21,6 @@ void main()
     fsin_Position_WorldSpace = Position;
     vec4 pos = vec4(Position, 1);
     gl_Position = Proj * View * pos;
-    gl_Position.y = -gl_Position.y; // Correct for Vulkan clip coordinates
     fsin_Normal = Normal;
     fsin_TexCoord = TexCoord * vec2(10, 6);
 }

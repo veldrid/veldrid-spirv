@@ -1,0 +1,48 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <_VSPV_ToolExePath>$(MSBuildThisFileDirectory)Veldrid.SPIRV.VariantCompiler.dll</_VSPV_ToolExePath>
+  </PropertyGroup>
+
+  <Target Name="VSPV_CompileShaderVariants" AfterTargets="ResolveReferences">
+    <Message Text="Compiling shader variants..." />
+
+    <Error Condition="'$(_VSPV_ToolExePath)' == ''" Text="The Veldrid.SPIRV variant compiler tool was not located or set." />
+    <Error Condition="'$(ShaderVariantDef)' == ''" Text="ShaderVariantDef must be set to a JSON file defining shader variants." />
+
+    <PropertyGroup>
+      <_VSPV_ToolArgs>$(_VSPV_ToolArgs) @(ShaderSourceDir->'--search-path %(Identity)')</_VSPV_ToolArgs>
+      <_VSPV_ToolArgs>$(_VSPV_ToolArgs) --output-path $(IntermediateOutputPath)\generated_shaders</_VSPV_ToolArgs>
+      <_VSPV_ToolArgs>$(_VSPV_ToolArgs) --set $(ShaderVariantDef)</_VSPV_ToolArgs>
+      
+      <_VSPV_GeneratedFilesList>$(IntermediateOutputPath)\generated_shaders\vspv_generated_files.txt</_VSPV_GeneratedFilesList>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_VSPV_ContinueOnError>false</_VSPV_ContinueOnError>
+      <_VSPV_ContinueOnError Condition="'$(SGIgnoreErrors)' == 'true' Or '$(DesignTimeBuild)' == 'true'">true</_VSPV_ContinueOnError>
+    </PropertyGroup>
+
+    <Exec Command="dotnet &quot;$(_VSPV_ToolExePath)&quot; $(_VSPV_ToolArgs)"
+          WorkingDirectory="$(MSBuildProjectDirectory)"
+          StandardOutputImportance="high"
+          ContinueOnError="$(_VSPV_ContinueOnError)" />
+
+    <ReadLinesFromFile
+      File="$(_VSPV_GeneratedFilesList)"
+      ContinueOnError="$(_VSPV_ContinueOnError)">
+      <Output
+          TaskParameter="Lines"
+          ItemName="VSPV_GeneratedShader" />
+    </ReadLinesFromFile>
+  </Target>
+
+  <Target Name="VSPV_EmbedGeneratedShaders"
+          AfterTargets="AssignTargetPaths"
+          Condition="'$(EmbedGeneratedShaders)' == 'true'">
+    <ItemGroup>
+      <EmbeddedResource Include="@(VSPV_GeneratedShader)" LogicalName="%(FileName)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

@@ -1,19 +1,39 @@
 version: 1.0.{build}
-image:
-- Ubuntu
-- Visual Studio 2017
+
 install:
 - git submodule update --init --recursive
+
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      _NATIVE_BUILD_ARGS: Release win-x64 --artifact-name build\libveldrid-spirv.win-x64.dll
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      _NATIVE_BUILD_ARGS: Release win-x86 --artifact-name build\libveldrid-spirv.win-x86.dll
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi arm64-v8a --artifact-name build\libveldrid-spirv.android-arm64-v8a.so
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi armeabi-v7a --artifact-name build\libveldrid-spirv.android-armeabi-v7a.so
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
+
+before_build:
+- sh: ./ext/sync-shaderc.sh
+- cmd: call .\ext\sync-shaderc.cmd
+
 build_script:
 - sh: ./ci-build.sh
-- cmd: call .\ci-build.cmd
+- cmd: call .\build-native.cmd %_NATIVE_BUILD_ARGS%
+
 artifacts:
 - path: build/Release/libveldrid-spirv.so
   name: libveldrid-spirv.so
-- path: build\x64\Release\libveldrid-spirv.win-x64.dll
+- path: build\libveldrid-spirv.win-x64.dll
   name: libveldrid-spirv.win-x64.dll
-- path: build\x86\Release\libveldrid-spirv.win-x86.dll
+- path: build\libveldrid-spirv.win-x86.dll
   name: libveldrid-spirv.win-x86.dll
+- path: build\libveldrid-spirv.android-arm64-v8a.so
+  name: libveldrid-spirv.android-arm64-v8a.so
+- path: build\libveldrid-spirv.android-armeabi-v7a.so
+  name: libveldrid-spirv.android-armeabi-v7a.so
 
 deploy:
   release: $(APPVEYOR_REPO_TAG_NAME)

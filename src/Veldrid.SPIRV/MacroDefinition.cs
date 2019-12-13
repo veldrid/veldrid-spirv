@@ -33,5 +33,9 @@ namespace Veldrid.SPIRV
             Name = name;
             Value = value;
         }
+
+        // For serialization
+        internal MacroDefinition()
+        { }
     }
 }

@@ -2,6 +2,12 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
+layout(set = 0, binding = 0) uniform ProjView
+{
+    mat4 View;
+    mat4 Proj;
+};
+
 layout(set = 0, binding = 2) uniform LightInfo
 {
     vec3 LightDirection;
@@ -41,4 +47,5 @@ void main()
     }
 
     outputColor = diffuseColor + specColor;
+    outputColor.r *= View[0][0] * Proj[0][1];
 }

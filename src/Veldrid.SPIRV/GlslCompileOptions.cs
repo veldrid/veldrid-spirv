@@ -63,7 +63,7 @@ namespace Veldrid.SPIRV
         {
             Language = language;
             Debug = debug;
-            Macros = macros;
+            Macros = macros ?? Array.Empty<MacroDefinition>();
         }
     }
 }

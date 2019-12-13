@@ -1,0 +1,10 @@
+<Project>
+  <Target Name="GetFilesToPack" AfterTargets="CoreCompile">
+    <ItemGroup>
+      <Content Include="$(PublishedToolPath)\**\*">
+        <Pack>true</Pack>
+        <PackagePath>build</PackagePath>
+      </Content>
+    </ItemGroup>
+  </Target>
+</Project>

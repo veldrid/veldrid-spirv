@@ -41,6 +41,25 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.GLSL)]
         [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.ESSL)]
         [InlineData("empty.vert.spv", "texel-fetch-no-sampler.frag.spv", CrossCompileTarget.MSL)]
+        [InlineData("empty.vert", "texel-fetch-no-sampler.frag", CrossCompileTarget.HLSL)]
+        [InlineData("empty.vert", "texel-fetch-no-sampler.frag", CrossCompileTarget.GLSL)]
+        [InlineData("empty.vert", "texel-fetch-no-sampler.frag", CrossCompileTarget.ESSL)]
+        [InlineData("empty.vert", "texel-fetch-no-sampler.frag", CrossCompileTarget.MSL)]
+        [InlineData("uses-point-size.vert", "empty.frag", CrossCompileTarget.HLSL)]
+        [InlineData("uses-point-size.vert", "empty.frag", CrossCompileTarget.GLSL)]
+        [InlineData("uses-point-size.vert", "empty.frag", CrossCompileTarget.ESSL)]
+        [InlineData("uses-point-size.vert", "empty.frag", CrossCompileTarget.MSL)]
+        [InlineData("uses-point-size.vert.spv", "empty.frag.spv", CrossCompileTarget.HLSL)]
+        [InlineData("uses-point-size.vert.spv", "empty.frag.spv", CrossCompileTarget.GLSL)]
+        [InlineData("uses-point-size.vert.spv", "empty.frag.spv", CrossCompileTarget.ESSL)]
+        [InlineData("uses-point-size.vert.spv", "empty.frag.spv", CrossCompileTarget.MSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.HLSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.GLSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.ESSL)]
+        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.MSL)]
+        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.GLSL)]
+        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.ESSL)]
+        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.MSL)]
         public void VertexFragmentSucceeds(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);
@@ -111,10 +130,8 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("overlapping-resources.vert", "overlapping-resources.frag.spv", CrossCompileTarget.HLSL)]
         [InlineData("overlapping-resources.vert.spv", "overlapping-resources.frag", CrossCompileTarget.HLSL)]
         [InlineData("overlapping-resources.vert", "overlapping-resources.frag", CrossCompileTarget.HLSL)]
-        [InlineData("read-from-buffer.vert", "read-from-buffer.frag", CrossCompileTarget.HLSL)] // SPIRV-Cross Limitation: cannot read struct from ByteAddressBuffer.
+        // SPIRV-Cross limitation: Reading structs from ByteAddressBuffer not yet supported.
         [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag.spv", CrossCompileTarget.HLSL)]
-        [InlineData("read-from-buffer.vert", "read-from-buffer.frag.spv", CrossCompileTarget.HLSL)]
-        [InlineData("read-from-buffer.vert.spv", "read-from-buffer.frag", CrossCompileTarget.HLSL)]
         public void CompilationFails(string vs, string fs, CrossCompileTarget target)
         {
             byte[] vsBytes = TestUtil.LoadBytes(vs);
@@ -134,6 +151,7 @@ namespace Veldrid.SPIRV.Tests
         [InlineData("planet.frag", ShaderStages.Fragment)]
         [InlineData("starfield.vert", ShaderStages.Vertex)]
         [InlineData("starfield.frag", ShaderStages.Fragment)]
+        [InlineData("texel-fetch-no-sampler.frag", ShaderStages.Fragment)]
         [InlineData("simple.comp", ShaderStages.Compute)]
         public void GlslToSpirv_Succeeds(string name, ShaderStages stage)
         {

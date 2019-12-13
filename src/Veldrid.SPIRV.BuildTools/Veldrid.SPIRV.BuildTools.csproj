@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <PublishedToolPath>$([System.IO.Path]::GetFullPath('$(RepositoryRootDirectory)bin\$(Configuration)'))\Veldrid.SPIRV.VariantCompiler\netcoreapp2.2\publish</PublishedToolPath>
+
+    <!-- Nuget info -->
+    <PackageId>Veldrid.SPIRV.BuildTools</PackageId>
+    <Description>Build-time plugin which compiles multiple shader variants, as defined in a configuration file.</Description>
+    <PackageTags>Veldrid Shader SPIR-V GLSL HLSL MSL ESSL Graphics OpenGL Vulkan Direct3D Metal Game</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Veldrid.SPIRV.BuildTools.targets">
+      <Pack>true</Pack>
+      <PackagePath>build</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\Veldrid.SPIRV.VariantCompiler\Veldrid.SPIRV.VariantCompiler.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

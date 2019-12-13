@@ -261,9 +261,11 @@ launchSettings.json
 
 # CMake build dir
 build/
+!src/Veldrid.SPIRV/build
 
 # Downloaded assets for package build
 download/
 
 # Shaderc
 ext/shaderc
+

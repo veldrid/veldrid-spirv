@@ -8,6 +8,7 @@ namespace Veldrid.SPIRV
     {
         public Bool32 Succeeded;
         public InteropArray DataBuffers;
+        public ReflectionInfo ReflectionInfo;
 
         public uint GetLength(uint index)
         {

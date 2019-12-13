@@ -8,6 +8,8 @@ namespace Veldrid.SPIRV
     {
         internal static unsafe string GetString(byte* data, uint length)
         {
+            if (data == null) { return null; }
+
             return Encoding.UTF8.GetString(data, (int)length);
         }
 

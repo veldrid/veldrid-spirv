@@ -9,15 +9,37 @@
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
-    <PackageReference Include="Veldrid" Version="4.4.0" />
+    <PackageReference Include="Veldrid" Version="4.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="build\Xamarin.iOS10\Veldrid.SPIRV.targets">
+      <PackagePath>build/Xamarin.iOS10/Veldrid.SPIRV.targets</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="build\Xamarin.iOS10\Veldrid.SPIRV.dll.config">
+      <PackagePath>build/Xamarin.iOS10/Veldrid.SPIRV.dll.config</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="build\MonoAndroid10\Veldrid.SPIRV.targets">
+      <PackagePath>build/MonoAndroid10/Veldrid.SPIRV.targets</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="build\net40\Veldrid.SPIRV.targets">
+      <PackagePath>build/net40/Veldrid.SPIRV.targets</PackagePath>
+      <Pack>true</Pack>
+    </Content>
   </ItemGroup>
 
   <Target Name="BeforePackage" BeforeTargets="AssignTargetPaths">
     <ItemGroup>
-      <_NativeAssetName Include="x86/$(Configuration)/libveldrid-spirv.dll" PackagePath="runtimes/win-x86/native" />
-      <_NativeAssetName Include="x64/$(Configuration)/libveldrid-spirv.dll" PackagePath="runtimes/win-x64/native" />
-      <_NativeAssetName Include="$(Configuration)/libveldrid-spirv.so" PackagePath="runtimes/linux-x64/native" />
-      <_NativeAssetName Include="$(Configuration)/libveldrid-spirv.dylib" PackagePath="runtimes/osx-x64/native" />
+      <_NativeAssetName Include="$(Configuration)/win-x86/libveldrid-spirv.dll" PackagePath="runtimes/win-x86/native" />
+      <_NativeAssetName Include="$(Configuration)/win-x64/libveldrid-spirv.dll" PackagePath="runtimes/win-x64/native" />
+      <_NativeAssetName Include="$(Configuration)/linux-x64/libveldrid-spirv.so" PackagePath="runtimes/linux-x64/native" />
+      <_NativeAssetName Include="$(Configuration)/osx-x64/libveldrid-spirv.dylib" PackagePath="runtimes/osx-x64/native" />
+      <_NativeAssetName Include="$(Configuration)/ios/libveldrid-spirv-combined.a" PackagePath="build/Xamarin.iOS10/native" />
+      <_NativeAssetName Include="$(Configuration)/android-arm64-v8a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/arm64-v8a" />
+      <_NativeAssetName Include="$(Configuration)/android-armeabi-v7a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/armeabi-v7a" />
 
       <_ExistingAssets Include="@(_NativeAssetName)" Condition="Exists('$(NativeAssetsPath)/%(Identity)')" />
 
