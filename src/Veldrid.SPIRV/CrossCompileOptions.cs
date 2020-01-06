@@ -23,6 +23,11 @@ namespace Veldrid.SPIRV
         /// </summary>
         public bool InvertVertexOutputY { get; set; }
         /// <summary>
+        /// Indicates whether all resource names should be forced into a normalized form. This has functional impact
+        /// on compilation targets where resource names are meaningful, like GLSL.
+        /// </summary>
+        public bool NormalizeResourceNames { get; set; }
+        /// <summary>
         /// An array of <see cref="SpecializationConstant"/> which will be substituted into the shader as new constants. Each
         /// element in the array will be matched by ID with the SPIR-V specialization constants defined in the shader.
         /// </summary>
@@ -55,12 +60,49 @@ namespace Veldrid.SPIRV
         /// fixup at the end of the vertex shader.</param>
         /// <param name="invertVertexOutputY">Indicates whether or not the compiled shader output should include a fixup at the
         /// end of the vertex shader which inverts the clip-space Y value.</param>
+        /// <param name="normalizeResourceNames">Indicates whether all resource names should be forced into a normalized form.
+        /// This has functional impact on compilation targets where resource names are meaningful, like GLSL.</param>
+        public CrossCompileOptions(bool fixClipSpaceZ, bool invertVertexOutputY, bool normalizeResourceNames)
+            : this(fixClipSpaceZ, invertVertexOutputY, normalizeResourceNames, Array.Empty<SpecializationConstant>())
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="CrossCompileOptions"/>, used to control the parameters of shader translation.
+        /// </summary>
+        /// <param name="fixClipSpaceZ">Indicates whether or not the compiled shader output should include a clip-space Z-range
+        /// fixup at the end of the vertex shader.</param>
+        /// <param name="invertVertexOutputY">Indicates whether or not the compiled shader output should include a fixup at the
+        /// end of the vertex shader which inverts the clip-space Y value.</param>
         /// <param name="specializations">An array of <see cref="SpecializationConstant"/> which will be substituted into the
         /// shader as new constants.</param>
         public CrossCompileOptions(bool fixClipSpaceZ, bool invertVertexOutputY, params SpecializationConstant[] specializations)
         {
             FixClipSpaceZ = fixClipSpaceZ;
             InvertVertexOutputY = invertVertexOutputY;
+            Specializations = specializations;
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="CrossCompileOptions"/>, used to control the parameters of shader translation.
+        /// </summary>
+        /// <param name="fixClipSpaceZ">Indicates whether or not the compiled shader output should include a clip-space Z-range
+        /// fixup at the end of the vertex shader.</param>
+        /// <param name="invertVertexOutputY">Indicates whether or not the compiled shader output should include a fixup at the
+        /// end of the vertex shader which inverts the clip-space Y value.</param>
+        /// <param name="normalizeResourceNames">Indicates whether all resource names should be forced into a normalized form.
+        /// This has functional impact on compilation targets where resource names are meaningful, like GLSL.</param>
+        /// <param name="specializations">An array of <see cref="SpecializationConstant"/> which will be substituted into the
+        /// shader as new constants.</param>
+        public CrossCompileOptions(
+            bool fixClipSpaceZ,
+            bool invertVertexOutputY,
+            bool normalizeResourceNames,
+            params SpecializationConstant[] specializations)
+        {
+            FixClipSpaceZ = fixClipSpaceZ;
+            InvertVertexOutputY = invertVertexOutputY;
+            NormalizeResourceNames = normalizeResourceNames;
             Specializations = specializations;
         }
     }

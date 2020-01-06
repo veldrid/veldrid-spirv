@@ -74,6 +74,7 @@ void AddResources(
     spirv_cross::Compiler *compiler,
     std::map<BindingInfo, ResourceInfo> &allResources,
     const uint32_t idIndex,
+    bool normalizeResourceNames,
     bool image = false,
     bool storage = false)
 {
@@ -84,30 +85,37 @@ void AddResources(
         bi.Set = compiler->get_decoration(resource.id, spv::Decoration::DecorationDescriptorSet);
         bi.Binding = compiler->get_decoration(resource.id, spv::Decoration::DecorationBinding);
 
-        std::string name = "vdspv_" + std::to_string(bi.Set) + "_" + std::to_string(bi.Binding);
-        if (kind == ResourceKind::UniformBuffer)
+        ResourceInfo ri = {};
+        if (normalizeResourceNames)
         {
-            compiler->set_name(resource.base_type_id, name);
+            std::string name = "vdspv_" + std::to_string(bi.Set) + "_" + std::to_string(bi.Binding);
+            if (kind == ResourceKind::UniformBuffer)
+            {
+                compiler->set_name(resource.base_type_id, name);
+            }
+            else
+            {
+                compiler->set_name(resource.id, name);
+            }
+            ri.Name = name;
         }
         else
         {
-            compiler->set_name(resource.id, name);
+            ri.Name = resource.name;
         }
 
-        ResourceInfo ri = {};
-        ri.Name = name;
         ri.IDs[idIndex] = resource.id;
         ri.Kind = kind;
 
         auto pair = allResources.insert(std::pair<BindingInfo, ResourceInfo>(bi, ri));
-        if (!pair.second)
+        if (!pair.second) // Insertion failed; element already exists.
         {
             if (pair.first->second.IDs[idIndex] != 0)
             {
                 std::stringstream msg;
                 msg << "The same binding slot ";
                 msg << "(" << std::to_string(bi.Set) << ", " << std::to_string(bi.Binding) << ") ";
-                msg << "was used by multiple distinct resources.";
+                msg << "was used by multiple distinct resources. First resource: " << pair.first->second.Name << ". Second resource: " << ri.Name;
                 throw std::runtime_error(msg.str());
             }
 
@@ -324,17 +332,17 @@ CompilationResult *CompileVertexFragment(const CrossCompileInfo &info)
 
     std::map<BindingInfo, ResourceInfo> allResources;
 
-    AddResources(vsResources.uniform_buffers, vsCompiler, allResources, 0);
-    AddResources(vsResources.storage_buffers, vsCompiler, allResources, 0, false, true);
-    AddResources(vsResources.separate_images, vsCompiler, allResources, 0, true, false);
-    AddResources(vsResources.storage_images, vsCompiler, allResources, 0, true, true);
-    AddResources(vsResources.separate_samplers, vsCompiler, allResources, 0);
+    AddResources(vsResources.uniform_buffers, vsCompiler, allResources, 0, info.NormalizeResourceNames);
+    AddResources(vsResources.storage_buffers, vsCompiler, allResources, 0, info.NormalizeResourceNames, false, true);
+    AddResources(vsResources.separate_images, vsCompiler, allResources, 0, info.NormalizeResourceNames, true, false);
+    AddResources(vsResources.storage_images, vsCompiler, allResources, 0, info.NormalizeResourceNames, true, true);
+    AddResources(vsResources.separate_samplers, vsCompiler, allResources, 0, info.NormalizeResourceNames);
 
-    AddResources(fsResources.uniform_buffers, fsCompiler, allResources, 1);
-    AddResources(fsResources.storage_buffers, fsCompiler, allResources, 1, false, true);
-    AddResources(fsResources.separate_images, fsCompiler, allResources, 1, true, false);
-    AddResources(fsResources.storage_images, fsCompiler, allResources, 1, true, true);
-    AddResources(fsResources.separate_samplers, fsCompiler, allResources, 1);
+    AddResources(fsResources.uniform_buffers, fsCompiler, allResources, 1, info.NormalizeResourceNames);
+    AddResources(fsResources.storage_buffers, fsCompiler, allResources, 1, info.NormalizeResourceNames, false, true);
+    AddResources(fsResources.separate_images, fsCompiler, allResources, 1, info.NormalizeResourceNames, true, false);
+    AddResources(fsResources.storage_images, fsCompiler, allResources, 1, info.NormalizeResourceNames, true, true);
+    AddResources(fsResources.separate_samplers, fsCompiler, allResources, 1, info.NormalizeResourceNames);
 
     if (info.Target == HLSL || info.Target == MSL)
     {
@@ -485,11 +493,11 @@ CompilationResult *CompileCompute(const CrossCompileInfo &info)
 
     std::map<BindingInfo, ResourceInfo> allResources;
 
-    AddResources(csResources.uniform_buffers, csCompiler, allResources, 0);
-    AddResources(csResources.storage_buffers, csCompiler, allResources, 0, false, true);
-    AddResources(csResources.separate_images, csCompiler, allResources, 0, true, false);
-    AddResources(csResources.storage_images, csCompiler, allResources, 0, true, true);
-    AddResources(csResources.separate_samplers, csCompiler, allResources, 0);
+    AddResources(csResources.uniform_buffers, csCompiler, allResources, 0, info.NormalizeResourceNames);
+    AddResources(csResources.storage_buffers, csCompiler, allResources, 0, info.NormalizeResourceNames, false, true);
+    AddResources(csResources.separate_images, csCompiler, allResources, 0, info.NormalizeResourceNames, true, false);
+    AddResources(csResources.storage_images, csCompiler, allResources, 0, info.NormalizeResourceNames, true, true);
+    AddResources(csResources.separate_samplers, csCompiler, allResources, 0, info.NormalizeResourceNames);
 
     if (info.Target == HLSL || info.Target == MSL)
     {

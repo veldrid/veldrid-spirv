@@ -17,7 +17,8 @@ namespace Veldrid.SPIRV.Tests
             VertexFragmentCompilationResult result = SpirvCompilation.CompileVertexFragment(
                 vsBytes,
                 fsBytes,
-                CrossCompileTarget.HLSL);
+                CrossCompileTarget.HLSL,
+                new CrossCompileOptions(false, false, true));
 
             VertexElementDescription[] reflectedVerts = result.Reflection.VertexElements;
             Assert.Equal(verts.Length, reflectedVerts.Length);
@@ -57,7 +58,7 @@ namespace Veldrid.SPIRV.Tests
                     new ResourceLayoutDescription(
                         new ResourceLayoutElementDescription("vdspv_0_0", ResourceKind.UniformBuffer, ShaderStages.Vertex | ShaderStages.Fragment),
                         UnusedResource,
-                        new ResourceLayoutElementDescription("vdspv_0_1", ResourceKind.UniformBuffer, ShaderStages.Fragment)),
+                        new ResourceLayoutElementDescription("vdspv_0_2", ResourceKind.UniformBuffer, ShaderStages.Fragment)),
                     new ResourceLayoutDescription(
                         new ResourceLayoutElementDescription("vdspv_1_0", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
                         new ResourceLayoutElementDescription("vdspv_1_1", ResourceKind.Sampler, ShaderStages.Fragment))
