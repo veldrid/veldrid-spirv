@@ -16,7 +16,7 @@ using namespace spirv_cross;
 
 namespace Veldrid
 {
-void ReflectVertexInfo(const Compiler& compiler, const ShaderResources& resources, ReflectionInfo& info);
+void ReflectVertexInfo(const Compiler &compiler, const ShaderResources &resources, ReflectionInfo &info);
 
 struct BindingInfo
 {
@@ -74,6 +74,7 @@ void AddResources(
     spirv_cross::Compiler *compiler,
     std::map<BindingInfo, ResourceInfo> &allResources,
     const uint32_t idIndex,
+    bool normalizeResourceNames,
     bool image = false,
     bool storage = false)
 {
@@ -84,18 +85,26 @@ void AddResources(
         bi.Set = compiler->get_decoration(resource.id, spv::Decoration::DecorationDescriptorSet);
         bi.Binding = compiler->get_decoration(resource.id, spv::Decoration::DecorationBinding);
 
-        std::string name = "vdspv_" + std::to_string(bi.Set) + "_" + std::to_string(bi.Binding);
-        if (kind == ResourceKind::UniformBuffer)
+        ResourceInfo ri = {};
+
+        if (normalizeResourceNames)
         {
-            compiler->set_name(resource.base_type_id, name);
+            std::string name = "vdspv_" + std::to_string(bi.Set) + "_" + std::to_string(bi.Binding);
+            if (kind == ResourceKind::UniformBuffer)
+            {
+                compiler->set_name(resource.base_type_id, name);
+            }
+            else
+            {
+                compiler->set_name(resource.id, name);
+            }
+            ri.Name = name;
         }
         else
         {
-            compiler->set_name(resource.id, name);
+            ri.Name = resource.name;
         }
 
-        ResourceInfo ri = {};
-        ri.Name = name;
         ri.IDs[idIndex] = resource.id;
         ri.Kind = kind;
 
@@ -257,7 +266,7 @@ InteropArray<ResourceLayoutDescription> CreateResourceLayoutArray(
 {
     uint32_t currentSet = 0;
     std::vector<uint32_t> setSizes(1);
-    for (auto& it : resources)
+    for (auto &it : resources)
     {
         uint32_t set = it.first.Set;
         if (setSizes.size() <= set)
@@ -282,13 +291,19 @@ InteropArray<ResourceLayoutDescription> CreateResourceLayoutArray(
         }
     }
 
-    for (auto& it : resources)
+    for (auto &it : resources)
     {
         ShaderStages stages = ShaderStages::None;
         if (it.second.IDs[0] != 0)
         {
-            if (compute) { stages = stages | ShaderStages::Compute; }
-            else { stages = stages | ShaderStages::Vertex; }
+            if (compute)
+            {
+                stages = stages | ShaderStages::Compute;
+            }
+            else
+            {
+                stages = stages | ShaderStages::Vertex;
+            }
         }
         if (it.second.IDs[1] != 0)
         {
@@ -324,17 +339,17 @@ CompilationResult *CompileVertexFragment(const CrossCompileInfo &info)
 
     std::map<BindingInfo, ResourceInfo> allResources;
 
-    AddResources(vsResources.uniform_buffers, vsCompiler, allResources, 0);
-    AddResources(vsResources.storage_buffers, vsCompiler, allResources, 0, false, true);
-    AddResources(vsResources.separate_images, vsCompiler, allResources, 0, true, false);
-    AddResources(vsResources.storage_images, vsCompiler, allResources, 0, true, true);
-    AddResources(vsResources.separate_samplers, vsCompiler, allResources, 0);
+    AddResources(vsResources.uniform_buffers, vsCompiler, allResources, info.NormalizeResourceNames, 0);
+    AddResources(vsResources.storage_buffers, vsCompiler, allResources, info.NormalizeResourceNames, 0, false, true);
+    AddResources(vsResources.separate_images, vsCompiler, allResources, info.NormalizeResourceNames, 0, true, false);
+    AddResources(vsResources.storage_images, vsCompiler, allResources, info.NormalizeResourceNames, 0, true, true);
+    AddResources(vsResources.separate_samplers, vsCompiler, allResources, info.NormalizeResourceNames, 0);
 
-    AddResources(fsResources.uniform_buffers, fsCompiler, allResources, 1);
-    AddResources(fsResources.storage_buffers, fsCompiler, allResources, 1, false, true);
-    AddResources(fsResources.separate_images, fsCompiler, allResources, 1, true, false);
-    AddResources(fsResources.storage_images, fsCompiler, allResources, 1, true, true);
-    AddResources(fsResources.separate_samplers, fsCompiler, allResources, 1);
+    AddResources(fsResources.uniform_buffers, fsCompiler, allResources, info.NormalizeResourceNames, 1);
+    AddResources(fsResources.storage_buffers, fsCompiler, allResources, info.NormalizeResourceNames, 1, false, true);
+    AddResources(fsResources.separate_images, fsCompiler, allResources, info.NormalizeResourceNames, 1, true, false);
+    AddResources(fsResources.storage_images, fsCompiler, allResources, info.NormalizeResourceNames, 1, true, true);
+    AddResources(fsResources.separate_samplers, fsCompiler, allResources, info.NormalizeResourceNames, 1);
 
     if (info.Target == HLSL || info.Target == MSL)
     {
@@ -375,18 +390,21 @@ CompilationResult *CompileVertexFragment(const CrossCompileInfo &info)
             fsCompiler->set_name(remap.combined_id, fsCompiler->get_name(remap.image_id));
         }
 
-        for (auto &output : vsResources.stage_outputs)
+        if (info.NormalizeResourceNames)
         {
-            uint32_t location = vsCompiler->get_decoration(output.id, spv::Decoration::DecorationLocation);
-            std::string newName = "vdspv_fsin" + std::to_string(location);
-            vsCompiler->set_name(output.id, newName);
-        }
+            for (auto &output : vsResources.stage_outputs)
+            {
+                uint32_t location = vsCompiler->get_decoration(output.id, spv::Decoration::DecorationLocation);
+                std::string newName = "vdspv_fsin" + std::to_string(location);
+                vsCompiler->set_name(output.id, newName);
+            }
 
-        for (auto &input : fsResources.stage_inputs)
-        {
-            uint32_t location = fsCompiler->get_decoration(input.id, spv::Decoration::DecorationLocation);
-            std::string newName = "vdspv_fsin" + std::to_string(location);
-            fsCompiler->set_name(input.id, newName);
+            for (auto &input : fsResources.stage_inputs)
+            {
+                uint32_t location = fsCompiler->get_decoration(input.id, spv::Decoration::DecorationLocation);
+                std::string newName = "vdspv_fsin" + std::to_string(location);
+                fsCompiler->set_name(input.id, newName);
+            }
         }
     }
 
@@ -485,11 +503,11 @@ CompilationResult *CompileCompute(const CrossCompileInfo &info)
 
     std::map<BindingInfo, ResourceInfo> allResources;
 
-    AddResources(csResources.uniform_buffers, csCompiler, allResources, 0);
-    AddResources(csResources.storage_buffers, csCompiler, allResources, 0, false, true);
-    AddResources(csResources.separate_images, csCompiler, allResources, 0, true, false);
-    AddResources(csResources.storage_images, csCompiler, allResources, 0, true, true);
-    AddResources(csResources.separate_samplers, csCompiler, allResources, 0);
+    AddResources(csResources.uniform_buffers, csCompiler, allResources, info.NormalizeResourceNames, 0);
+    AddResources(csResources.storage_buffers, csCompiler, allResources, info.NormalizeResourceNames, 0, false, true);
+    AddResources(csResources.separate_images, csCompiler, allResources, info.NormalizeResourceNames, 0, true, false);
+    AddResources(csResources.storage_images, csCompiler, allResources, info.NormalizeResourceNames, 0, true, true);
+    AddResources(csResources.separate_samplers, csCompiler, allResources, info.NormalizeResourceNames, 0);
 
     if (info.Target == HLSL || info.Target == MSL)
     {

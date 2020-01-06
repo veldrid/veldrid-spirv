@@ -92,6 +92,7 @@ namespace Veldrid.SPIRV
             info.Target = target;
             info.FixClipSpaceZ = options.FixClipSpaceZ;
             info.InvertY = options.InvertVertexOutputY;
+            info.NormalizeResourceNames = options.NormalizeResourceNames;
             fixed (byte* vsBytesPtr = vsSpirvBytes)
             fixed (byte* fsBytesPtr = fsSpirvBytes)
             {
@@ -208,6 +209,7 @@ namespace Veldrid.SPIRV
             info.Target = target;
             info.FixClipSpaceZ = options.FixClipSpaceZ;
             info.InvertY = options.InvertVertexOutputY;
+            info.NormalizeResourceNames = options.NormalizeResourceNames;
             fixed (byte* csBytesPtr = csSpirvBytes)
             fixed (SpecializationConstant* specConstants = options.Specializations)
             {

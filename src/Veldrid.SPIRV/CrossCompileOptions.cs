@@ -23,6 +23,11 @@ namespace Veldrid.SPIRV
         /// </summary>
         public bool InvertVertexOutputY { get; set; }
         /// <summary>
+        /// Indicates whether all resource names should be forced into a normalized form. This has functional impact
+        /// on compilation targets where resource names are meaningful, like GLSL.
+        /// </summary>
+        public bool NormalizeResourceNames { get; set; }
+        /// <summary>
         /// An array of <see cref="SpecializationConstant"/> which will be substituted into the shader as new constants. Each
         /// element in the array will be matched by ID with the SPIR-V specialization constants defined in the shader.
         /// </summary>

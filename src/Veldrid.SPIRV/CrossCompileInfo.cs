@@ -8,6 +8,7 @@ namespace Veldrid.SPIRV
         public CrossCompileTarget Target;
         public Bool32 FixClipSpaceZ;
         public Bool32 InvertY;
+        public Bool32 NormalizeResourceNames;
         public InteropArray Specializations;
         public InteropArray VertexShader;
         public InteropArray FragmentShader;

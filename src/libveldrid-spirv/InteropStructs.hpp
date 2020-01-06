@@ -124,6 +124,7 @@ struct CrossCompileInfo
     CrossCompileTarget Target;
     Bool32 FixClipSpaceZ;
     Bool32 InvertY;
+    Bool32 NormalizeResourceNames;
     InteropArray<SpecializationConstant> Specializations;
     InteropArray<uint32_t> VertexShader;
     InteropArray<uint32_t> FragmentShader;
