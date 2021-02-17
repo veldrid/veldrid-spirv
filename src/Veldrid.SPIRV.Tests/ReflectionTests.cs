@@ -5,6 +5,14 @@ namespace Veldrid.SPIRV.Tests
 {
     public class ReflectionTests
     {
+        private void AssertEqual(ResourceLayoutElementDescription a, ResourceLayoutElementDescription b)
+        {
+            Assert.Equal(a.Name, b.Name);
+            Assert.Equal(a.Kind, b.Kind);
+            Assert.Equal(a.Options, b.Options);
+            Assert.Equal(a.Stages, b.Stages);
+        }
+
         [Theory]
         [MemberData(nameof(ShaderSetsAndResources))]
         public void ReflectionFromSpirv_Succeeds(
@@ -36,7 +44,7 @@ namespace Veldrid.SPIRV.Tests
                 Assert.Equal(layout.Elements.Length, reflectedLayout.Elements.Length);
                 for (int j = 0; j < layout.Elements.Length; j++)
                 {
-                    Assert.Equal(layout.Elements[j], reflectedLayout.Elements[j]);
+                    AssertEqual(layout.Elements[j], reflectedLayout.Elements[j]);
                 }
             }
         }
