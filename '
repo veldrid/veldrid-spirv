@@ -1,0 +1,12 @@
+Attempt to use Python 3 on CI builds.
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Date:      Tue Feb 16 22:30:17 2021 -0800
+#
+# On branch update_python_builds
+# Changes to be committed:
+#	modified:   .travis.yml
+#	modified:   appveyor.yml
+#

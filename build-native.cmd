@@ -19,6 +19,7 @@ if /i [%1] == [--android-ndk] (set _NDK_DIR=%2&& shift && shift & goto ArgLoop)
 if /i [%1] == [--android-abi] (set _ANDROID_ABI=%2&& set _BUILD_ARCH=%2&& shift && shift & goto ArgLoop)
 if /i [%1] == [--artifact-name] (set _ARTIFACT_NAME=%2&& shift && shift & goto ArgLoop)
 if /i [%1] == [--android-platform] (set _ANDROID_PLATFORM=%2&& shift && shift & goto ArgLoop)
+if /i [%1] == [--python-exe] (set _PYTHON_EXECUTABLE=%2&& shift && shift & goto ArgLoop)
 shift
 goto ArgLoop
 
@@ -35,6 +36,11 @@ if defined _NDK_DIR (
 )
 
 set _BUILD_DIR=.\build\%_OS_DIR%-%_BUILD_ARCH%
+
+if defined _PYTHON_EXECUTABLE (
+  set _CMAKE_ARGS=%_CMAKE_ARGS% -DPYTHON_EXECUTABLE=%_PYTHON_EXECUTABLE%
+
+)
 
 if defined _NDK_DIR (
   set _ARTIFACT_SRC=%_BUILD_DIR%\libveldrid-spirv.so

@@ -3,17 +3,20 @@ version: 1.0.{build}
 install:
 - git submodule update --init --recursive
 
+stack: python 3.6
+
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      _NATIVE_BUILD_ARGS: Release win-x64 --artifact-name build\libveldrid-spirv.win-x64.dll
+      _NATIVE_BUILD_ARGS: Release win-x64 --artifact-name build\libveldrid-spirv.win-x64.dll --python-exe C:\Python36\python.exe
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      _NATIVE_BUILD_ARGS: Release win-x86 --artifact-name build\libveldrid-spirv.win-x86.dll
+      _NATIVE_BUILD_ARGS: Release win-x86 --artifact-name build\libveldrid-spirv.win-x86.dll --python-exe C:\Python36\python.exe
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi arm64-v8a --artifact-name build\libveldrid-spirv.android-arm64-v8a.so
+      _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi arm64-v8a --artifact-name build\libveldrid-spirv.android-arm64-v8a.so --python-exe C:\Python36\python.exe
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi armeabi-v7a --artifact-name build\libveldrid-spirv.android-armeabi-v7a.so
+      _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi armeabi-v7a --artifact-name build\libveldrid-spirv.android-armeabi-v7a.so --python-exe C:\Python36\python.exe
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
+      PYTHON: "3.6"
 
 before_build:
 - sh: ./ext/sync-shaderc.sh
