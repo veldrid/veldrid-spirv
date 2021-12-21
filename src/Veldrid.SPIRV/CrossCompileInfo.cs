@@ -6,6 +6,7 @@ namespace Veldrid.SPIRV
     internal struct CrossCompileInfo
     {
         public CrossCompileTarget Target;
+        public uint TargetVersion;
         public Bool32 FixClipSpaceZ;
         public Bool32 InvertY;
         public Bool32 NormalizeResourceNames;

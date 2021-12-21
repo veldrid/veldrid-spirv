@@ -190,7 +190,14 @@ Compiler *GetCompiler(std::vector<uint32_t> spirvBytes, const CrossCompileInfo &
     {
         auto ret = new CompilerHLSL(spirvBytes);
         CompilerHLSL::Options opts = {};
-        opts.shader_model = 50;
+        if(info.TargetVersion != 0)
+        {
+            opts.shader_model = info.TargetVersion;
+        }
+        else
+        {
+            opts.shader_model = 50;
+        }
         opts.point_size_compat = true;
         ret->set_hlsl_options(opts);
         CompilerGLSL::Options commonOpts;
@@ -206,13 +213,20 @@ Compiler *GetCompiler(std::vector<uint32_t> spirvBytes, const CrossCompileInfo &
         CompilerGLSL::Options opts = {};
         opts.es = info.Target == ESSL;
         opts.enable_420pack_extension = false;
-        if (info.ComputeShader.Count > 0)
+        if(info.TargetVersion != 0)
         {
-            opts.version = info.Target == GLSL ? 430 : 310;
+            opts.version = info.TargetVersion;
         }
         else
         {
-            opts.version = info.Target == GLSL ? 330 : 300;
+            if (info.ComputeShader.Count > 0)
+            {
+                opts.version = info.Target == GLSL ? 430 : 310;
+            }
+            else
+            {
+                opts.version = info.Target == GLSL ? 330 : 300;
+            }
         }
         opts.vertex.fixup_clipspace = info.FixClipSpaceZ;
         opts.vertex.flip_vert_y = info.InvertY;
@@ -223,6 +237,10 @@ Compiler *GetCompiler(std::vector<uint32_t> spirvBytes, const CrossCompileInfo &
     {
         auto ret = new CompilerMSL(spirvBytes);
         CompilerMSL::Options opts = {};
+        if(info.TargetVersion != 0)
+        {
+            opts.msl_version = info.TargetVersion;
+        }
         ret->set_msl_options(opts);
         CompilerGLSL::Options commonOpts;
         commonOpts.vertex.flip_vert_y = info.InvertY;

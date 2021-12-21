@@ -122,6 +122,7 @@ enum CrossCompileTarget : uint32_t
 struct CrossCompileInfo
 {
     CrossCompileTarget Target;
+    uint32_t TargetVersion;
     Bool32 FixClipSpaceZ;
     Bool32 InvertY;
     Bool32 NormalizeResourceNames;
