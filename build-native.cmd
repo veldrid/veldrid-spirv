@@ -59,6 +59,7 @@ cmake --build . --config %_CMAKE_BUILD_TYPE% --target veldrid-spirv
 popd
 
 if defined _ARTIFACT_NAME (
+  For %%A in ("%_ARTIFACT_NAME%") do (mkdir %%~dpA)
   echo "Copying %_ARTIFACT_SRC% -> %_ARTIFACT_NAME%"
   copy %_ARTIFACT_SRC% %_ARTIFACT_NAME%
 )
