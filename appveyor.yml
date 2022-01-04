@@ -14,6 +14,8 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi arm64-v8a --artifact-name build\libveldrid-spirv.android-arm64-v8a.so --python-exe C:\Python36\python.exe
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi x86_64 --artifact-name build\libveldrid-spirv.android-x86_64.so --python-exe C:\Python36\python.exe
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       _NATIVE_BUILD_ARGS: Release --android-ndk C:\ProgramData\Microsoft\AndroidNDK64\android-ndk-r17 --android-abi armeabi-v7a --artifact-name build\libveldrid-spirv.android-armeabi-v7a.so --python-exe C:\Python36\python.exe
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1804
       PYTHON: "3.6"
@@ -35,6 +37,8 @@ artifacts:
   name: libveldrid-spirv.win-x86.dll
 - path: build\libveldrid-spirv.android-arm64-v8a.so
   name: libveldrid-spirv.android-arm64-v8a.so
+- path: build\libveldrid-spirv.android-x86_64.so
+  name: libveldrid-spirv.android-x86_64.so
 - path: build\libveldrid-spirv.android-armeabi-v7a.so
   name: libveldrid-spirv.android-armeabi-v7a.so
 
