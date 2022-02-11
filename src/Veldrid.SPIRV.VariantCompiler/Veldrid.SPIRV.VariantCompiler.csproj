@@ -1,22 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Publish">
+﻿<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Publish">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Veldrid.SPIRV</RootNamespace>
     <!-- NOTE: Version is overridden in full build. -->
     <VeldridSPIRVVersion Condition="'$(VeldridSPIRVVersion)' == ''">1.0.12</VeldridSPIRVVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Veldrid.SPIRV" Version="$(VeldridSPIRVVersion)" />
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.3.4" />
+    <PackageReference Include="Veldrid.SPIRV" Version="1.0.14" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="$(RepositoryRootDirectory)/build/win-x64/$(Configuration)/libveldrid-spirv.dll" Condition="Exists('$(RepositoryRootDirectory)/build/win-x64/$(Configuration)/libveldrid-spirv.dll')" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dylib" Condition="Exists('$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.dylib')" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.so" Condition="Exists('$(RepositoryRootDirectory)/build/$(Configuration)/libveldrid-spirv.so')" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.255" />
   </ItemGroup>
 
 </Project>

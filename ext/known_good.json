@@ -5,7 +5,7 @@
       "site" : "github",
       "subrepo" : "KhronosGroup/glslang",
       "subdir" : "third_party/glslang",
-      "commit" : "dd69df7f3dac26362e10b0f38efb9e47990f7537"
+      "commit" : "3de5cfe50edecd001e6d703555284d9b10b3dd57"
     },
     {
       "name" : "re2",
@@ -26,13 +26,13 @@
       "site" : "github",
       "subrepo" : "google/googletest",
       "subdir" : "third_party/googletest",
-      "commit" : "b1fbd33c06cdb0024c67733c6fdec2009d17b384"
+      "commit" : "e2239ee6043f73722e7aa812a459f54a28552929"
     },
     {
       "name" : "shaderc",
       "site" : "github",
       "subrepo" : "google/shaderc",
-      "commit" : "702723ac7599d229195aabfee0b61954ad087140"
+      "commit" : "1bbf43f210941ba69a2cd05cf3529063f1ff5bb9"
     },
     {
       "name" : "spirv-headers",
@@ -46,7 +46,7 @@
       "site" : "github",
       "subrepo" : "KhronosGroup/SPIRV-Tools",
       "subdir" : "third_party/spirv-tools",
-      "commit" : "b27b1afd12d05bf238ac7368bb49de73cd620a8e"
+      "commit" : "f3ccb633dfd7c5de1f9f0a2d2e9d7a25f2478206"
     }
   ]
 }
