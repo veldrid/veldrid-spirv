@@ -32,7 +32,7 @@
       "name" : "shaderc",
       "site" : "github",
       "subrepo" : "google/shaderc",
-      "commit" : "1bbf43f210941ba69a2cd05cf3529063f1ff5bb9"
+      "commit" : "702723ac7599d229195aabfee0b61954ad087140"
     },
     {
       "name" : "spirv-headers",
