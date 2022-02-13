@@ -1,0 +1,169 @@
+name: CI
+on:
+  create: # when tags are created
+  push:
+    branches: [ github_actions ]
+  pull_request:
+    branches: [ github_actions ]
+jobs:
+  native_builds:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get Submodules
+        run: git submodule update --init --recursive
+
+      - name: Build
+        run:  |
+              if [ "$RUNNER_OS" == "Windows" ]; then
+                ./ci-build.cmd
+              else
+                ./ci-build.sh
+              fi
+        shell: bash
+
+      - name: Upload win-x64 Release
+        uses: actions/upload-artifact@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          name: win-x64
+          path: build\win-x64\libveldrid-spirv.dll
+          if-no-files-found: error
+
+      - name: Upload win-x86 Release
+        uses: actions/upload-artifact@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          name: win-x86
+          path: build\win-x86\libveldrid-spirv.dll
+          if-no-files-found: error
+
+      - name: Upload android-arm64-v8a Release
+        uses: actions/upload-artifact@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          name: android-arm64-v8a
+          path: build\android-arm64-v8a\libveldrid-spirv.so
+          if-no-files-found: error
+
+      - name: Upload android-x86_64 Release
+        uses: actions/upload-artifact@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          name: android-x86_64
+          path: build\android-x86_64\libveldrid-spirv.so
+          if-no-files-found: error
+
+      - name: Upload android-armeabi-v7a Release
+        uses: actions/upload-artifact@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          name: android-armeabi-v7a
+          path: build\android-armeabi-v7a\libveldrid-spirv.so
+          if-no-files-found: error
+
+      - name: Upload Linux Release
+        uses: actions/upload-artifact@v2
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: linux-x64
+          path: build/Release/libveldrid-spirv.so
+          if-no-files-found: error
+
+      - name: Upload osx-universal Release
+        uses: actions/upload-artifact@v2
+        if: matrix.os == 'macos-latest'
+        with:
+          name: osx-universal
+          path: build/Release/libveldrid-spirv.dylib
+          if-no-files-found: error
+
+      - name: Upload iOS Release
+        uses: actions/upload-artifact@v2
+        if: matrix.os == 'macos-latest'
+        with:
+          name: ios
+          path: build/ios-Release/Release-iphoneos/libveldrid-spirv-combined.a
+          if-no-files-found: error
+
+  managed_build:
+    runs-on: windows-latest
+    needs: native_builds
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Download win-x64
+        uses: actions/download-artifact@v2
+        with:
+          name: win-x64
+          path: build/Release/win-x64
+
+      - name: Download win-x86
+        uses: actions/download-artifact@v2
+        with:
+          name: win-x64
+          path: build/Release/win-x64
+
+      - name: Download android-arm64-v8a
+        uses: actions/download-artifact@v2
+        with:
+          name: android-arm64-v8a
+          path: build/Release/android-arm64-v8a
+
+      - name: Download android-x86_64
+        uses: actions/download-artifact@v2
+        with:
+          name: android-x86_64
+          path: build/Release/android-x86_64
+
+      - name: Download android-armeabi-v7a
+        uses: actions/download-artifact@v2
+        with:
+          name: android-armeabi-v7a
+          path: build/Release/android-armeabi-v7a
+
+      - name: Download linux-x64
+        uses: actions/download-artifact@v2
+        with:
+          name: linux-x64
+          path: build/Release/linux-x64
+
+      - name: Download osx-universal
+        uses: actions/download-artifact@v2
+        with:
+          name: osx-universal
+          path: build/Release/osx-universal
+
+      - name: Download ios
+        uses: actions/download-artifact@v2
+        with:
+          name: ios
+          path: build/Release/ios
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore src
+
+      - name: Build Project
+        run: dotnet build -c Release --no-restore src
+
+      - name: Run Tests
+        run: dotnet run -p src/Veldrid.SPIRV.Tests/Veldrid.SPIRV.Tests.csproj -c Release
+
+      - name: Build Packages
+        run: dotnet pack src/Veldrid.SPIRV -c Release --no-restore --no-build
+
+      - name: List Packages
+        run: ls -l bin\Release\Veldrid.SPIRV\

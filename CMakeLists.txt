@@ -15,7 +15,9 @@ include_directories(ext/shaderc/libshaderc/include/shaderc)
 
 file(GLOB_RECURSE LIBVELDRID_SPIRV_SOURCES src/libveldrid-spirv/*.cpp src/libveldrid-spirv/*.hpp)
 
-if (DEFINED IOS_PLATFORM)
+project(veldrid-spirv)
+
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
     set(LIBRARY_TYPE STATIC)
     message( "Configured to build a static library." )
 else()
@@ -23,8 +25,6 @@ else()
     message( "Configured to build a shared library." )
 endif()
 
-
-project (veldrid-spirv)
 add_library(veldrid-spirv ${LIBRARY_TYPE} ${LIBVELDRID_SPIRV_SOURCES})
 target_link_libraries(veldrid-spirv
     spirv-cross-core
@@ -34,11 +34,12 @@ target_link_libraries(veldrid-spirv
     spirv-cross-hlsl
     shaderc
 )
+
 set_target_properties(veldrid-spirv PROPERTIES PREFIX "lib")
 set_target_properties(veldrid-spirv PROPERTIES DEBUG_POSTFIX "")
 
 set_target_properties(veldrid-spirv PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
 
-if (DEFINED IOS_PLATFORM)
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
     shaderc_combine_static_lib(veldrid-spirv-combined veldrid-spirv)
 endif()

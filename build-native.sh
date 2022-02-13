@@ -7,6 +7,9 @@ _CMakeIOSPlatform=
 _CMakeEnableBitcode=
 _OutputPathPrefix=
 _CMakeBuildTarget=veldrid-spirv
+_CMakeOsxArchitectures=
+_CMakeGenerator=
+_CMakeExtraBuildArgs=
 
 while :; do
     if [ $# -le 0 ]; then
@@ -23,10 +26,16 @@ while :; do
             ;;
         ios)
             _CMakeToolchain=-DCMAKE_TOOLCHAIN_FILE=$scriptPath/ios/ios.toolchain.cmake
-            _CMakeIOSPlatform=-DIOS_PLATFORM=OS64
+            _CMakePlatform=-DPLATFORM=OS64COMBINED
             _CMakeEnableBitcode=-DENABLE_BITCODE=0
             _OutputPathPrefix=ios-
             _CMakeBuildTarget=veldrid-spirv-combined_genfile
+            _CMakeGenerator="-G Xcode -T buildsystem=1"
+            _CMakeExtraBuildArgs="--config Release"
+            ;;
+        -osx-architectures)
+            _CMakeOsxArchitectures=$2
+            shift
             ;;
         *)
             __UnprocessedBuildArgs="$__UnprocessedBuildArgs $1"
@@ -44,6 +53,6 @@ fi
 
 mkdir -p $_OutputPath
 pushd $_OutputPath
-cmake ../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeToolchain $_CMakeIOSPlatform $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath
-cmake --build . --target $_CMakeBuildTarget
+cmake ../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolchain $_CMakePlatform $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
+cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
 popd
