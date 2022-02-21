@@ -2,9 +2,9 @@ name: CI
 on:
   create: # when tags are created
   push:
-    branches: [ github_actions_matrix ]
+    branches: [ master ]
   pull_request:
-    branches: [ github_actions_matrix ]
+    branches: [ master ]
 jobs:
   native_builds:
     runs-on: ${{ matrix.os }}
@@ -150,5 +150,14 @@ jobs:
       - name: Build Packages
         run: dotnet pack src/Veldrid.SPIRV -c Release --no-restore --no-build
 
-      - name: List Packages
-        run: ls -l bin\Release\Veldrid.SPIRV\
+      - name: Upload NuGet package
+        uses: actions/upload-artifact@v2
+        with:
+          name: nuget_package
+          path: bin\Packages\Release\*.nupkg
+          if-no-files-found: error
+
+      - name: Publish to nuget.org
+        if: startsWith(github.ref, 'refs/tags/')
+        run: dotnet nuget push bin\Packages\Release\*.nupkg -s https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_KEY}}
+
