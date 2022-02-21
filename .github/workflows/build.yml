@@ -89,49 +89,49 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: win-x64
-          path: build/Release/win-x64
+          path: build/Release
 
       - name: Download win-x86
         uses: actions/download-artifact@v2
         with:
-          name: win-x64
-          path: build/Release/win-x64
+          name: win-x86
+          path: build/Release
 
       - name: Download android-arm64-v8a
         uses: actions/download-artifact@v2
         with:
           name: android-arm64-v8a
-          path: build/Release/android-arm64-v8a
+          path: build/Release
 
       - name: Download android-x86_64
         uses: actions/download-artifact@v2
         with:
           name: android-x86_64
-          path: build/Release/android-x86_64
+          path: build/Release
 
       - name: Download android-armeabi-v7a
         uses: actions/download-artifact@v2
         with:
           name: android-armeabi-v7a
-          path: build/Release/android-armeabi-v7a
+          path: build/Release
 
       - name: Download linux-x64
         uses: actions/download-artifact@v2
         with:
           name: linux-x64
-          path: build/Release/linux-x64
+          path: build/Release
 
       - name: Download osx-universal
         uses: actions/download-artifact@v2
         with:
           name: osx-universal
-          path: build/Release/osx-universal
+          path: build/Release
 
       - name: Download ios
         uses: actions/download-artifact@v2
         with:
           name: ios
-          path: build/Release/ios
+          path: build/Release
 
       - name: Install .NET
         uses: actions/setup-dotnet@v1
