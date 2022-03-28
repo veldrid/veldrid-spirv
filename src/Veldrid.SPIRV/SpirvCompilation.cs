@@ -263,6 +263,109 @@ namespace Veldrid.SPIRV
                 }
             }
         }
+        
+        /// <summary>
+        /// Cross-compiles the given geometry shader into some target language.
+        /// </summary>
+        /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="target">The target language.</param>
+        /// <returns>A <see cref="ComputeCompilationResult"/> containing the compiled output.</returns>
+        public static unsafe GeometryCompilationResult CompileGeometry(
+            byte[] csBytes,
+            CrossCompileTarget target) => CompileGeometry(csBytes, target, new CrossCompileOptions());
+
+        /// <summary>
+        /// Cross-compiles the given geometry shader into some target language.
+        /// </summary>
+        /// <param name="csBytes">The geometry shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="target">The target language.</param>
+        /// <param name="options">The options for shader translation.</param>
+        /// <returns>A <see cref="ComputeCompilationResult"/> containing the compiled output.</returns>
+        public static unsafe GeometryCompilationResult CompileGeometry(
+            byte[] csBytes,
+            CrossCompileTarget target,
+            CrossCompileOptions options)
+        {
+            byte[] csSpirvBytes;
+
+            if (Util.HasSpirvHeader(csBytes))
+            {
+                csSpirvBytes = csBytes;
+            }
+            else
+            {
+                fixed (byte* sourceTextPtr = csBytes)
+                {
+                    SpirvCompilationResult vsCompileResult = CompileGlslToSpirv(
+                        (uint)csBytes.Length,
+                        sourceTextPtr,
+                        string.Empty,
+                        ShaderStages.Compute,
+                        target == CrossCompileTarget.GLSL || target == CrossCompileTarget.ESSL,
+                        0,
+                        null);
+                    csSpirvBytes = vsCompileResult.SpirvBytes;
+                }
+            }
+
+            CrossCompileInfo info;
+            info.Target = target;
+            info.FixClipSpaceZ = options.FixClipSpaceZ;
+            info.InvertY = options.InvertVertexOutputY;
+            info.NormalizeResourceNames = options.NormalizeResourceNames;
+            fixed (byte* csBytesPtr = csSpirvBytes)
+            fixed (SpecializationConstant* specConstants = options.Specializations)
+            {
+                info.GeometryShader = new InteropArray((uint)csSpirvBytes.Length / 4, csBytesPtr);
+                info.Specializations = new InteropArray((uint)options.Specializations.Length, specConstants);
+
+                CompilationResult* result = null;
+                try
+                {
+                    result = VeldridSpirvNative.CrossCompile(&info);
+                    if (!result->Succeeded)
+                    {
+                        throw new SpirvCompilationException(
+                            "Compilation failed: " + Util.GetString((byte*)result->GetData(0), result->GetLength(0)));
+                    }
+
+                    string csCode = Util.GetString((byte*)result->GetData(0), result->GetLength(0));
+
+                    ReflectionInfo* reflInfo = &result->ReflectionInfo;
+
+                    ResourceLayoutDescription[] layouts = new ResourceLayoutDescription[reflInfo->ResourceLayouts.Count];
+                    for (uint i = 0; i < reflInfo->ResourceLayouts.Count; i++)
+                    {
+                        ref NativeResourceLayoutDescription nativeDesc =
+                            ref reflInfo->ResourceLayouts.Ref<NativeResourceLayoutDescription>(i);
+                        layouts[i].Elements = new ResourceLayoutElementDescription[nativeDesc.ResourceElements.Count];
+                        for (uint j = 0; j < nativeDesc.ResourceElements.Count; j++)
+                        {
+                            ref NativeResourceElementDescription elemDesc =
+                                ref nativeDesc.ResourceElements.Ref<NativeResourceElementDescription>(j);
+                            layouts[i].Elements[j] = new ResourceLayoutElementDescription(
+                                Util.GetString((byte*)elemDesc.Name.Data, elemDesc.Name.Count),
+                                elemDesc.Kind,
+                                elemDesc.Stages,
+                                elemDesc.Options);
+                        }
+                    }
+
+                    SpirvReflection reflection = new SpirvReflection(
+                        Array.Empty<VertexElementDescription>(),
+                        layouts);
+
+                    return new GeometryCompilationResult(csCode, reflection);
+                }
+                finally
+                {
+                    if (result != null)
+                    {
+                        VeldridSpirvNative.FreeResult(result);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Compiles the given GLSL source code into SPIR-V.

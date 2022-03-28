@@ -13,5 +13,6 @@ namespace Veldrid.SPIRV
         public InteropArray VertexShader;
         public InteropArray FragmentShader;
         public InteropArray ComputeShader;
+        public InteropArray GeometryShader;
     }
 }

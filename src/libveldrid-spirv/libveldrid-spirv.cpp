@@ -480,6 +480,90 @@ CompilationResult *CompileVertexFragment(const CrossCompileInfo &info)
     return result;
 }
 
+CompilationResult *CompileGeometry(const CrossCompileInfo &info)
+{
+    std::vector<uint32_t> gsBytes(
+        info.GeometryShader.Data,
+        info.GeometryShader.Data + info.GeometryShader.Count);
+    Compiler *gsCompiler = GetCompiler(gsBytes, info);
+
+    SetSpecializations(gsCompiler, info);
+
+    ShaderResources gsResources = gsCompiler->get_shader_resources();
+
+    std::map<BindingInfo, ResourceInfo> allResources;
+
+    AddResources(gsResources.uniform_buffers, gsCompiler, allResources, 0, info.NormalizeResourceNames);
+    AddResources(gsResources.storage_buffers, gsCompiler, allResources, 0, info.NormalizeResourceNames, false, true);
+    AddResources(gsResources.separate_images, gsCompiler, allResources, 0, info.NormalizeResourceNames, true, false);
+    AddResources(gsResources.storage_images, gsCompiler, allResources, 0, info.NormalizeResourceNames, true, true);
+    AddResources(gsResources.separate_samplers, gsCompiler, allResources, 0, info.NormalizeResourceNames);
+
+    if (info.Target == HLSL || info.Target == MSL)
+    {
+        uint32_t bufferIndex = 0;
+        uint32_t textureIndex = 0;
+        uint32_t uavIndex = 0;
+        uint32_t samplerIndex = 0;
+        for (auto &it : allResources)
+        {
+            uint32_t index = GetResourceIndex(info.Target, it.second.Kind, bufferIndex, textureIndex, uavIndex, samplerIndex);
+
+            uint32_t gsID = it.second.IDs[0];
+            if (gsID != 0)
+            {
+                gsCompiler->set_decoration(gsID, spv::Decoration::DecorationBinding, index);
+            }
+        }
+    }
+
+    if (info.Target == GLSL || info.Target == ESSL)
+    {
+        gsCompiler->build_dummy_sampler_for_combined_images();
+        gsCompiler->build_combined_image_samplers();
+        for (auto &remap : gsCompiler->get_combined_image_samplers())
+        {
+            gsCompiler->set_name(remap.combined_id, gsCompiler->get_name(remap.image_id));
+        }
+    }
+
+    if (info.Target == ESSL)
+    {
+        for (auto &uniformBuffer : gsResources.uniform_buffers)
+        {
+            gsCompiler->unset_decoration(uniformBuffer.id, spv::Decoration::DecorationBinding);
+        }
+
+        uint32_t bufferIndex = 0;
+        uint32_t imageIndex = 0;
+        for (auto &it : allResources)
+        {
+            if (it.second.Kind == StorageBufferReadOnly || it.second.Kind == StorageBufferReadWrite)
+            {
+                gsCompiler->set_decoration(it.second.IDs[0], spv::Decoration::DecorationBinding, bufferIndex++);
+            }
+            else if (it.second.Kind == StorageImage)
+            {
+                gsCompiler->set_decoration(it.second.IDs[0], spv::Decoration::DecorationBinding, imageIndex++);
+            }
+        }
+    }
+
+    std::string gsText = gsCompiler->compile();
+
+    delete gsCompiler;
+
+    CompilationResult *result = new CompilationResult();
+    result->Succeeded = true;
+    result->DataBuffers.Resize(1);
+    result->DataBuffers[0].CopyFrom(static_cast<uint32_t>(gsText.length()), (uint8_t *)gsText.c_str());
+
+    result->Reflection.ResourceLayouts = CreateResourceLayoutArray(allResources, true);
+
+    return result;
+}
+
+
 CompilationResult *CompileCompute(const CrossCompileInfo &info)
 {
     std::vector<uint32_t> csBytes(
@@ -572,6 +656,10 @@ CompilationResult *Compile(const CrossCompileInfo &info)
     else if (info.ComputeShader.Count > 0)
     {
         return CompileCompute(info);
+    }
+    else if (info.GeometryShader.Count > 0) 
+    {
+        return CompileGeometry(info);
     }
 
     return new CompilationResult("The given combination of shaders was not valid.");
