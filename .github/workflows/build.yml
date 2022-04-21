@@ -37,7 +37,7 @@ jobs:
             artifact_name: build/Release/libveldrid-spirv.so
           - os: macos-latest
             build_args: release -osx-architectures 'arm64;x86_64'
-            build_target: osx-universal
+            build_target: osx
             artifact_name: build/Release/libveldrid-spirv.dylib
           - os: macos-latest
             build_args: release ios
@@ -121,10 +121,10 @@ jobs:
           name: linux-x64
           path: build/Release
 
-      - name: Download osx-universal
+      - name: Download osx
         uses: actions/download-artifact@v2
         with:
-          name: osx-universal
+          name: osx
           path: build/Release
 
       - name: Download ios
