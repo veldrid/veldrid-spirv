@@ -3,6 +3,8 @@
 scriptPath="`dirname \"$0\"`"
 
 _BuildConfig=Debug
+_Platform=
+_Arguments=
 
 while :; do
     if [ $# -le 0 ]; then
@@ -17,6 +19,14 @@ while :; do
         release|-release)
             _BuildConfig=Release
             ;;
+        osx)
+            _Platform=osx
+            _Arguments=$2
+            shift
+            ;;
+        linux-x64)
+            _Platform=linux-x64
+            ;;
         *)
             __UnprocessedBuildArgs="$__UnprocessedBuildArgs $1"
     esac
@@ -24,5 +34,5 @@ while :; do
     shift
 done
 
-$scriptPath/build-native.sh $_BuildConfig
+$scriptPath/build-native.sh $_BuildConfig $_Platform $_Arguments
 dotnet pack -c $_BuildConfig $scriptPath/src/Veldrid.SPIRV/Veldrid.SPIRV.csproj
