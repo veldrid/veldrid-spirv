@@ -21,7 +21,7 @@ New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration 
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\win-x86 | Out-Null
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\win-x64 | Out-Null
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\linux-x64 | Out-Null
-New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\osx-universal | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\osx | Out-Null
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\ios | Out-Null
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\android-arm64-v8a | Out-Null
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\android-x86_64 | Out-Null
@@ -68,14 +68,14 @@ Write-Host "- libveldrid-spirv.so (64-bit Linux)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.dylib",
-    "$PSScriptRoot/download/$configuration/osx-universal/libveldrid-spirv.dylib")
+    "$PSScriptRoot/download/$configuration/osx/libveldrid-spirv.dylib")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
     Write-Error "Couldn't download libveldrid-spirv.dylib. This most likely indicates the macOS native build failed."
     exit
 }
-Write-Host "- libveldrid-spirv.dylib (64-bit macOS)"
+Write-Host "- libveldrid-spirv.dylib (macOS universal)"
 
 $client.DownloadFile(
     "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv-combined.a",
