@@ -15,9 +15,8 @@ if /i [%1] == [release] (set _CMAKE_BUILD_TYPE=Release&& shift & goto ArgLoop)
 if /i [%1] == [debug] (set _CMAKE_BUILD_TYPE=Debug&& shift & goto ArgLoop)
 if /i [%1] == [win-x64] (set _BUILD_ARCH=x64&& set _CMAKE_GENERATOR_PLATFORM=x64&& shift & goto ArgLoop)
 if /i [%1] == [win-x86] (set _BUILD_ARCH=x86&& set _CMAKE_GENERATOR_PLATFORM=Win32&& shift & goto ArgLoop)
+if /i [%1] == [android] (set _ANDROID_ABI=%2&& set _BUILD_ARCH=%2&& shift && shift & goto ArgLoop)
 if /i [%1] == [--android-ndk] (set _NDK_DIR=%2&& shift && shift & goto ArgLoop)
-if /i [%1] == [--android-abi] (set _ANDROID_ABI=%2&& set _BUILD_ARCH=%2&& shift && shift & goto ArgLoop)
-if /i [%1] == [--artifact-name] (set _ARTIFACT_NAME=%2&& shift && shift & goto ArgLoop)
 if /i [%1] == [--android-platform] (set _ANDROID_PLATFORM=%2&& shift && shift & goto ArgLoop)
 if /i [%1] == [--python-exe] (set _PYTHON_EXECUTABLE=%2&& shift && shift & goto ArgLoop)
 shift
@@ -42,12 +41,6 @@ if defined _PYTHON_EXECUTABLE (
 
 )
 
-if defined _NDK_DIR (
-  set _ARTIFACT_SRC=%_BUILD_DIR%\libveldrid-spirv.so
-) else (
-  set _ARTIFACT_SRC=%_BUILD_DIR%\libveldrid-spirv.dll
-)
-
 set _CMAKE_ARGS=%_CMAKE_ARGS% ..\..\..
 
 If NOT exist "%BUILD_DIR%" (
@@ -58,11 +51,6 @@ cmake %_CMAKE_ARGS%
 cmake --build . --config %_CMAKE_BUILD_TYPE% --target veldrid-spirv
 copy .\%_CMAKE_BUILD_TYPE%\* .\
 popd
-
-if defined _ARTIFACT_NAME (
-  echo "Copying %_ARTIFACT_SRC% -> %_ARTIFACT_NAME%"
-  copy %_ARTIFACT_SRC% %_ARTIFACT_NAME%
-)
 
 :Success
 exit /b 0

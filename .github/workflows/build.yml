@@ -20,15 +20,15 @@ jobs:
             build_target: win-x86
             artifact_name: build\Release\win-x86\libveldrid-spirv.dll
           - os: windows-latest
-            build_args: release --android-ndk '%ANDROID_NDK_HOME%' --android-abi arm64-v8a
+            build_args: release android arm64-v8a --android-ndk '%ANDROID_NDK_HOME%'
             build_target: android-arm64-v8a
             artifact_name: build\Release\android-arm64-v8a\libveldrid-spirv.so
           - os: windows-latest
-            build_args: release --android-ndk '%ANDROID_NDK_HOME%' --android-abi x86_64
+            build_args: release android x86_64 --android-ndk '%ANDROID_NDK_HOME%'
             build_target: android-x86_64
             artifact_name: build\Release\android-x86_64\libveldrid-spirv.so
           - os: windows-latest
-            build_args: release --android-ndk '%ANDROID_NDK_HOME%' --android-abi armeabi-v7a
+            build_args: release android armeabi-v7a --android-ndk '%ANDROID_NDK_HOME%'
             build_target: android-armeabi-v7a
             artifact_name: build\Release\android-armeabi-v7a\libveldrid-spirv.so
           - os: ubuntu-latest
