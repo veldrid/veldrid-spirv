@@ -32,17 +32,17 @@ jobs:
             build_target: android-armeabi-v7a
             artifact_name: build\android-armeabi-v7a\libveldrid-spirv.so
           - os: ubuntu-latest
-            build_args: release
+            build_args: release linux-x64
             build_target: linux-x64
-            artifact_name: build/Release/libveldrid-spirv.so
+            artifact_name: build/Release/linux-x64/libveldrid-spirv.so
           - os: macos-latest
-            build_args: release -osx-architectures 'arm64;x86_64'
+            build_args: release osx 'arm64;x86_64'
             build_target: osx
-            artifact_name: build/Release/libveldrid-spirv.dylib
+            artifact_name: build/Release/osx/libveldrid-spirv.dylib
           - os: macos-latest
             build_args: release ios
             build_target: ios
-            artifact_name: build/ios-Release/Release-iphoneos/libveldrid-spirv-combined.a
+            artifact_name: build/Release/ios/libveldrid-spirv-combined.a
     name: ${{ matrix.build_target }} Native Build
 
     steps:
@@ -119,19 +119,19 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: linux-x64
-          path: build/Release
+          path: build/Release/linux-x64
 
       - name: Download osx
         uses: actions/download-artifact@v2
         with:
           name: osx
-          path: build/Release
+          path: build/Release/osx
 
       - name: Download ios
         uses: actions/download-artifact@v2
         with:
           name: ios
-          path: build/Release
+          path: build/Release/ios
 
       - name: Install .NET
         uses: actions/setup-dotnet@v1
