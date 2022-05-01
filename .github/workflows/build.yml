@@ -12,25 +12,25 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            build_args: Release win-x64 --artifact-name build\\win-x64\\libveldrid-spirv.dll
+            build_args: release win-x64
             build_target: win-x64
-            artifact_name: build\win-x64\libveldrid-spirv.dll
+            artifact_name: build\Release\win-x64\libveldrid-spirv.dll
           - os: windows-latest
-            build_args: Release win-x86 --artifact-name build\\win-x86\\libveldrid-spirv.dll
+            build_args: Release win-x86
             build_target: win-x86
-            artifact_name: build\win-x86\libveldrid-spirv.dll
+            artifact_name: build\Release\win-x86\libveldrid-spirv.dll
           - os: windows-latest
-            build_args: Release --android-ndk '%ANDROID_NDK_HOME%' --android-abi arm64-v8a --artifact-name build\\android-arm64-v8a\\libveldrid-spirv.so
+            build_args: release --android-ndk '%ANDROID_NDK_HOME%' --android-abi arm64-v8a
             build_target: android-arm64-v8a
-            artifact_name: build\android-arm64-v8a\libveldrid-spirv.so
+            artifact_name: build\Release\android-arm64-v8a\libveldrid-spirv.so
           - os: windows-latest
-            build_args: Release --android-ndk '%ANDROID_NDK_HOME%' --android-abi x86_64 --artifact-name build\\android-x86_64\\libveldrid-spirv.so
+            build_args: release --android-ndk '%ANDROID_NDK_HOME%' --android-abi x86_64
             build_target: android-x86_64
-            artifact_name: build\android-x86_64\libveldrid-spirv.so
+            artifact_name: build\Release\android-x86_64\libveldrid-spirv.so
           - os: windows-latest
-            build_args: Release --android-ndk '%ANDROID_NDK_HOME%' --android-abi armeabi-v7a --artifact-name build\\android-armeabi-v7a\\libveldrid-spirv.so
+            build_args: release --android-ndk '%ANDROID_NDK_HOME%' --android-abi armeabi-v7a
             build_target: android-armeabi-v7a
-            artifact_name: build\android-armeabi-v7a\libveldrid-spirv.so
+            artifact_name: build\Release\android-armeabi-v7a\libveldrid-spirv.so
           - os: ubuntu-latest
             build_args: release linux-x64
             build_target: linux-x64
@@ -89,31 +89,31 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: win-x64
-          path: build/Release
+          path: build/Release/win-x64
 
       - name: Download win-x86
         uses: actions/download-artifact@v2
         with:
           name: win-x86
-          path: build/Release
+          path: build/Release/win-x86
 
       - name: Download android-arm64-v8a
         uses: actions/download-artifact@v2
         with:
           name: android-arm64-v8a
-          path: build/Release
+          path: build/Release/android-arm64-v8a
 
       - name: Download android-x86_64
         uses: actions/download-artifact@v2
         with:
           name: android-x86_64
-          path: build/Release
+          path: build/Release/android-x86_64
 
       - name: Download android-armeabi-v7a
         uses: actions/download-artifact@v2
         with:
           name: android-armeabi-v7a
-          path: build/Release
+          path: build/Release/android-armeabi-v7a
 
       - name: Download linux-x64
         uses: actions/download-artifact@v2
