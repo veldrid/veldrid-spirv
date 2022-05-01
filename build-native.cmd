@@ -49,7 +49,11 @@ If NOT exist "%BUILD_DIR%" (
 pushd %_BUILD_DIR%
 cmake %_CMAKE_ARGS%
 cmake --build . --config %_CMAKE_BUILD_TYPE% --target veldrid-spirv
+
+if "%_OS_DIR%" == "win" (
 copy .\%_CMAKE_BUILD_TYPE%\* .\
+)
+
 popd
 
 :Success
