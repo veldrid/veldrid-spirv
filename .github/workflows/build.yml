@@ -71,15 +71,20 @@ jobs:
               fi
         shell: bash
 
+      # We can only run per-platform tests on 64-bit architectures
+      # https://github.com/actions/setup-dotnet/issues/72
       - name: Install .NET
+        if: ${{ matrix.build_target == 'win-x64' || matrix.build_target == 'osx' || matrix.build_target == 'linux-x64' }}
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.0.x
 
       - name: Restore Dependencies
+        if: ${{ matrix.build_target == 'win-x64' || matrix.build_target == 'osx' || matrix.build_target == 'linux-x64' }}
         run: dotnet restore src
 
       - name: Run Tests
+        if: ${{ matrix.build_target == 'win-x64' || matrix.build_target == 'osx' || matrix.build_target == 'linux-x64' }}
         run: dotnet run -p src/Veldrid.SPIRV.Tests/Veldrid.SPIRV.Tests.csproj -c Release --no-restore
 
       - name: Upload ${{ matrix.build_target }} Native Library
