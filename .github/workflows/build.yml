@@ -152,13 +152,10 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore src
 
-      - name: Build Project
-        run: dotnet build -c Release --no-restore src
+      - name: Build NuGet Package
+        run: dotnet pack src/Veldrid.SPIRV -c Release --no-restore
 
-      - name: Build Packages
-        run: dotnet pack src/Veldrid.SPIRV -c Release --no-restore --no-build
-
-      - name: Upload NuGet package
+      - name: Upload NuGet Package
         uses: actions/upload-artifact@v2
         with:
           name: nuget_package
