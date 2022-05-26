@@ -101,6 +101,22 @@ namespace Veldrid.SPIRV.Tests
         }
 
         [Theory]
+        //[InlineData("empty.geom", CrossCompileTarget.HLSL)]
+        [InlineData("empty.geom", CrossCompileTarget.GLSL)]
+        [InlineData("empty.geom", CrossCompileTarget.ESSL)]
+        [InlineData("empty.geom", CrossCompileTarget.MSL)]
+        //[InlineData("simple.geom", CrossCompileTarget.HLSL)]
+        [InlineData("simple.geom", CrossCompileTarget.GLSL)]
+        [InlineData("simple.geom", CrossCompileTarget.ESSL)]
+        [InlineData("simple.geom", CrossCompileTarget.MSL)]
+        public void GeometrySucceeds(string cs, CrossCompileTarget target)
+        {
+            byte[] csBytes = TestUtil.LoadBytes(cs);
+            ComputeCompilationResult result = SpirvCompilation.CompileGeometry(csBytes, target);
+            Assert.NotNull(result.ComputeShader);
+        }
+
+        [Theory]
         [InlineData("overlapping-resources.vert.spv", "overlapping-resources.frag.spv", CrossCompileTarget.HLSL)]
         [InlineData("overlapping-resources.vert", "overlapping-resources.frag.spv", CrossCompileTarget.HLSL)]
         [InlineData("overlapping-resources.vert.spv", "overlapping-resources.frag", CrossCompileTarget.HLSL)]

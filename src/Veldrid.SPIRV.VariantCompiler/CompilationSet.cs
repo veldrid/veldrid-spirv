@@ -59,6 +59,7 @@ namespace Veldrid.SPIRV
             {
                 if (variant.Shaders[0].Stage == ShaderStages.Vertex) { return CompileVertexFragment(variant); }
                 if (variant.Shaders[0].Stage == ShaderStages.Compute) { return CompileCompute(variant); }
+                if (variant.Shaders[0].Stage == ShaderStages.Geometry) { return CompileGeometry(variant); }
             }
             if (variant.Shaders.Length == 2)
             {
@@ -257,6 +258,51 @@ namespace Veldrid.SPIRV
                     ComputeCompilationResult result = SpirvCompilation.CompileCompute(csBytes, target, variant.CrossCompileOptions);
                     string csPath = Path.Combine(_outputPath, $"{variant.Name}_Compute.{GetExtension(target)}");
                     File.WriteAllText(csPath, result.ComputeShader);
+                    generatedFiles.Add(csPath);
+
+                    string reflectionPath = Path.Combine(_outputPath, $"{variant.Name}_ReflectionInfo.json");
+
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Formatting = Formatting.Indented;
+                    StringEnumConverter enumConverter = new StringEnumConverter();
+                    serializer.Converters.Add(enumConverter);
+                    using (StreamWriter sw = File.CreateText(reflectionPath))
+                    using (JsonTextWriter jtw = new JsonTextWriter(sw))
+                    {
+                        serializer.Serialize(jtw, result.Reflection);
+                    }
+                    generatedFiles.Add(reflectionPath);
+                }
+                catch (Exception e)
+                {
+                    compilationExceptions.Add(e);
+                }
+            }
+
+            if (compilationExceptions.Count > 0)
+            {
+                throw new AggregateException($"Errors were encountered when compiling shader variant(s).", compilationExceptions);
+            }
+
+            return generatedFiles.ToArray();
+        }
+
+        private string[] CompileGeometry(ShaderVariantDescription variant)
+        {
+            List<string> generatedFiles = new List<string>();
+            byte[] csBytes = CompileToSpirv(variant, variant.Shaders[0].FileName, ShaderStages.Geometry);
+            string spvPath = Path.Combine(_outputPath, $"{variant.Name}_{ShaderStages.Geometry.ToString()}.spv");
+            File.WriteAllBytes(spvPath, csBytes);
+            generatedFiles.Add(spvPath);
+
+            List<Exception> compilationExceptions = new List<Exception>();
+            foreach (CrossCompileTarget target in variant.Targets)
+            {
+                try
+                {
+                    GeometryCompilationResult result = SpirvCompilation.CompileGeometry(csBytes, target, variant.CrossCompileOptions);
+                    string csPath = Path.Combine(_outputPath, $"{variant.Name}_Geometry.{GetExtension(target)}");
+                    File.WriteAllText(csPath, result.GeometryShader);
                     generatedFiles.Add(csPath);
 
                     string reflectionPath = Path.Combine(_outputPath, $"{variant.Name}_ReflectionInfo.json");

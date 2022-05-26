@@ -480,11 +480,11 @@ CompilationResult *CompileVertexFragment(const CrossCompileInfo &info)
     return result;
 }
 
-CompilationResult *CompileCompute(const CrossCompileInfo &info)
+CompilationResult *CompileComputeOrGeometry(const CrossCompileInfo &info, const InteropArray<uint32_t>& shaderData)
 {
     std::vector<uint32_t> csBytes(
-        info.ComputeShader.Data,
-        info.ComputeShader.Data + info.ComputeShader.Count);
+        shaderData.Data,
+        shaderData.Data + shaderData.Count);
     Compiler *csCompiler = GetCompiler(csBytes, info);
 
     SetSpecializations(csCompiler, info);
@@ -563,6 +563,8 @@ CompilationResult *CompileCompute(const CrossCompileInfo &info)
     return result;
 }
 
+
+
 CompilationResult *Compile(const CrossCompileInfo &info)
 {
     if (info.VertexShader.Count > 0 && info.FragmentShader.Count > 0)
@@ -571,7 +573,11 @@ CompilationResult *Compile(const CrossCompileInfo &info)
     }
     else if (info.ComputeShader.Count > 0)
     {
-        return CompileCompute(info);
+        return CompileComputeOrGeometry(info, info.ComputeShader);
+    }
+    else if (info.GeometryShader.Count > 0)
+    {
+        return CompileComputeOrGeometry(info, info.GeometryShader);
     }
 
     return new CompilationResult("The given combination of shaders was not valid.");
