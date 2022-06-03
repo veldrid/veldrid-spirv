@@ -12,41 +12,43 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            build_args: Release win-x64 --artifact-name build\\win-x64\\libveldrid-spirv.dll
+            build_args: release win-x64
             build_target: win-x64
-            artifact_name: build\win-x64\libveldrid-spirv.dll
+            artifact_name: build\Release\win-x64\libveldrid-spirv.dll
           - os: windows-latest
-            build_args: Release win-x86 --artifact-name build\\win-x86\\libveldrid-spirv.dll
+            build_args: Release win-x86
             build_target: win-x86
-            artifact_name: build\win-x86\libveldrid-spirv.dll
+            artifact_name: build\Release\win-x86\libveldrid-spirv.dll
           - os: windows-latest
-            build_args: Release --android-ndk '%ANDROID_NDK_HOME%' --android-abi arm64-v8a --artifact-name build\\android-arm64-v8a\\libveldrid-spirv.so
+            build_args: release android arm64-v8a --android-ndk '%ANDROID_NDK_HOME%'
             build_target: android-arm64-v8a
-            artifact_name: build\android-arm64-v8a\libveldrid-spirv.so
+            artifact_name: build\Release\android-arm64-v8a\libveldrid-spirv.so
           - os: windows-latest
-            build_args: Release --android-ndk '%ANDROID_NDK_HOME%' --android-abi x86_64 --artifact-name build\\android-x86_64\\libveldrid-spirv.so
+            build_args: release android x86_64 --android-ndk '%ANDROID_NDK_HOME%'
             build_target: android-x86_64
-            artifact_name: build\android-x86_64\libveldrid-spirv.so
+            artifact_name: build\Release\android-x86_64\libveldrid-spirv.so
           - os: windows-latest
-            build_args: Release --android-ndk '%ANDROID_NDK_HOME%' --android-abi armeabi-v7a --artifact-name build\\android-armeabi-v7a\\libveldrid-spirv.so
+            build_args: release android armeabi-v7a --android-ndk '%ANDROID_NDK_HOME%'
             build_target: android-armeabi-v7a
-            artifact_name: build\android-armeabi-v7a\libveldrid-spirv.so
+            artifact_name: build\Release\android-armeabi-v7a\libveldrid-spirv.so
           - os: ubuntu-latest
-            build_args: release
+            build_args: release linux-x64
             build_target: linux-x64
-            artifact_name: build/Release/libveldrid-spirv.so
+            artifact_name: build/Release/linux-x64/libveldrid-spirv.so
           - os: macos-latest
-            build_args: release -osx-architectures 'arm64;x86_64'
+            build_args: release osx 'arm64;x86_64'
             build_target: osx
-            artifact_name: build/Release/libveldrid-spirv.dylib
+            artifact_name: build/Release/osx/libveldrid-spirv.dylib
           - os: macos-latest
             build_args: release ios
             build_target: ios
-            artifact_name: build/ios-Release/Release-iphoneos/libveldrid-spirv-combined.a
+            artifact_name: build/Release/ios/libveldrid-spirv-combined.a
     name: ${{ matrix.build_target }} Native Build
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Get Submodules
         run: git submodule update --init --recursive
@@ -69,6 +71,22 @@ jobs:
               fi
         shell: bash
 
+      # We can only run per-platform tests on 64-bit architectures
+      # https://github.com/actions/setup-dotnet/issues/72
+      - name: Install .NET
+        if: ${{ matrix.build_target == 'win-x64' || matrix.build_target == 'osx' || matrix.build_target == 'linux-x64' }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore Dependencies
+        if: ${{ matrix.build_target == 'win-x64' || matrix.build_target == 'osx' || matrix.build_target == 'linux-x64' }}
+        run: dotnet restore src
+
+      - name: Run Tests
+        if: ${{ matrix.build_target == 'win-x64' || matrix.build_target == 'osx' || matrix.build_target == 'linux-x64' }}
+        run: dotnet run -p src/Veldrid.SPIRV.Tests/Veldrid.SPIRV.Tests.csproj -c Release --no-restore
+
       - name: Upload ${{ matrix.build_target }} Native Library
         uses: actions/upload-artifact@v2
         with:
@@ -89,68 +107,62 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: win-x64
-          path: build/Release
+          path: build/Release/win-x64
 
       - name: Download win-x86
         uses: actions/download-artifact@v2
         with:
           name: win-x86
-          path: build/Release
+          path: build/Release/win-x86
 
       - name: Download android-arm64-v8a
         uses: actions/download-artifact@v2
         with:
           name: android-arm64-v8a
-          path: build/Release
+          path: build/Release/android-arm64-v8a
 
       - name: Download android-x86_64
         uses: actions/download-artifact@v2
         with:
           name: android-x86_64
-          path: build/Release
+          path: build/Release/android-x86_64
 
       - name: Download android-armeabi-v7a
         uses: actions/download-artifact@v2
         with:
           name: android-armeabi-v7a
-          path: build/Release
+          path: build/Release/android-armeabi-v7a
 
       - name: Download linux-x64
         uses: actions/download-artifact@v2
         with:
           name: linux-x64
-          path: build/Release
+          path: build/Release/linux-x64
 
       - name: Download osx
         uses: actions/download-artifact@v2
         with:
           name: osx
-          path: build/Release
+          path: build/Release/osx
 
       - name: Download ios
         uses: actions/download-artifact@v2
         with:
           name: ios
-          path: build/Release
+          path: build/Release/ios
 
       - name: Install .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.0.x
 
-      - name: Restore dependencies
+      - name: Restore Dependencies
         run: dotnet restore src
 
-      - name: Build Project
-        run: dotnet build -c Release --no-restore src
+      - name: Build NuGet Package
+        run: dotnet pack src/Veldrid.SPIRV -c Release --no-restore
 
-      - name: Run Tests
-        run: dotnet run -p src/Veldrid.SPIRV.Tests/Veldrid.SPIRV.Tests.csproj -c Release
-
-      - name: Build Packages
-        run: dotnet pack src/Veldrid.SPIRV -c Release --no-restore --no-build
-
-      - name: Upload NuGet package
+      - name: Upload NuGet Package
         uses: actions/upload-artifact@v2
         with:
           name: nuget_package

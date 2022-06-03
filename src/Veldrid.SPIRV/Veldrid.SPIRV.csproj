@@ -46,9 +46,9 @@
       <_NativeAssetName Include="$(Configuration)/android-armeabi-v7a/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/armeabi-v7a" />
       <_NativeAssetName Include="$(Configuration)/android-x86_64/libveldrid-spirv.so" PackagePath="build/MonoAndroid10/native/x86_64" />
 
-      <_ExistingAssets Include="@(_NativeAssetName)" Condition="Exists('$(NativeAssetsPath)/%(Identity)')" />
+      <_ExistingAssets Include="@(_NativeAssetName)" Condition="Exists('$(NativeAssetsPath)%(Identity)')" />
 
-      <Content Include="@(_ExistingAssets->'$(NativeAssetsPath)/%(Identity)')" CopyToOutputDirectory="PreserveNewest" PackagePath="%(PackagePath)" Pack="true" />
+      <Content Include="@(_ExistingAssets->'$(NativeAssetsPath)%(Identity)')" CopyToOutputDirectory="PreserveNewest" PackagePath="%(PackagePath)" Pack="true" />
     </ItemGroup>
   </Target>
 
