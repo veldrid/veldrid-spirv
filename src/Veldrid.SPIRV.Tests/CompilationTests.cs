@@ -81,6 +81,32 @@ namespace Veldrid.SPIRV.Tests
         }
 
         [Theory]
+        [InlineData("instance.vert.hlsl", "instance.frag.hlsl", CrossCompileTarget.HLSL)]
+        [InlineData("instance.vert.hlsl", "instance.frag.hlsl", CrossCompileTarget.GLSL)]
+        [InlineData("instance.vert.hlsl", "instance.frag.hlsl", CrossCompileTarget.ESSL)]
+        [InlineData("instance.vert.hlsl", "instance.frag.hlsl", CrossCompileTarget.MSL)]
+        [InlineData("planet.vert.hlsl", "planet.frag.hlsl", CrossCompileTarget.HLSL)]
+        [InlineData("planet.vert.hlsl", "planet.frag.hlsl", CrossCompileTarget.GLSL)]
+        [InlineData("planet.vert.hlsl", "planet.frag.hlsl", CrossCompileTarget.ESSL)]
+        [InlineData("planet.vert.hlsl", "planet.frag.hlsl", CrossCompileTarget.MSL)]
+        [InlineData("starfield.vert.hlsl", "starfield.frag.hlsl", CrossCompileTarget.HLSL)]
+        [InlineData("starfield.vert.hlsl", "starfield.frag.hlsl", CrossCompileTarget.GLSL)]
+        [InlineData("starfield.vert.hlsl", "starfield.frag.hlsl", CrossCompileTarget.ESSL)]
+        [InlineData("starfield.vert.hlsl", "starfield.frag.hlsl", CrossCompileTarget.MSL)]
+        public void VertexFragmentSucceeds_Hlsl(string vs, string fs, CrossCompileTarget target)
+        {
+            byte[] vsBytes = TestUtil.LoadBytes(vs);
+            byte[] fsBytes = TestUtil.LoadBytes(fs);
+            VertexFragmentCompilationResult result = SpirvCompilation.CompileVertexFragment(
+                vsBytes,
+                fsBytes,
+                target,
+                new CrossCompileOptions(SourceLanguage.HLSL, false, false));
+            Assert.NotNull(result.VertexShader);
+            Assert.NotNull(result.FragmentShader);
+        }
+
+        [Theory]
         [InlineData("simple.comp", CrossCompileTarget.HLSL)]
         [InlineData("simple.comp", CrossCompileTarget.GLSL)]
         [InlineData("simple.comp", CrossCompileTarget.ESSL)]
@@ -134,6 +160,31 @@ namespace Veldrid.SPIRV.Tests
                 stage,
                 new GlslCompileOptions(
                     false,
+                    new MacroDefinition("Name0", "Value0"),
+                    new MacroDefinition("Name1", "Value1"),
+                    new MacroDefinition("Name2")));
+
+            Assert.NotNull(result.SpirvBytes);
+            Assert.True(result.SpirvBytes.Length > 4);
+            Assert.True(result.SpirvBytes.Length % 4 == 0);
+        }
+
+        [Theory]
+        [InlineData("instance.vert.hlsl", ShaderStages.Vertex)]
+        [InlineData("instance.frag.hlsl", ShaderStages.Fragment)]
+        [InlineData("planet.vert.hlsl", ShaderStages.Vertex)]
+        [InlineData("planet.frag.hlsl", ShaderStages.Fragment)]
+        [InlineData("starfield.vert.hlsl", ShaderStages.Vertex)]
+        [InlineData("starfield.frag.hlsl", ShaderStages.Fragment)]
+        public void HlslToSpirv_Succeeds(string name, ShaderStages stage)
+        {
+            SpirvCompilationResult result = SpirvCompilation.CompileGlslToSpirv(
+                TestUtil.LoadShaderText(name),
+                name,
+                stage,
+                new GlslCompileOptions(
+                    false,
+                    SourceLanguage.HLSL,
                     new MacroDefinition("Name0", "Value0"),
                     new MacroDefinition("Name1", "Value1"),
                     new MacroDefinition("Name2")));

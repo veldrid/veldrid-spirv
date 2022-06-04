@@ -48,8 +48,8 @@ namespace Veldrid.SPIRV
             GraphicsBackend backend = factory.BackendType;
             if (backend == GraphicsBackend.Vulkan)
             {
-                vertexShaderDescription.ShaderBytes = EnsureSpirv(vertexShaderDescription);
-                fragmentShaderDescription.ShaderBytes = EnsureSpirv(fragmentShaderDescription);
+                vertexShaderDescription.ShaderBytes = EnsureSpirv(vertexShaderDescription, options);
+                fragmentShaderDescription.ShaderBytes = EnsureSpirv(fragmentShaderDescription, options);
 
                 return new Shader[]
                 {
@@ -121,7 +121,7 @@ namespace Veldrid.SPIRV
             GraphicsBackend backend = factory.BackendType;
             if (backend == GraphicsBackend.Vulkan)
             {
-                computeShaderDescription.ShaderBytes = EnsureSpirv(computeShaderDescription);
+                computeShaderDescription.ShaderBytes = EnsureSpirv(computeShaderDescription, options);
                 return factory.CreateShader(ref computeShaderDescription);
             }
 
@@ -141,7 +141,7 @@ namespace Veldrid.SPIRV
                 computeEntryPoint));
         }
 
-        private static unsafe byte[] EnsureSpirv(ShaderDescription description)
+        private static unsafe byte[] EnsureSpirv(ShaderDescription description, CrossCompileOptions options)
         {
             if (Util.HasSpirvHeader(description.ShaderBytes))
             {
@@ -155,6 +155,7 @@ namespace Veldrid.SPIRV
                         (uint)description.ShaderBytes.Length,
                         sourceAsciiPtr,
                         null,
+                        options.SourceLanguage,
                         description.Stage,
                         description.Debug,
                         0,

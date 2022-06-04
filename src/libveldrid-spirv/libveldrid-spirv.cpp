@@ -640,6 +640,8 @@ VD_EXPORT CompilationResult *CompileGlslToSpirv(GlslCompileInfo *info)
     {
         shaderc::CompileOptions options;
 
+        options.SetSourceLanguage(info->Language);
+
         if (info->Debug)
         {
             options.SetGenerateDebugInfo();

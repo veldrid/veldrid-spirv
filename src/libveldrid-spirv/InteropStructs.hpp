@@ -147,6 +147,7 @@ struct GlslCompileInfo
 {
     InteropArray<char> SourceText;
     InteropArray<char> FileName;
+    shaderc_source_language Language;
     shaderc_shader_kind Kind;
     Bool32 Debug;
     InteropArray<MacroDefinition> Macros;
