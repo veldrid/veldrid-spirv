@@ -456,12 +456,12 @@ CompilationResult *CompileVertexFragment(const CrossCompileInfo &info)
     if (info.Target == GLSL && usesStorageResource)
     {
         std::string key = "#version 330";
-        fsText.replace(vsText.find(key), key.length(), "#version 430");
+        fsText.replace(fsText.find(key), key.length(), "#version 430");
     }
     else if (info.Target == ESSL && usesStorageResource)
     {
         std::string key = "#version 300";
-        fsText.replace(vsText.find(key), key.length(), "#version 310");
+        fsText.replace(fsText.find(key), key.length(), "#version 310");
     }
 
     CompilationResult *result = new CompilationResult();
