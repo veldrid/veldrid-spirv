@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Veldrid.SPIRV
@@ -8,6 +9,16 @@ namespace Veldrid.SPIRV
     /// </summary>
     public static class SpirvCompilation
     {
+        private static readonly Dictionary<CrossCompileTarget, uint> DefaultTargetVersions = new Dictionary<CrossCompileTarget, uint>(Enum.GetValues(typeof(CrossCompileTarget)).Length);
+
+        /// <summary>
+        /// Sets the default version number to use when cross compiling to given target
+        /// </summary>
+        /// <param name="target">The target for which the version number should be used</param>
+        /// <param name="version">The version of the target to cross compile for</param>
+        public static void SetDefaultTargetVersionForCrossCompileTarget(CrossCompileTarget target, uint version)
+            => DefaultTargetVersions[target] = version;
+
         /// <summary>
         /// Cross-compiles the given vertex-fragment pair into some target language.
         /// </summary>
@@ -32,6 +43,22 @@ namespace Veldrid.SPIRV
             byte[] vsBytes,
             byte[] fsBytes,
             CrossCompileTarget target,
+            CrossCompileOptions options) => CompileVertexFragment(vsBytes, fsBytes, target, GetDefaultTargetVersion(target, isCompute: false), options);
+
+        /// <summary>
+        /// Cross-compiles the given vertex-fragment pair into some target language.
+        /// </summary>
+        /// <param name="vsBytes">The vertex shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="fsBytes">The fragment shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="target">The target language.</param>
+        /// <param name="targetVersion">The target language version.</param>
+        /// <param name="options">The options for shader translation.</param>
+        /// <returns>A <see cref="VertexFragmentCompilationResult"/> containing the compiled output.</returns>
+        public static unsafe VertexFragmentCompilationResult CompileVertexFragment(
+            byte[] vsBytes,
+            byte[] fsBytes,
+            CrossCompileTarget target,
+            uint targetVersion,
             CrossCompileOptions options)
         {
             int size1 = sizeof(CrossCompileInfo);
@@ -90,6 +117,7 @@ namespace Veldrid.SPIRV
 
             CrossCompileInfo info;
             info.Target = target;
+            info.TargetVersion = targetVersion;
             info.FixClipSpaceZ = options.FixClipSpaceZ;
             info.InvertY = options.InvertVertexOutputY;
             info.NormalizeResourceNames = options.NormalizeResourceNames;
@@ -162,7 +190,7 @@ namespace Veldrid.SPIRV
         }
 
         /// <summary>
-        /// Cross-compiles the given vertex-fragment pair into some target language.
+        /// Cross-compiles the given compute shader source into some target language.
         /// </summary>
         /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
         /// <param name="target">The target language.</param>
@@ -172,15 +200,29 @@ namespace Veldrid.SPIRV
             CrossCompileTarget target) => CompileCompute(csBytes, target, new CrossCompileOptions());
 
         /// <summary>
-        /// Cross-compiles the given vertex-fragment pair into some target language.
+        /// Cross-compiles the given compute shader source into some target language.
         /// </summary>
         /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
         /// <param name="target">The target language.</param>
         /// <param name="options">The options for shader translation.</param>
         /// <returns>A <see cref="ComputeCompilationResult"/> containing the compiled output.</returns>
+        public static ComputeCompilationResult CompileCompute(
+            byte[] csBytes,
+            CrossCompileTarget target,
+            CrossCompileOptions options) => CompileCompute(csBytes, target, GetDefaultTargetVersion(target, isCompute: true), options);
+
+        /// <summary>
+        /// Cross-compiles the given compute shader source into some target language.
+        /// </summary>
+        /// <param name="csBytes">The compute shader's SPIR-V bytecode or ASCII-encoded GLSL source code.</param>
+        /// <param name="target">The target language.</param>
+        /// <param name="targetVersion">The target language version.</param>
+        /// <param name="options">The options for shader translation.</param>
+        /// <returns>A <see cref="ComputeCompilationResult"/> containing the compiled output.</returns>
         public static unsafe ComputeCompilationResult CompileCompute(
             byte[] csBytes,
             CrossCompileTarget target,
+            uint targetVersion,
             CrossCompileOptions options)
         {
             byte[] csSpirvBytes;
@@ -207,6 +249,7 @@ namespace Veldrid.SPIRV
 
             CrossCompileInfo info;
             info.Target = target;
+            info.TargetVersion = targetVersion;
             info.FixClipSpaceZ = options.FixClipSpaceZ;
             info.InvertY = options.InvertVertexOutputY;
             info.NormalizeResourceNames = options.NormalizeResourceNames;
@@ -354,6 +397,38 @@ namespace Veldrid.SPIRV
                 {
                     VeldridSpirvNative.FreeResult(result);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Composes the given major, minor, and patch values into a value that can be used as a TargetVersion
+        /// </summary>
+        /// <param name="major">MSL major version</param>
+        /// <param name="minor">MSL minor version</param>
+        /// <param name="patch">MSL patch version</param>
+        /// <returns></returns>
+        public static uint MakeMSLVersion(uint major, uint minor = 0, uint patch = 0)
+        {
+            return (major * 10000) + (minor * 100) + patch;
+        }
+
+        private static uint GetDefaultTargetVersion(CrossCompileTarget target, bool isCompute)
+        {
+            if (DefaultTargetVersions.TryGetValue(target, out var version))
+                return version;
+
+            switch (target)
+            {
+                case CrossCompileTarget.GLSL:
+                    return isCompute ? 430u : 330u;
+                case CrossCompileTarget.ESSL:
+                    return isCompute ? 310u : 300u;
+                case CrossCompileTarget.HLSL:
+                    return 50;
+                case CrossCompileTarget.MSL:
+                    return MakeMSLVersion(1,2);
+                default:
+                    throw new NotImplementedException($"{nameof(GetDefaultTargetVersion)} not implemented for {nameof(CrossCompileTarget)} {target}");
             }
         }
 
