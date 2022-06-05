@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Veldrid.SPIRV
 {
@@ -333,10 +334,19 @@ namespace Veldrid.SPIRV
             try
             {
                 result = VeldridSpirvNative.CompileGlslToSpirv(&info);
-                if (!result->Succeeded)
+                if (!result->Succeeded) 
                 {
-                    throw new SpirvCompilationException(
+                    SpirvCompilationException ex = new SpirvCompilationException(
                         "Compilation failed: " + Util.GetString((byte*)result->GetData(0), result->GetLength(0)));
+                    
+                    MatchCollection mc = Regex.Matches(ex.Message, @":\d+:");
+                    if (mc.Count != 0) {
+                        ex.Data.Add("LineNumber", int.Parse(mc[0].Value.Trim(':')));
+                    }
+                    ex.Data.Add("ShaderStage", stage);
+                    
+                    
+                    throw ex;
                 }
 
                 uint length = result->GetLength(0);
