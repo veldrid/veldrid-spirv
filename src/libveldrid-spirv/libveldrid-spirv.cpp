@@ -11,6 +11,7 @@
 #include <sstream>
 #include "shaderc.hpp"
 #include <iostream>
+#include <cstdint>
 
 using namespace spirv_cross;
 
